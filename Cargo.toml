@@ -1,0 +1,9 @@
+[package]
+name = "yabinero"
+version = "0.1.0"
+authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
+edition = "2018"
+license = "GPL-3.0+"
+
+[dependencies]
+fltk = { version = "", features = ["fltk-shared"] }
