@@ -1,15 +1,23 @@
+//! # Yet Another Binero puzzle game
+
 mod value;
 mod engine;
 mod gui;
 
-use value::Value;
-use engine::Grid;
+use value::{Value, value};
+use engine::grid::Grid;
 
 fn main() {
     let first = Value::First;
     let second = Value::Second;
-    let mut grid = Grid::new(5);
-    grid.set(4, 2, first);
-    grid.set(3, 2, second);
+    let mut grid = Grid::new(6);
+    grid.put(4, 2, first);
+    grid.put(3, 2, second);
     println!("Grid: {}", grid);
+    if let Some(val) = value('0') {
+        println!("{}", val);
+    }
+    if let Some(val) = grid.put(3, 2, first) {
+        println!("{}", val);
+    }
 }
