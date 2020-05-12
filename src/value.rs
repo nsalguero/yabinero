@@ -25,12 +25,56 @@ impl fmt::Display for Value {
 ///
 /// # Arguments
 ///
-/// * `c` - a character
-pub fn value(c: char) -> Option<Value> {
-    match c {
+/// * `val` - a character
+///
+/// # Example
+///
+/// ```
+/// if let Some(val) = value_from_char('0') {
+///     println!("{}", val);
+/// }
+/// ```
+pub fn value_from_char(val: char) -> Option<Value> {
+    match val {
         FIRST_CHAR => Some(Value::First),
         SECOND_CHAR => Some(Value::Second),
         _ => None,
+    }
+}
+
+/// Returns a `Value` if the given integer is correct and `None` otherwise
+///
+/// # Arguments
+///
+/// * `val` - an unsigned 8-bit integer
+///
+/// # Example
+///
+/// ```
+/// if let Some(val) = value_from_char(0) {
+///     println!("{}", val);
+/// }
+/// ```
+pub fn value_from_u8(val: u8) -> Option<Value> {
+    let value = val + 48;
+    value_from_char(char::from(value))
+}
+
+/// Returns the other `Value` of a given `Value`
+///
+/// # Arguments
+///
+/// * `value` - a `Value`
+///
+/// # Example
+///
+/// ```
+/// let other_val = other(Value::First);
+/// ```
+pub fn other(value: Value) -> Value {
+    match value {
+        Value::First => Value::Second,
+        Value::Second => Value::First,
     }
 }
 

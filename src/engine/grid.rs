@@ -36,6 +36,11 @@ impl Grid {
         }
     }
 
+    /// Returns the size of the grid
+    pub fn size(&self) -> u8 {
+        self.size
+    }
+
     /// Returns wether or not a value can be put in the grid
     ///
     /// # Arguments
@@ -44,6 +49,11 @@ impl Grid {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Value`
     ///
+    /// # Example
+    ///
+    /// ```
+    /// let cp = grid.can_put(2, 2, Value::Second);
+    /// ```
     pub fn can_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
         let (i, j) = self.indexes(x_axis, y_axis);
         self.can_accept(Axis::X, i, value) && self.can_accept(Axis::Y, j, value)
@@ -154,7 +164,7 @@ impl Grid {
                 }
             },
         }
-        number < self.size / 2
+        number <= self.size / 2
     }
 }
 
