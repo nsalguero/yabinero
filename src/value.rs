@@ -5,7 +5,7 @@
 use std::fmt;
 
 /// The two possible values that can be put in a binero grid
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Value {
     First,
     Second,

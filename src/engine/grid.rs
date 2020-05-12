@@ -36,6 +36,19 @@ impl Grid {
         }
     }
 
+    /// Returns wether or not a value can be put in the grid
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `value` - a `Value`
+    ///
+    pub fn can_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
+        let (i, j) = self.indexes(x_axis, y_axis);
+        self.can_accept(Axis::X, i, value) && self.can_accept(Axis::Y, j, value)
+    }
+
     /// Puts a value in the grid and returns the previous one
     ///
     /// # Arguments
@@ -104,6 +117,45 @@ impl Grid {
         assert!(j < self.size);
         (i as usize, j as usize)
     }
+
+    /// Returns wether or not the grid can accept a value in the nth row or column
+    ///
+    /// Arguments
+    ///
+    /// * `axis` - an x or y-axis
+    /// * `index` - the index of the row or column
+    /// * `value` - a `Value`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let ca = grid.can_accept(Axis::X, 1, Value::First);
+    /// ```
+    fn can_accept(&self, axis: Axis, index: usize, value: Value) -> bool {
+        let mut number: u8 = 1;
+
+        let mut incr_number = |i: usize, j| {
+            if let Some(val) = self.matrix[i][j] {
+                if val == value {
+                    number += 1;
+                }
+            }
+        };
+
+        match axis {
+            Axis::X => {
+                for i in 0..self.size {
+                    incr_number(index, i as usize);
+                }
+            },
+            Axis::Y => {
+                for i in 0..self.size {
+                    incr_number(i as usize, index);
+                }
+            },
+        }
+        number < self.size / 2
+    }
 }
 
 impl fmt::Display for Grid {
@@ -138,4 +190,9 @@ impl fmt::Display for Grid {
         grid.push_str(&display_line());
         write!(f, "{}", grid)
     }
+}
+
+enum Axis {
+    X,
+    Y,
 }
