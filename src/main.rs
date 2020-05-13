@@ -4,6 +4,6 @@ mod value;
 mod engine;
 
 fn main() {
-    let grid = engine::create_grid(12);
+    let (grid, history) = engine::create_grid(12);
     println!("New grid: {}", grid);
 }

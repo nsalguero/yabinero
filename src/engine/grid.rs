@@ -3,12 +3,13 @@
 //! `grid` represents the grid of the game
 
 use std::fmt;
-use crate::value::Value;
+use crate::value::{self, Value};
 
 /// A binero grid is represented here
 pub struct Grid {
     size: u8,
     matrix: Vec<Vec<Option<Value>>>,
+    empty_values: u16,
 }
 
 impl Grid {
@@ -33,12 +34,41 @@ impl Grid {
         Grid {
             size,
             matrix: vec![vec![None; size as usize]; size as usize],
+            empty_values: size as u16 * size as u16,
         }
     }
 
     /// Returns the size of the grid
     pub fn size(&self) -> u8 {
         self.size
+    }
+
+    /// Returns wheter or not the grid is full
+    pub fn is_full(&self) -> bool {
+        self.empty_values == 0
+    }
+
+    /// Returns wether or not a value must be put in the grid
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `value` - a `Value`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let mp = grid.must_put(2, 2, Value::Second);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
+    pub fn must_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
+        assert!(x_axis < self.size && y_axis < self.size);
+        let the_other_value = value::the_other(value);
+        !self.can_put(x_axis, y_axis, the_other_value)
     }
 
     /// Returns wether or not a value can be put in the grid
@@ -85,6 +115,7 @@ impl Grid {
         assert!(x_axis < self.size && y_axis < self.size);
         let result = self.get(x_axis, y_axis);
         self.matrix[x_axis as usize][y_axis as usize] = value;
+        self.empty_values -= 1;
         result
     }
 

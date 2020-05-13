@@ -56,8 +56,7 @@ pub fn from_char(val: char) -> Option<Value> {
 /// }
 /// ```
 pub fn from_u8(val: u8) -> Option<Value> {
-    let value = val + 48;
-    from_char(char::from(value))
+    from_char(char::from(val + 48))
 }
 
 /// Returns the other `Value` of a given `Value`

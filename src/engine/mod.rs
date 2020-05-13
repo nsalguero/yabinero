@@ -3,10 +3,12 @@
 //! `engine` contains the functions that create and solve a binero
 
 pub mod grid;
+pub mod history;
 
 use rand::Rng;
 use grid::Grid;
-use crate::value;
+use history::History;
+use crate::value::{self, Value};
 
 /// Returns a binero grid, with the given size, ready to be played
 ///
@@ -24,19 +26,57 @@ use crate::value;
 /// # Panics
 ///
 /// Panics if `size` is an odd number
-pub fn create_grid(size: u8) -> Grid {
-    let mut result = Grid::new(size);
-    for i in 0..result.size() {
-        for j in 0..result.size() {
-            let value = rand::thread_rng().gen_range(0, 2);
-            if let Some(val) = value::from_u8(value) {
-                if result.can_put(i, j, val) {
-                    result.put(i, j, Some(val));
-                } else {
-                    result.put(i, j, Some(value::the_other(val)));
+pub fn create_grid(size: u8) -> (Grid, History) {
+    let mut grid = Grid::new(size);
+    let mut history = History::new();
+    solve(&mut grid, &mut history);
+    (grid, History::new())
+}
+
+pub fn solve(grid: &mut Grid, history: &mut History) {
+    let grid_size = grid.size();
+
+    while !grid.is_full() {
+        loop {
+            let mut put_mandatory_values = || -> bool {
+                let mut result = false;
+                for i in 0..grid_size {
+                    for j in 0..grid_size {
+                        let value = rand_value();
+                        if grid.must_put(i, j, value) {
+                            let new_value = Some(value);
+                            let old_value = grid.put(i, j, new_value);
+                            history.push(i, j, old_value, new_value, false);
+                            result = true;
+                        }
+                    }
                 }
+                result
+            };
+
+            if put_mandatory_values() {
+                break;
             }
         }
+
+        let mut try_a_choice = || {
+            for i in 0..grid_size {
+                for j in 0..grid_size {
+                    let mut value = rand_value();
+                    if grid.can_put(i, j, value) {
+                        let new_value = Some(value);
+                        let old_value = grid.put(i, j, new_value);
+                        history.push(i, j, old_value, new_value, true);
+                    }
+                }
+            }
+        };
+
+        try_a_choice();
     }
-    result
+}
+
+fn rand_value() -> Value {
+    let value = rand::thread_rng().gen_range(0, 2);
+    value::from_u8(value).unwrap()
 }
