@@ -115,7 +115,10 @@ impl Grid {
         assert!(x_axis < self.size && y_axis < self.size);
         let result = self.get(x_axis, y_axis);
         self.matrix[x_axis as usize][y_axis as usize] = value;
-        self.empty_values -= 1;
+        match value {
+            Some(v) => self.empty_values -= 1,
+            None => self.empty_values += 1,
+        };
         result
     }
 

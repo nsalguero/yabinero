@@ -32,17 +32,12 @@ impl History {
         self.items.push(item);
     }
 
-    /// Panics if there is no latest choice
-    pub fn backtrack_to_latest_choice(&mut self) -> Item {
-        let choice = self.choices.pop().unwrap();
-        let latest = self.items.len() - 1;
-        if choice < latest {
-            for _ in choice..latest {
-                self.items.pop();
-            }
-        }
-        self.current_item = Some(choice - 1);
-        self.items.pop().unwrap()
+    pub fn latest_choice(&mut self) -> Option<usize> {
+        self.choices.pop()
+    }
+
+    pub fn current_item(&self) -> Option<usize> {
+        self.current_item
     }
 
     pub fn is_undo_possible(&self) -> bool {
@@ -85,12 +80,12 @@ impl History {
     }
 
     fn pop_all_after_current_item(&mut self) {
-        if let Some(curr) = self.current_item {
-            let next = curr + 1;
+        if let Some(next) = self.next_item() {
             let size = self.items.len();
             if next < size {
-                for _ in next..size {
+                for i in next..size {
                     self.items.pop();
+                    self.choices.retain(|&item| item != i);
                 }
             }
         }

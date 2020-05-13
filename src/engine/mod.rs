@@ -7,7 +7,7 @@ pub mod history;
 
 use rand::Rng;
 use grid::Grid;
-use history::History;
+use history::{History, Item};
 use crate::value::{self, Value};
 
 /// Returns a binero grid, with the given size, ready to be played
@@ -34,45 +34,58 @@ pub fn create_grid(size: u8) -> (Grid, History) {
 }
 
 pub fn solve(grid: &mut Grid, history: &mut History) {
-    let grid_size = grid.size();
-
     while !grid.is_full() {
-        loop {
-            let mut put_mandatory_values = || -> bool {
-                let mut result = false;
-                for i in 0..grid_size {
-                    for j in 0..grid_size {
-                        let value = rand_value();
-                        if grid.must_put(i, j, value) {
-                            let new_value = Some(value);
-                            let old_value = grid.put(i, j, new_value);
-                            history.push(i, j, old_value, new_value, false);
-                            result = true;
-                        }
-                    }
-                }
-                result
-            };
-
-            if put_mandatory_values() {
-                break;
+        while put_mandatory_values(grid, history) {
+        }
+        if !grid.is_full() {
+            if !try_a_choice(grid, history) {
+                backtrack_to_latest_choice(grid, history);
             }
         }
+    }
+}
 
-        let mut try_a_choice = || {
-            for i in 0..grid_size {
-                for j in 0..grid_size {
-                    let mut value = rand_value();
-                    if grid.can_put(i, j, value) {
-                        let new_value = Some(value);
-                        let old_value = grid.put(i, j, new_value);
-                        history.push(i, j, old_value, new_value, true);
-                    }
+fn put_mandatory_values(grid: &mut Grid, history: &mut History) -> bool {
+    let mut result = false;
+    for i in 0..grid.size() {
+        for j in 0..grid.size() {
+            if grid.get(i, j).is_none() {
+                let value = rand_value();
+                if grid.must_put(i, j, value) {
+                    let new_value = Some(value);
+                    let old_value = grid.put(i, j, new_value);
+                    history.push(i, j, old_value, new_value, false);
+                    result = true;
                 }
             }
-        };
+        }
+    }
+    result
+}
 
-        try_a_choice();
+fn try_a_choice(grid: &mut Grid, history: &mut History) -> bool {
+    for i in 0..grid.size() {
+        for j in 0..grid.size() {
+            if grid.get(i, j).is_none() {
+                let mut value = rand_value();
+                if grid.can_put(i, j, value) {
+                    let new_value = Some(value);
+                    let old_value = grid.put(i, j, new_value);
+                    history.push(i, j, old_value, new_value, true);
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
+fn backtrack_to_latest_choice(grid: &mut Grid, history: &mut History) {
+    let choice = history.latest_choice().unwrap();
+    let latest = history.current_item().unwrap() + 1;
+    for _ in choice..latest {
+        let item = history.undo();
+        grid.put(item.x_axis(), item.y_axis(), item.old_value());
     }
 }
 
