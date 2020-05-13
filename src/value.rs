@@ -21,7 +21,7 @@ impl fmt::Display for Value {
     }
 }
 
-/// Returns a `Value` if the given character is correct and `None` otherwise
+/// Returns a `Some(Value)` if the given character is correct and `None` otherwise
 ///
 /// # Arguments
 ///
@@ -30,11 +30,11 @@ impl fmt::Display for Value {
 /// # Example
 ///
 /// ```
-/// if let Some(val) = value_from_char('0') {
+/// if let Some(val) = value::from_char('0') {
 ///     println!("{}", val);
 /// }
 /// ```
-pub fn value_from_char(val: char) -> Option<Value> {
+pub fn from_char(val: char) -> Option<Value> {
     match val {
         FIRST_CHAR => Some(Value::First),
         SECOND_CHAR => Some(Value::Second),
@@ -42,7 +42,7 @@ pub fn value_from_char(val: char) -> Option<Value> {
     }
 }
 
-/// Returns a `Value` if the given integer is correct and `None` otherwise
+/// Returns a `Some(Value)` if the given integer is correct and `None` otherwise
 ///
 /// # Arguments
 ///
@@ -51,13 +51,13 @@ pub fn value_from_char(val: char) -> Option<Value> {
 /// # Example
 ///
 /// ```
-/// if let Some(val) = value_from_char(0) {
+/// if let Some(val) = value::from_u8(0) {
 ///     println!("{}", val);
 /// }
 /// ```
-pub fn value_from_u8(val: u8) -> Option<Value> {
+pub fn from_u8(val: u8) -> Option<Value> {
     let value = val + 48;
-    value_from_char(char::from(value))
+    from_char(char::from(value))
 }
 
 /// Returns the other `Value` of a given `Value`
@@ -69,9 +69,9 @@ pub fn value_from_u8(val: u8) -> Option<Value> {
 /// # Example
 ///
 /// ```
-/// let other_val = other(Value::First);
+/// let other_val = value::the_other(Value::First);
 /// ```
-pub fn other(value: Value) -> Value {
+pub fn the_other(value: Value) -> Value {
     match value {
         Value::First => Value::Second,
         Value::Second => Value::First,

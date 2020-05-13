@@ -54,9 +54,14 @@ impl Grid {
     /// ```
     /// let cp = grid.can_put(2, 2, Value::Second);
     /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
     pub fn can_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
-        let (i, j) = self.indexes(x_axis, y_axis);
-        self.can_accept(Axis::X, i, value) && self.can_accept(Axis::Y, j, value)
+        assert!(x_axis < self.size && y_axis < self.size);
+        self.can_accept(Axis::X, x_axis, y_axis, value) &&
+            self.can_accept(Axis::Y, x_axis, y_axis, value)
     }
 
     /// Puts a value in the grid and returns the previous one
@@ -65,21 +70,21 @@ impl Grid {
     ///
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
-    /// * `value` - a `Value`
+    /// * `value` - a `Option<Value>`
     ///
     /// # Example
     ///
     /// ```
-    /// grid.put(4, 2, Value::First);
+    /// let old_value = grid.put(4, 2, Some(Value::First));
     /// ```
     ///
     /// # Panics
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
-    pub fn put(&mut self, x_axis: u8, y_axis: u8, value: Value) -> Option<Value> {
+    pub fn put(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) -> Option<Value> {
+        assert!(x_axis < self.size && y_axis < self.size);
         let result = self.get(x_axis, y_axis);
-        let (i, j) = self.indexes(x_axis, y_axis);
-        self.matrix[i][j] = Some(value);
+        self.matrix[x_axis as usize][y_axis as usize] = value;
         result
     }
 
@@ -98,73 +103,79 @@ impl Grid {
     ///
     /// # Panics
     ///
-    /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
+    /// Panics if `x_axis` or `y_axis` are not less than the size of the grid
     pub fn get(&self, x_axis: u8, y_axis: u8) -> Option<Value> {
-        let (i, j) = self.indexes(x_axis, y_axis);
-        self.matrix[i][j]
-    }
-
-    /// Returns the indexes corresponding to the given x and y-axis
-    ///
-    /// # Arguments
-    ///
-    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
-    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// let (i, j) = grid.get(4, 2);
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
-    fn indexes(&self, x_axis: u8, y_axis: u8) -> (usize, usize) {
-        let i = x_axis - 1;
-        assert!(i < self.size);
-        let j = y_axis - 1;
-        assert!(j < self.size);
-        (i as usize, j as usize)
+        assert!(x_axis < self.size && y_axis < self.size);
+        self.matrix[x_axis as usize][y_axis as usize]
     }
 
     /// Returns wether or not the grid can accept a value in the nth row or column
     ///
     /// Arguments
     ///
-    /// * `axis` - an x or y-axis
-    /// * `index` - the index of the row or column
+    /// * `axis` - the axis we are working on
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Value`
     ///
     /// # Example
     ///
     /// ```
-    /// let ca = grid.can_accept(Axis::X, 1, Value::First);
+    /// let ca = grid.can_accept(Axis::X, 1, 2, Value::First);
     /// ```
-    fn can_accept(&self, axis: Axis, index: usize, value: Value) -> bool {
-        let mut number: u8 = 1;
-
-        let mut incr_number = |i: usize, j| {
-            if let Some(val) = self.matrix[i][j] {
-                if val == value {
-                    number += 1;
-                }
+    fn can_accept(&self, axis: Axis, x_axis: u8, y_axis: u8, value: Value) -> bool {
+        let manage_numbers = |i: u8, j: u8, mut total: u8, mut adjacent: u8| {
+            let v = self.matrix[i as usize][j as usize];
+            match v {
+                Some(val) => {
+                    if val == value {
+                        total += 1;
+                        adjacent += 1;
+                    } else {
+                        adjacent = 0;
+                    }
+                },
+                None => adjacent = 0,
             }
+            (total, adjacent)
         };
+
+        let mut total_number: u8 = 0;
+        let mut adjacent_number: u8 = 0;
 
         match axis {
             Axis::X => {
-                for i in 0..self.size {
-                    incr_number(index, i as usize);
+                for j in 0..self.size {
+                    if j == y_axis {
+                        total_number += 1;
+                        adjacent_number += 1;
+                    } else {
+                        let (tot, adj) = manage_numbers(x_axis, j, total_number, adjacent_number);
+                        total_number = tot;
+                        adjacent_number = adj;
+                    }
+                    if total_number > self.size / 2 || adjacent_number > 2 {
+                        return false;
+                    }
                 }
             },
             Axis::Y => {
                 for i in 0..self.size {
-                    incr_number(i as usize, index);
+                    if i == x_axis {
+                        total_number += 1;
+                        adjacent_number += 1;
+                    } else {
+                        let (tot, adj) = manage_numbers(i, y_axis, total_number, adjacent_number);
+                        total_number = tot;
+                        adjacent_number = adj;
+                    }
+                    if total_number > self.size / 2 || adjacent_number > 2 {
+                        return false;
+                    }
                 }
             },
         }
-        number <= self.size / 2
+        true
     }
 }
 
