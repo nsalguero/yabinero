@@ -2,6 +2,7 @@
 //!
 //! `history` manages the history of the game
 
+use std::fmt;
 use crate::value::Value;
 
 /// The history of the game is represented here
@@ -87,6 +88,12 @@ impl History {
         self.items.get(next).unwrap()
     }
 
+    /// Clears the history
+    pub fn clear(&mut self) {
+        self.current_item = None;
+        self.pop_all_after_current_item();
+    }
+
     /// Returns the next item of the history if it exists
     fn next_item(&self) -> Option<usize> {
         let current = self.current_item;
@@ -105,13 +112,30 @@ impl History {
     fn pop_all_after_current_item(&mut self) {
         if let Some(next) = self.next_item() {
             let size = self.items.len();
-            if next < size {
-                for i in next..size {
-                    self.items.pop();
-                    self.choices.retain(|&item| item != i);
-                }
+            for i in next..size {
+                self.items.pop();
+                self.choices.retain(|&item| item != i);
             }
         }
+    }
+}
+
+impl fmt::Display for History {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut history = "".to_owned();
+        for i in 0..self.items.len() {
+            history.push_str(&format!("{}", self.items.get(i).unwrap()));
+            if self.choices.contains(&i) {
+                history.push_str(" *");
+            }
+            if let Some(current) = self.current_item {
+                if current == i {
+                    history.push_str(" <-");
+                }
+            }
+            history.push_str("\n");
+        }
+        write!(f, "{}", history)
     }
 }
 
@@ -159,5 +183,19 @@ impl Item {
     /// Returns the new value of an item of the history
     pub fn new_value(&self) -> Option<Value> {
         self.new_value
+    }
+}
+
+impl fmt::Display for Item {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let value_as_str = |value: Option<Value>| -> String {
+            match value {
+                Some(val) => format!("{}", val),
+                None => "''".to_owned(),
+            }
+        };
+
+        write!(f, "x-axis: {}, y-axis: {}, old value: {}, new value: {}", self.x_axis, self.y_axis,
+               value_as_str(self.old_value), value_as_str(self.new_value))
     }
 }

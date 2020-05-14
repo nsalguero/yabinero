@@ -1,9 +1,11 @@
 //! # Yet Another Binero puzzle game
 
-mod value;
 mod engine;
+mod value;
+
+use engine::Binero;
 
 fn main() {
-    let (grid, history) = engine::create_grid(12);
-    println!("New grid: {}", grid);
+    let game = Binero::new(12);
+    println!("New game: {}", game);
 }
