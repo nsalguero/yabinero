@@ -5,11 +5,13 @@
 mod grid;
 mod history;
 
+use std::u16;
 use std::fmt;
 use rand::Rng;
 use grid::Grid;
 use history::{History, Item};
 use crate::value::{self, Value};
+use crate::difficulty::Difficulty;
 
 /// A binero game is represented here
 pub struct Binero {
@@ -23,23 +25,27 @@ impl Binero {
     /// # Arguments
     ///
     /// * `size` - an unsigned 8-bit integer that gives the size
+    /// * `difficulty` - a level of difficulty
     ///
     /// # Example
     ///
     /// ```
     /// use engine::Binero;
-    /// let game = Binero::new(6);
+    /// use difficulty::Difficulty;
+    /// let game = Binero::new(6, Difficulty.Beginner);
     /// ```
     ///
     /// # Panics
     ///
     /// Panics if `size` is an odd number
-    pub fn new(size: u8) -> Binero {
+    pub fn new(size: u8, difficulty: Difficulty) -> Binero {
         let mut result = Binero {
             grid: Grid::new(size),
             history: History::new(),
         };
         result.solve();
+        result.history.clear();
+        result.make_playable(difficulty);
         result.history.clear();
         result
     }
@@ -184,6 +190,20 @@ impl Binero {
     fn rand_value(&self) -> Value {
         let value = rand::thread_rng().gen_range(0, 2);
         value::from_u8(value).unwrap()
+    }
+
+    /// Removes a certain amount of values from the grid according to the given difficulty
+    ///
+    /// # Arguments
+    ///
+    /// * `difficulty` - a level of difficulty
+    fn make_playable(&mut self, difficulty: Difficulty) {
+        let max_removed: u16 = match difficulty { // FIXME: define the good number
+            Difficulty::Beginner => 42,
+            Difficulty::Easy => 42,
+            Difficulty::Medium => 42,
+            Difficulty::Hard => u16::MAX,
+        };
     }
 }
 
