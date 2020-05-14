@@ -12,8 +12,15 @@ fn main() {
     game.put(0, 1, None);
     game.put(1, 1, None);
     game.put(2, 1, None);
-    game.undo();
-    game.undo();
-    game.redo();
+    println!("{}", game.undo().unwrap());
+    println!("{}", game.undo().unwrap());
+    println!("{}", game.undo().unwrap());
+    println!("{}", game.undo().unwrap());
+    println!("{}", game.undo().is_none());
+    println!("{}", game.redo().unwrap());
+    println!("{}", game.redo().unwrap());
+    println!("{}", game.redo().unwrap());
+    println!("{}", game.redo().unwrap().x_axis());
+    println!("{}", game.redo().is_none());
     println!("New game: {}", game);
 }

@@ -2,8 +2,8 @@
 //!
 //! `engine` contains the functions that create and solve a binero
 
-pub mod grid;
-pub mod history;
+mod grid;
+mod history;
 
 use std::fmt;
 use rand::Rng;
