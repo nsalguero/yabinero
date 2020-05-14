@@ -48,7 +48,7 @@ impl Grid {
         self.empty_values == 0
     }
 
-    /// Returns wether or not a value must be put in the grid
+    /// Returns whether or not a value must be put in the grid
     ///
     /// # Arguments
     ///
@@ -71,7 +71,7 @@ impl Grid {
         !self.can_put(x_axis, y_axis, the_other_value)
     }
 
-    /// Returns wether or not a value can be put in the grid
+    /// Returns whether or not a value can be put in the grid
     ///
     /// # Arguments
     ///
@@ -143,7 +143,7 @@ impl Grid {
         self.matrix[x_axis as usize][y_axis as usize]
     }
 
-    /// Returns wether or not the grid can accept a value in the nth row or column
+    /// Returns whether or not the grid can accept a value in the nth row or column
     ///
     /// Arguments
     ///
@@ -158,58 +158,65 @@ impl Grid {
     /// let ca = grid.can_accept(Axis::X, 1, 2, Value::First);
     /// ```
     fn can_accept(&self, axis: Axis, x_axis: u8, y_axis: u8, value: Value) -> bool {
-        let manage_numbers = |i: u8, j: u8, mut total: u8, mut adjacent: u8| {
-            let v = self.matrix[i as usize][j as usize];
-            match v {
-                Some(val) => {
-                    if val == value {
-                        total += 1;
-                        adjacent += 1;
-                    } else {
-                        adjacent = 0;
-                    }
-                },
-                None => adjacent = 0,
-            }
-            (total, adjacent)
-        };
-
         let mut total_number: u8 = 0;
         let mut adjacent_number: u8 = 0;
 
-        match axis {
-            Axis::X => {
-                for j in 0..self.size {
-                    if j == y_axis {
-                        total_number += 1;
-                        adjacent_number += 1;
-                    } else {
-                        let (tot, adj) = manage_numbers(x_axis, j, total_number, adjacent_number);
-                        total_number = tot;
-                        adjacent_number = adj;
+        let index_in_changing_axis = match axis {
+            Axis::X => y_axis,
+            Axis::Y => x_axis,
+        };
+
+        for k in 0..self.size {
+            if k == index_in_changing_axis {
+                total_number += 1;
+                adjacent_number += 1;
+            } else {
+                let mut manage_numbers = |i: u8, j: u8| {
+                    let v = self.matrix[i as usize][j as usize];
+                    match v {
+                        Some(val) => {
+                            if val == value {
+                                total_number += 1;
+                                adjacent_number += 1;
+                            } else {
+                                adjacent_number = 0;
+                            }
+                        },
+                        None => adjacent_number = 0,
                     }
-                    if total_number > self.size / 2 || adjacent_number > 2 {
-                        return false;
-                    }
-                }
-            },
-            Axis::Y => {
-                for i in 0..self.size {
-                    if i == x_axis {
-                        total_number += 1;
-                        adjacent_number += 1;
-                    } else {
-                        let (tot, adj) = manage_numbers(i, y_axis, total_number, adjacent_number);
-                        total_number = tot;
-                        adjacent_number = adj;
-                    }
-                    if total_number > self.size / 2 || adjacent_number > 2 {
-                        return false;
-                    }
-                }
-            },
+                };
+
+                match axis {
+                    Axis::X => manage_numbers(x_axis, k),
+                    Axis::Y => manage_numbers(k, y_axis),
+                };
+            }
+            if self.violate_constraint_max_per_row_or_column(total_number) ||
+                self.violate_constraint_max_adjacent_in_row_or_column(adjacent_number) {
+                return false;
+            }
         }
         true
+    }
+
+    /// Returns whether or not the grid violates the constraint saying a row or a column must
+    /// contain as much of a value as of the other
+    ///
+    /// # Arguments
+    ///
+    /// * `number` - the number of a value in a row or a column
+    fn violate_constraint_max_per_row_or_column(&self, number: u8) -> bool {
+        number > self.size / 2
+    }
+
+    /// Returns whether or not the grid violates the constraint saying a row or a column cannot
+    /// contain more than twice the same value side by side
+    ///
+    /// # Arguments
+    ///
+    /// * `number` - the number of the same value side by side in a row or a column
+    fn violate_constraint_max_adjacent_in_row_or_column(&self, number: u8) -> bool {
+        number > 2
     }
 }
 

@@ -21,6 +21,15 @@ impl History {
         }
     }
 
+    /// Pushes an action in the history
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `old_value` - the previous value
+    /// * `new value` - the new value
+    /// * `is_a_choice` - whether or not the new value is a choice
     pub fn push(&mut self, x_axis: u8, y_axis: u8, old_value: Option<Value>, new_value: Option<Value>, is_a_choice: bool) {
         self.pop_all_after_current_item();
         let next_item = self.items.len();
@@ -32,22 +41,30 @@ impl History {
         self.items.push(item);
     }
 
+    /// Returns the index of the latest choice in the history
     pub fn latest_choice(&mut self) -> Option<usize> {
         self.choices.pop()
     }
 
+    /// Returns the index of the current item of the history
     pub fn current_item(&self) -> Option<usize> {
         self.current_item
     }
 
+    /// Returns whether or not undoing the current action is possible
     pub fn is_undo_possible(&self) -> bool {
         self.current_item.is_some()
     }
 
+    /// Returns whether or not redoing the next action is possible because it was undone before
     pub fn is_redo_possible(&self) -> bool {
         self.next_item().is_some()
     }
 
+    /// Cancels the current action and returns it
+    ///
+    /// # Panics
+    ///
     /// Panics if no possible undo
     pub fn undo(&mut self) -> &Item {
         let curr = self.current_item.unwrap();
@@ -59,6 +76,10 @@ impl History {
         self.items.get(curr).unwrap()
     }
 
+    /// Replays the next action that was previously undone and returns it
+    ///
+    /// # Panics
+    ///
     /// Panics if no possible redo
     pub fn redo(&mut self) -> &Item {
         let next = self.next_item().unwrap();
@@ -66,6 +87,7 @@ impl History {
         self.items.get(next).unwrap()
     }
 
+    /// Returns the next item of the history if it exists
     fn next_item(&self) -> Option<usize> {
         let current = self.current_item;
         let next = match current {
@@ -79,6 +101,7 @@ impl History {
         }
     }
 
+    /// Clears the history after the current item
     fn pop_all_after_current_item(&mut self) {
         if let Some(next) = self.next_item() {
             let size = self.items.len();
@@ -92,6 +115,7 @@ impl History {
     }
 }
 
+/// An item of the history of the game is represented here
 pub struct Item {
     x_axis: u8,
     y_axis: u8,
@@ -100,6 +124,14 @@ pub struct Item {
 }
 
 impl Item {
+    /// Returns a new item of the history
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `old_value` - the previous value
+    /// * `new value` - the new value
     fn new(x_axis: u8, y_axis: u8, old_value: Option<Value>, new_value: Option<Value>) -> Item {
         Item {
             x_axis,
@@ -109,18 +141,22 @@ impl Item {
         }
     }
 
+    /// Returns the x-axis of an item of the history
     pub fn x_axis(&self) -> u8 {
         self.x_axis
     }
 
+    /// Returns the y-axis of an item of the history
     pub fn y_axis(&self) -> u8 {
         self.y_axis
     }
 
+    /// Returns the previous value of an item of the history
     pub fn old_value(&self) -> Option<Value> {
         self.old_value
     }
 
+    /// Returns the new value of an item of the history
     pub fn new_value(&self) -> Option<Value> {
         self.new_value
     }
