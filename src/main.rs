@@ -10,10 +10,10 @@ use difficulty::Difficulty;
 
 fn main() {
     let mut game = Binero::new(12, Difficulty::Beginner);
-    game.put(0, 0, None);
-    game.put(0, 1, None);
-    game.put(1, 1, None);
-    game.put(2, 1, None);
+    game.try_to_put(0, 0, None);
+    game.try_to_put(0, 1, None);
+    game.try_to_put(1, 1, None);
+    game.try_to_put(2, 1, None);
     println!("{}", game.undo().unwrap());
     println!("{}", game.undo().unwrap());
     println!("{}", game.undo().unwrap());

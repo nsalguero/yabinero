@@ -79,16 +79,29 @@ impl Binero {
         grid_can_be_solved
     }
 
-    /// Put a value in the grid
+    /// Try to put a value in the grid and returns whether or not it was possible
     ///
     /// # Arguments
     ///
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - an `Option<Value>`
-    pub fn put(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) {
-        let old_value = self.grid.put(x_axis, y_axis, value);
-        self.history.push(x_axis, y_axis, old_value, value, true);
+    pub fn try_to_put(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) -> bool {
+        match value {
+            Some(val) => {
+                if self.grid.can_put(x_axis, y_axis, val) {
+                    if self.grid.must_put(x_axis, y_axis, val) {
+                        self.put_a_mandatory_value(x_axis, y_axis, val);
+                    } else {
+                        self.put_a_choice(x_axis, y_axis, value);
+                    }
+                } else {
+                    return false;
+                }
+            },
+            None => self.put_a_choice(x_axis, y_axis, value),
+        }
+        true
     }
 
     /// Cancels the latest action if it is possible
@@ -107,6 +120,18 @@ impl Binero {
         } else {
             None
         }
+    }
+
+    /// Put a choice in the grid
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `value` - an `Option<Value>`
+    fn put_a_choice(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) {
+        let old_value = self.grid.put(x_axis, y_axis, value);
+        self.history.push(x_axis, y_axis, old_value, value, true);
     }
 
     /// Put a mandatory value in the grid
@@ -153,9 +178,7 @@ impl Binero {
                 if self.grid.get(i, j).is_none() {
                     let value = self.rand_value();
                     if self.grid.can_put(i, j, value) {
-                        let new_value = Some(value);
-                        let old_value = self.grid.put(i, j, new_value);
-                        self.history.push(i, j, old_value, new_value, true);
+                        self.put_a_choice(i, j, Some(value));
                         return true;
                     }
                 }
