@@ -10,19 +10,7 @@ use difficulty::Difficulty;
 
 fn main() {
     let mut game = Binero::new(12, Difficulty::Beginner);
-    game.try_to_put(0, 0, None);
-    game.try_to_put(0, 1, None);
-    game.try_to_put(1, 1, None);
-    game.try_to_put(2, 1, None);
-    println!("{}", game.undo().unwrap());
-    println!("{}", game.undo().unwrap());
-    println!("{}", game.undo().unwrap());
-    println!("{}", game.undo().unwrap());
-    println!("{}", game.undo().is_none());
-    println!("{}", game.redo().unwrap());
-    println!("{}", game.redo().unwrap());
-    println!("{}", game.redo().unwrap());
-    println!("{}", game.redo().unwrap().x_axis());
-    println!("{}", game.redo().is_none());
+    println!("New game: {}", game);
+    println!("Can be solved: {}", game.try_to_solve());
     println!("New game: {}", game);
 }

@@ -34,7 +34,7 @@ impl Grid {
         Grid {
             size,
             matrix: vec![vec![None; size as usize]; size as usize],
-            empty_values: size as u16 * size as u16,
+            empty_values: (size as u16).pow(2),
         }
     }
 
@@ -46,6 +46,11 @@ impl Grid {
     /// Returns wheter or not the grid is full
     pub fn is_full(&self) -> bool {
         self.empty_values == 0
+    }
+
+    /// Returns the number of empty boxes in the grid
+    pub fn empty_values(&self) -> u16 {
+        self.empty_values
     }
 
     /// Returns whether or not a value must be put in the grid

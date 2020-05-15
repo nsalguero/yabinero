@@ -5,9 +5,9 @@
 mod grid;
 mod history;
 
-use std::u16;
 use std::fmt;
 use rand::Rng;
+use rand::prelude::*;
 use grid::Grid;
 use history::{History, Item};
 use crate::value::{self, Value};
@@ -43,15 +43,14 @@ impl Binero {
             grid: Grid::new(size),
             history: History::new(),
         };
-        result.solve();
+        result.try_to_solve();
         result.history.clear();
         result.make_playable(difficulty);
-        result.history.clear();
         result
     }
 
     /// Try to solve a binero and returns if it could or not
-    pub fn solve(&mut self) -> bool {
+    pub fn try_to_solve(&mut self) -> bool {
         let mut grid_can_be_solved = true;
         while !self.grid.is_full() {
             loop {
@@ -104,19 +103,23 @@ impl Binero {
         true
     }
 
-    /// Cancels the latest action if it is possible
-    pub fn undo(&mut self) -> Option<&Item> {
+    /// Cancels the latest action and returns it if it is possible or returns None
+    pub fn try_to_undo(&mut self) -> Option<&Item> {
         if self.history.is_undo_possible() {
-            Some(self.history.undo())
+            let item = self.history.undo();
+            self.grid.put(item.x_axis(), item.y_axis(), item.old_value());
+            Some(item)
         } else {
             None
         }
     }
 
-    /// Replays the next action that was undone if it is possible
-    pub fn redo(&mut self) -> Option<&Item> {
+    /// Replays the next action that was undone and returns it if it is possible or returns None
+    pub fn try_to_redo(&mut self) -> Option<&Item> {
         if self.history.is_redo_possible() {
-            Some(self.history.redo())
+            let item = self.history.redo();
+            self.grid.put(item.x_axis(), item.y_axis(), item.new_value());
+            Some(item)
         } else {
             None
         }
@@ -221,12 +224,60 @@ impl Binero {
     ///
     /// * `difficulty` - a level of difficulty
     fn make_playable(&mut self, difficulty: Difficulty) {
-        let max_removed: u16 = match difficulty { // FIXME: define the good number
-            Difficulty::Beginner => 42,
-            Difficulty::Easy => 42,
-            Difficulty::Medium => 42,
-            Difficulty::Hard => u16::MAX,
+        let total = (self.grid.size() as u16).pow(2);
+        let max_removed: u16 = match difficulty {
+            Difficulty::Beginner => total / 2,
+            Difficulty::Easy => total * 2 / 3,
+            Difficulty::Medium => total * 3 / 4,
+            Difficulty::Hard => total,
         };
+        let indexes = self.shuffle_indexes();
+        let mut first = true;
+        for &(i, j) in indexes.iter() {
+            if self.grid.empty_values() >= max_removed {
+                break;
+            }
+            let value = self.grid.put(i, j, None);
+            if first {
+                first = false;
+                continue;
+            }
+            self.check_a_value(i, j, value);
+        }
+    }
+
+    /// Checks whether or not a value can be removed from the grid keeping a unique solution for
+    /// the binero
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    /// * `value` - an `Option<Value>`
+    fn check_a_value(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) {
+        let other_value = value::the_other(value.unwrap());
+        self.grid.put(x_axis, y_axis, Some(other_value));
+        let non_unique_solution = self.try_to_solve();
+        while self.try_to_undo().is_some() {
+        }
+        self.grid.put(x_axis, y_axis, None);
+        self.history.clear();
+        if non_unique_solution {
+            self.grid.put(x_axis, y_axis, value);
+        }
+    }
+
+    /// Shuffles the x and y axis and returns them
+    fn shuffle_indexes(&self) -> Vec<(u8, u8)> {
+        let mut rng = rand::thread_rng();
+        let mut result: Vec<(u8, u8)> = Vec::new();
+        for i in 0..self.grid.size() {
+            for j in 0..self.grid.size() {
+                result.push((i, j));
+            }
+        }
+        result.shuffle(&mut rng);
+        result
     }
 }
 
