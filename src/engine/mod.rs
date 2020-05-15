@@ -43,7 +43,8 @@ impl Binero {
             grid: Grid::new(size),
             history: History::new(),
         };
-        result.try_to_solve();
+        println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {}", result.try_to_solve());
+        println!("Before making playable {}", result);
         result.history.clear();
         result.make_playable(difficulty);
         result

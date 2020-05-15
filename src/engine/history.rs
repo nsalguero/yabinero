@@ -122,7 +122,7 @@ impl History {
 
 impl fmt::Display for History {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut history = "".to_owned();
+        let mut history = "\n".to_owned();
         for i in 0..self.items.len() {
             history.push_str(&format!("{}", self.items.get(i).unwrap()));
             if self.choices.contains(&i) {
