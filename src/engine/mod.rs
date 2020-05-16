@@ -43,8 +43,7 @@ impl Binero {
             grid: Grid::new(size),
             history: History::new(),
         };
-        println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {}", result.try_to_solve());
-        println!("Before making playable {}", result);
+        result.try_to_solve();
         result.history.clear();
         result.make_playable(difficulty);
         result
@@ -203,7 +202,12 @@ impl Binero {
                     if i == current {
                         if let Some(bad_value) = item.new_value() {
                             let (x_axis, y_axis) = (item.x_axis(), item.y_axis());
-                            self.put_a_mandatory_value(x_axis, y_axis, value::the_other(bad_value));
+                            let other_value = value::the_other(bad_value);
+                            if self.grid.can_put(x_axis, y_axis, other_value) {
+                                self.put_a_mandatory_value(x_axis, y_axis, other_value);
+                            } else {
+                                return self.backtrack_to_latest_choice();
+                            }
                         }
                     }
                 }
