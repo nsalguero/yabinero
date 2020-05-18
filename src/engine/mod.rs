@@ -150,6 +150,27 @@ impl Binero {
         self.history.push(x_axis, y_axis, old_value, new_value, false);
     }
 
+    /// Returns the mandatory value for a place in the grid if it exists or `None` if there is no
+    /// mandatory value for that place
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    fn mandatory_value(&mut self, x_axis: u8, y_axis: u8) -> Option<Value> {
+        let value = self.rand_value();
+        if self.grid.must_put(x_axis, y_axis, value) {
+            Some(value)
+        } else {
+            let other_value = value::the_other(value);
+            if self.grid.must_put(x_axis, y_axis, other_value) {
+                Some(other_value)
+            } else {
+                None
+            }
+        }
+    }
+
     /// Try to put all mandatory values in the grid and returns whether or not at least one value was
     /// added and whether or not backtracking was impossible
     fn put_mandatory_values(&mut self) -> (bool, bool) {
@@ -157,8 +178,7 @@ impl Binero {
         for i in 0..self.grid.size() {
             for j in 0..self.grid.size() {
                 if self.grid.get(i, j).is_none() {
-                    let value = self.rand_value();
-                    if self.grid.must_put(i, j, value) {
+                    if let Some(value) = self.mandatory_value(i, j) {
                         if self.grid.can_put(i, j, value) {
                             self.put_a_mandatory_value(i, j, value);
                         } else {

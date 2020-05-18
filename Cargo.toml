@@ -8,3 +8,5 @@ license = "GPL-3.0+"
 [dependencies]
 fltk = "^0.4"
 rand = "^0.7"
+rodio = "^0.11"
+config = "^0.10"
