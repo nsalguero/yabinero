@@ -5,3 +5,7 @@
 Binero game.
 
 This software can generate and solve binero puzzles.
+
+The icon was created by the author of this game using "The GIMP".
+
+The two ogg files come from the conversion of WAVE files that come from K3B.
