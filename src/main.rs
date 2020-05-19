@@ -15,14 +15,13 @@
 //    println!("New game: {}", game);
 //}
 
-use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, window::Window};
+use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, menu::*, window::Window};
 use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
-use std::fs::File;
-use std::io::BufReader;
-use rodio::Source;
 use std::path::Path;
+
+mod gui;
 
 fn main() {
     let app = App::default();
@@ -54,10 +53,7 @@ fn main() {
     but.set_callback(Box::new(move || {
         app.set_scheme(AppScheme::Gtk);
         tx.send(true).unwrap();
-        let device = rodio::default_output_device().unwrap();
-        let file = File::open(Path::new("sounds").join("success.ogg")).unwrap();
-        let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-        rodio::play_raw(&device, source.convert_samples());
+        gui::sound::play(gui::sound::Sound::Error);
     }));
     app.run().unwrap();
 }
