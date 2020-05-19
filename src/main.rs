@@ -15,7 +15,7 @@
 //    println!("New game: {}", game);
 //}
 
-use fltk::{app::*, button::*, frame::*, window::*};
+use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, window::Window};
 use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
@@ -26,7 +26,10 @@ use std::path::Path;
 
 fn main() {
     let app = App::default();
-    let mut wind = Window::new(100, 100, 400, 300, "Hello from rust");
+    let mut wind = Window::new(100, 100, 400, 300, "Hello from rust").center_screen();
+    if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
+        wind.set_icon(&icon);
+    }
     let mut frame = Frame::new(0, 0, 400, 200, "");
     let mut but = Button::new(160, 210, 80, 40, "Click me!");
     wind.end();
