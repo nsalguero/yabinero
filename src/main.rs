@@ -15,24 +15,34 @@
 //    println!("New game: {}", game);
 //}
 
-use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, menu::*, window::Window};
+use fltk::{app::{self, App, AppScheme}, button::*, frame::Frame, image::PngImage, menu::*, window::MenuWindow};
 use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
 use std::path::Path;
+use tr::*;
 
-mod gui;
+//mod gui;
 
 fn main() {
+    tr_init!("locale");
     let app = App::default();
-    let mut wind = Window::new(100, 100, 400, 300, "Hello from rust").center_screen();
+    let mut wind = MenuWindow::new(100, 100, 400, 300, "Hello from rust").center_screen();
     if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
         wind.set_icon(&icon);
     }
-    let mut frame = Frame::new(0, 0, 400, 200, "");
-    let mut but = Button::new(160, 210, 80, 40, "Click me!");
+    wind.set_color(Color::Light2);
+    let mut menu = MenuBar::new(0, 0, 400, 40, "");
+    menu.set_color(Color::Light2);
+    menu.set_selection_color(Color::Dark3);
+    let mut frame = Frame::new(0, 40, 400, 160, "");
+    let mut but = Button::new(160, 210, 80, 40, &tr!("Click me!"));
+    but.set_color(Color::Light2);
     wind.end();
     wind.show();
+    menu.add(&(tr!("Game") + "/" + &tr!("New") + "\t"), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(|| {}));
+    menu.add(&(tr!("Game") + "/" + &tr!("Quit") + "\t"), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {std::process::exit(0)}));
+    menu.add(&(tr!("Options") + "/" + &tr!("Sounds")), Shortcut::None, MenuFlag::Toggle, Box::new(|| {}));
     let now = Instant::now();
     const WAITING_DURATION: Duration = Duration::from_millis(100);
     let (tx, rx) = mpsc::channel();
@@ -53,7 +63,6 @@ fn main() {
     but.set_callback(Box::new(move || {
         app.set_scheme(AppScheme::Gtk);
         tx.send(true).unwrap();
-        gui::sound::play(gui::sound::Sound::Error);
     }));
     app.run().unwrap();
 }
