@@ -20,7 +20,10 @@ use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
 use std::path::Path;
-use tr::*;
+use tr::{tr, tr_init};
+use dirs::config_dir;
+use std::fs::File;
+use std::io::Write;
 
 //mod gui;
 
@@ -43,6 +46,9 @@ fn main() {
     menu.add(&(tr!("Game") + "/" + &tr!("New") + "\t"), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(|| {}));
     menu.add(&(tr!("Game") + "/" + &tr!("Quit") + "\t"), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {std::process::exit(0)}));
     menu.add(&(tr!("Options") + "/" + &tr!("Sounds")), Shortcut::None, MenuFlag::Toggle, Box::new(|| {}));
+    if let Ok(mut config_file) = File::create(Path::new(&config_dir().unwrap()).join("yabinero")) {
+        config_file.write(b"Test");
+    }
     let now = Instant::now();
     const WAITING_DURATION: Duration = Duration::from_millis(100);
     let (tx, rx) = mpsc::channel();
