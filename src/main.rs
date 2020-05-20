@@ -1,13 +1,13 @@
 //! # Yet Another Binero puzzle game
 
-//mod engine;
-//mod value;
-//mod difficulty;
-//mod gui;
-//
-//use engine::Binero;
-//use difficulty::Difficulty;
-//
+mod engine;
+mod value;
+mod difficulty;
+mod gui;
+
+use engine::Binero;
+use difficulty::Difficulty;
+
 //fn main() {
 //    let mut game = Binero::new(12, Difficulty::Beginner);
 //    println!("New game: {}", game);
@@ -15,7 +15,7 @@
 //    println!("New game: {}", game);
 //}
 
-use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, input::IntInput, menu::*, window::MenuWindow};
+use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, input::Input, menu::*, window::MenuWindow};
 use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
@@ -24,10 +24,11 @@ use tr::{tr, tr_init};
 use dirs::config_dir;
 use std::fs::File;
 //use std::io::Write;
-
-//mod gui;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 fn main() {
+    let game = Binero::new(4, Difficulty::Beginner);
     tr_init!("locale");
     let app = App::default();
     let mut wind = MenuWindow::new(100, 100, 400, 520, "Hello from rust").center_screen();
@@ -44,25 +45,56 @@ fn main() {
     let mut but = Button::new(160, 80, 100, 40, &tr!("Click me!"));
     but.set_color(Color::Light2);
     let mut boxes = Vec::new();
-    let mut k = 0;
     for i in 0..4 {
         boxes.push(Vec::new());
         for j in 0..4 {
-            k += 1;
-            let mut input = IntInput::new(j * 60, 120 + i * 60, 60, 60, "");
-            input.set_value(&format!("{}", k));
-            input.set_text_size(20);
-            input.set_selection_color(Color::Dark3);
-            if k == 1 {
+            let mut input = Input::new(j * 32, 120 + i * 32, 32, 32, "");
+            if let Some(val) = game.get(i as u8, j as u8) {
+                input.set_value(&format!(" {}", val));
                 input.set_readonly(true);
                 input.set_text_color(Color::Inactive);
                 input.set_selection_color(Color::Dark1);
+            } else {
+                input.set_value(" ");
             }
+            input.set_text_size(20);
+            input.set_selection_color(Color::Dark3);
             boxes[i as usize].push(input);
         }
     }
+    let boxes = Rc::new(RefCell::new(boxes));
+    let game = Rc::new(RefCell::new(game));
     wind.end();
     wind.show();
+    for i in 0..4 {
+        for j in 0..4 {
+            let cloned_boxes = Rc::clone(&boxes);
+            let cloned_game = Rc::clone(&game);
+            boxes.borrow_mut()[i as usize][j as usize].handle(Box::new(move |ev: Event| {
+                match ev {
+                    Event::KeyUp => {
+                        let value = cloned_boxes.borrow()[i as usize][j as usize].value();
+                        if let Ok(val) = value.trim().parse() {
+                            if val != 0 && val != 1 {
+                                cloned_boxes.borrow_mut()[i as usize][j as usize].undo();
+                            } else {
+                                let old_value = cloned_game.borrow().get(i, j);
+                                if old_value != value::from_u8(val) {
+                                    if cloned_game.borrow_mut().try_to_put(i, j, value::from_u8(val)) {
+                                        cloned_boxes.borrow_mut()[i as usize][j as usize].set_value(&format!(" {}", value.trim()));
+                                    } else {
+                                        cloned_boxes.borrow_mut()[i as usize][j as usize].undo();
+                                    }
+                                }
+                            }
+                        }
+                        true
+                    },
+                    _ => false,
+                }
+            }));
+        }
+    }
     menu.add(&(tr!("Game") + "/" + &tr!("New") + "\t"), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(|| {}));
     menu.add(&(tr!("Game") + "/" + &tr!("Quit") + "\t"), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {std::process::exit(0)}));
     menu.add(&(tr!("Options") + "/" + &tr!("Sounds")), Shortcut::None, MenuFlag::Toggle, Box::new(|| {}));

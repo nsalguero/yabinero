@@ -125,6 +125,16 @@ impl Binero {
         }
     }
 
+    /// Returns a value from the grid
+    ///
+    /// # Arguments
+    ///
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    pub fn get(&self, x_axis: u8, y_axis: u8) -> Option<Value> {
+        self.grid.get(x_axis, y_axis)
+    }
+
     /// Put a choice in the grid
     ///
     /// # Arguments
