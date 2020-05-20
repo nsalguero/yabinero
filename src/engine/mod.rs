@@ -135,6 +135,11 @@ impl Binero {
         self.grid.get(x_axis, y_axis)
     }
 
+    /// Returns the size of the grid
+    pub fn size(&self) -> u8 {
+        self.grid.size()
+    }
+
     /// Put a choice in the grid
     ///
     /// # Arguments

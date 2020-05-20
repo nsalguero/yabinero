@@ -28,7 +28,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 fn main() {
-    let game = Binero::new(4, Difficulty::Beginner);
+    let game = Binero::new(6, Difficulty::Beginner);
     tr_init!("locale");
     let app = App::default();
     let mut wind = MenuWindow::new(100, 100, 400, 520, "Hello from rust").center_screen();
@@ -45,10 +45,10 @@ fn main() {
     let mut but = Button::new(160, 80, 100, 40, &tr!("Click me!"));
     but.set_color(Color::Light2);
     let mut boxes = Vec::new();
-    for i in 0..4 {
+    for i in 0..game.size() {
         boxes.push(Vec::new());
-        for j in 0..4 {
-            let mut input = Input::new(j * 32, 120 + i * 32, 32, 32, "");
+        for j in 0..game.size() {
+            let mut input = Input::new(j as i32 * 32, 120 + i as i32 * 32, 32, 32, "");
             if let Some(val) = game.get(i as u8, j as u8) {
                 input.set_value(&format!(" {}", val));
                 input.set_readonly(true);
@@ -66,8 +66,8 @@ fn main() {
     let game = Rc::new(RefCell::new(game));
     wind.end();
     wind.show();
-    for i in 0..4 {
-        for j in 0..4 {
+    for i in 0..game.borrow().size() {
+        for j in 0..game.borrow().size() {
             let cloned_boxes = Rc::clone(&boxes);
             let cloned_game = Rc::clone(&game);
             boxes.borrow_mut()[i as usize][j as usize].handle(Box::new(move |ev: Event| {
