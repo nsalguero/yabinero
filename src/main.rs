@@ -20,7 +20,7 @@ use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
 use std::path::Path;
-use tr::{tr, tr_init};
+use tr::tr_init;
 use dirs::config_dir;
 use std::fs::File;
 //use std::io::Write;
