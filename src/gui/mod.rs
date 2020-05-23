@@ -19,32 +19,32 @@ use crate::engine::Binero;
 pub struct Game {
     binero: Option<Binero>,
     app: App,
-    wind: Window,
+    window: Window,
 }
 
 impl Game {
     /// Returns a GUI
     pub fn new() -> Game {
-        let (app, wind) = Game::init_gui();
-        wind.end();
-        wind.show();
+        let (app, window) = Game::init_gui();
+        window.end();
+        window.show();
         app.run().unwrap();
         Game {
             binero: None,
             app,
-            wind,
+            window,
         }
     }
 
     /// Returns the newly created `App` and `Window`
     fn init_gui() -> (App, Window) {
         let app = App::default();
-        let mut wind = MenuWindow::new(100, 100, 400, 520, "Hello from rust").center_screen();
+        let mut window = MenuWindow::new(100, 100, 400, 520, "Hello from rust").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
-            wind.set_icon(&icon);
+            window.set_icon(&icon);
         }
-        wind.set_color(Color::Light2);
-        wind.make_resizable(false);
-        (app, wind)
+        window.set_color(Color::Light2);
+        window.make_resizable(false);
+        (app, window)
     }
 }

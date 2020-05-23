@@ -1,14 +1,38 @@
+use std::process::exit;
 use std::fmt;
 use fltk::menu::MenuBar;
 use tr::tr;
 
 /// Returns an empty menu bar
 pub fn init(width: i32) -> MenuBar {
-    MenuBar::new(0, 0, width, 40, "")
+    let mut menu = MenuBar::new(0, 0, width, 40, "");
+    menu.set_color(Color::Light2);
+    menu.set_selection_color(Color::Dark3);
 }
 
 pub fn add_entries(menu: &mut MenuBar) {
-    
+    menu.add(entry_label(TopLevelMenu::Game, Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Game, Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Game, Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
+        exit(0);
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Size), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Theme), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    }));
+}
+
+fn entry_label(topLevel: &TopLevelMenu, submenu: &Submenu, subsubmenu: Option<&str>) -> String {
+    match subsubmenu {
+        Some(subsub) => format!("{}/{}/{}\t", topLevel, submenu, subsub),
+        None => format!("{}/{}\t", topLevel, submenu),
+    }
 }
 
 /// The top level menus
@@ -29,53 +53,31 @@ impl fmt::Display for TopLevelMenu {
     }
 }
 
-/// The `Game` submenu
-enum GameSubmenu {
+/// The submenus
+enum Submenu {
     New,
     BestScores,
     Quit,
+    Size,
+    Difficulty,
+    Sounds,
+    Theme,
+    About,
+    License,
 }
 
-impl fmt::Display for GameSubmenu {
+impl fmt::Display for Submenu {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut printable = match *self {
             GameSubmenu::New => tr!("New"),
             GameSubmenu::BestScores => tr!("Best scores"),
             GameSubmenu::Quit => tr!("Quit"),
-        };
-        write!(f, "{}", printable)
-    }
-}
-
-/// The `Options` submenu
-enum OptionsSubmenu {
-    Size,
-    Difficulty,
-    Sounds,
-    Theme,
-}
-
-impl fmt::Display for OptionsSubmenu {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut printable = match *self {
-            OptionsSubmenu::Size => tr!("Game"),
-            OptionsSubmenu::Difficulty => tr!("Options"),
+            OptionsSubmenu::Size => tr!("Size"),
+            OptionsSubmenu::Difficulty => tr!("Difficulty"),
             OptionsSubmenu::Sounds => tr!("Sounds"),
             OptionsSubmenu::Theme => tr!("Theme"),
-        };
-        write!(f, "{}", printable)
-    }
-}
-
-/// The `Help` submenu
-enum HelpSubmenu {
-    About,
-}
-
-impl fmt::Display for OptionsSubmenu {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut printable = match *self {
-            HelpSubmenu::Size => tr!("About"),
+            HelpSubmenu::About => tr!("About"),
+            HelpSubmenu::License => tr!("License"),
         };
         write!(f, "{}", printable)
     }
