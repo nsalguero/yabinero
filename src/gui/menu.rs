@@ -2,6 +2,7 @@ use std::process::exit;
 use std::fmt;
 use fltk::menu::MenuBar;
 use tr::tr;
+use crate::difficulty::Difficulty;
 
 /// Returns an empty menu bar
 pub fn init(width: i32) -> MenuBar {
@@ -18,13 +19,19 @@ pub fn add_entries(menu: &mut MenuBar) {
     menu.add(entry_label(TopLevelMenu::Game, Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
         exit(0);
     }));
-    menu.add(entry_label(TopLevelMenu::Options, Submenu::Size), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Size), Shortcut::None, MenuFlag::Submenu, Box::new(|| {
     }));
-    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty, format!("{}", Difficulty::Beginner)), Shortcut::None, MenuFlag::Normal, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty, format!("{}", Difficulty::Easy)), Shortcut::None, MenuFlag::Normal, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty, format!("{}", Difficulty::Medium)), Shortcut::None, MenuFlag::Normal, Box::new(|| {
+    }));
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Difficulty, format!("{}", Difficulty::Hard)), Shortcut::None, MenuFlag::Normal, Box::new(|| {
     }));
     menu.add(entry_label(TopLevelMenu::Options, Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(|| {
     }));
-    menu.add(entry_label(TopLevelMenu::Options, Submenu::Theme), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
+    menu.add(entry_label(TopLevelMenu::Options, Submenu::Theme), Shortcut::None, MenuFlag::Submenu, Box::new(|| {
     }));
 }
 

@@ -2,17 +2,16 @@
 //!
 //! `gui` contains the functions that handles the GUI
 
+mod grid;
+mod menu;
+mod sound;
+
 use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, input::Input, menu::*, window::MenuWindow};
 use std::time::{Duration, Instant};
 use std::thread;
 use std::sync::mpsc;
 use std::path::Path;
 use tr::tr;
-
-mod grid;
-mod menu;
-mod sound;
-
 use crate::engine::Binero;
 
 /// The GUI is represented here
@@ -26,8 +25,10 @@ impl Game {
     /// Returns a GUI
     pub fn new() -> Game {
         let (app, window) = Game::init_gui();
+        let mut menu = menu::init(window.size());
         window.end();
         window.show();
+        menu::add_entries(&mut menu);
         app.run().unwrap();
         Game {
             binero: None,
