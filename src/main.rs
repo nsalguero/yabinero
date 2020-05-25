@@ -20,7 +20,7 @@ use gui::Game;
 
 fn main() {
     tr_init!("locale");
-    Game::new();
+    Game::create();
 //    let mut frame = Frame::new(0, 40, 320, 40, "");
 //    frame.set_align(Align::AlignRight);
 //    let mut but = Button::new(160, 80, 100, 40, &tr!("Click me!"));

@@ -12,11 +12,11 @@ use crate::value;
 ///
 /// # Arguments
 ///
-/// * `game` - a binero
+/// * `binero` - a binero
 /// * `starting_y` - the starting point for the height of the grid in the GUI
-pub fn create(game: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
-    let boxes = init(&game, starting_y);
-    populate(&boxes, &game);
+pub fn create(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
+    let boxes = init(&binero, starting_y);
+    populate(&boxes, &binero);
     boxes
 }
 
@@ -24,16 +24,16 @@ pub fn create(game: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec
 ///
 /// # Arguments
 ///
-/// * `game` - a binero
+/// * `binero` - a binero
 /// * `starting_y` - the starting point for the height of the grid in the GUI
-fn init(game: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
+fn init(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
     let mut boxes = Vec::new();
-    for i in 0..game.borrow().size() {
+    for i in 0..binero.borrow().size() {
         boxes.push(Vec::new());
-        for j in 0..game.borrow().size() {
+        for j in 0..binero.borrow().size() {
             let mut input = Input::new(j as i32 * INPUT_SIZE, starting_y + i as i32 * INPUT_SIZE, INPUT_SIZE, INPUT_SIZE, "");
             input.set_text_size(20);
-            if let Some(val) = game.borrow().get(i as u8, j as u8) {
+            if let Some(val) = binero.borrow().get(i as u8, j as u8) {
                 input.set_value(&format!(" {}", val));
                 input.set_readonly(true);
                 input.set_text_color(Color::Inactive);
@@ -53,12 +53,12 @@ fn init(game: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input
 /// # Arguments
 ///
 /// * `boxes` - an empty grid of the game in the GUI
-/// * `game` - a binero
-fn populate(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, game: &Rc<RefCell<Binero>>) {
-    for i in 0..game.borrow().size() {
-        for j in 0..game.borrow().size() {
+/// * `binero` - a binero
+fn populate(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>) {
+    for i in 0..binero.borrow().size() {
+        for j in 0..binero.borrow().size() {
             let cloned_boxes = Rc::clone(&boxes);
-            let cloned_game = Rc::clone(&game);
+            let cloned_binero = Rc::clone(&binero);
             boxes.borrow_mut()[i as usize][j as usize].handle(Box::new(move |ev: Event| {
                 match ev {
                     Event::KeyUp => {
@@ -67,9 +67,9 @@ fn populate(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, game: &Rc<RefCell<Binero>>) {
                             if val != 0 && val != 1 {
                                 cloned_boxes.borrow_mut()[i as usize][j as usize].undo();
                             } else {
-                                let old_value = cloned_game.borrow().get(i, j);
+                                let old_value = cloned_binero.borrow().get(i, j);
                                 if old_value != value::from_u8(val) {
-                                    if cloned_game.borrow_mut().try_to_put(i, j, value::from_u8(val)) {
+                                    if cloned_binero.borrow_mut().try_to_put(i, j, value::from_u8(val)) {
                                         cloned_boxes.borrow_mut()[i as usize][j as usize].set_value(&format!(" {}", value.trim()));
                                     } else {
                                         cloned_boxes.borrow_mut()[i as usize][j as usize].undo();

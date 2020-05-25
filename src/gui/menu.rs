@@ -4,9 +4,13 @@
 
 use std::process::exit;
 use std::fmt;
+use std::rc::Rc;
+use std::cell::RefCell;
 use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
+use crate::engine::Binero;
 use crate::difficulty::Difficulty;
+use crate::gui::Game;
 
 /// Returns an empty menu bar
 ///
@@ -25,8 +29,10 @@ pub fn init(width: i32) -> MenuBar {
 /// # Arguments
 ///
 /// * `menu` - the menu
-pub fn add_entries(menu: &mut MenuBar) {
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(|| {
+pub fn add_entries(menu: &mut MenuBar, game: &Rc<RefCell<Game>>) {
+    let cloned_game = Rc::clone(game);
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
+        let binero = Binero::new(cloned_game.borrow().size, cloned_game.borrow().difficulty);
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));
