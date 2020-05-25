@@ -12,7 +12,7 @@ pub enum Difficulty {
 
 impl fmt::Display for Difficulty {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut printable = match *self {
+        let printable = match *self {
             Difficulty::Beginner => tr!("Beginner"),
             Difficulty::Easy => tr!("Easy"),
             Difficulty::Medium => tr!("Medium"),

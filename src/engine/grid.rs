@@ -19,13 +19,6 @@ impl Grid {
     ///
     /// * `size` - an unsigned 8-bit integer that gives the size
     ///
-    /// # Example
-    ///
-    /// ```
-    /// use engine::grid::Grid;
-    /// let mut grid = Grid::new(6);
-    /// ```
-    ///
     /// # Panics
     ///
     /// Panics if `size` is an odd number
@@ -61,12 +54,6 @@ impl Grid {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Value`
     ///
-    /// # Example
-    ///
-    /// ```
-    /// let mp = grid.must_put(2, 2, Value::Second);
-    /// ```
-    ///
     /// # Panics
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
@@ -84,12 +71,6 @@ impl Grid {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Value`
     ///
-    /// # Example
-    ///
-    /// ```
-    /// let cp = grid.can_put(2, 2, Value::Second);
-    /// ```
-    ///
     /// # Panics
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
@@ -106,12 +87,6 @@ impl Grid {
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Option<Value>`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// let old_value = grid.put(4, 2, Some(Value::First));
-    /// ```
     ///
     /// # Panics
     ///
@@ -134,12 +109,6 @@ impl Grid {
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     ///
-    /// # Example
-    ///
-    /// ```
-    /// let value = grid.get(4, 2);
-    /// ```
-    ///
     /// # Panics
     ///
     /// Panics if `x_axis` or `y_axis` are not less than the size of the grid
@@ -156,12 +125,6 @@ impl Grid {
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - a `Value`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// let ca = grid.can_accept(Axis::X, 1, 2, Value::First);
-    /// ```
     fn can_accept(&self, axis: Axis, x_axis: u8, y_axis: u8, value: Value) -> bool {
         let mut total_number: u8 = 0;
         let mut adjacent_number: u8 = 0;

@@ -26,14 +26,6 @@ impl fmt::Display for Value {
 /// # Arguments
 ///
 /// * `val` - a character
-///
-/// # Example
-///
-/// ```
-/// if let Some(val) = value::from_char('0') {
-///     println!("{}", val);
-/// }
-/// ```
 pub fn from_char(val: char) -> Option<Value> {
     match val {
         FIRST_CHAR => Some(Value::First),
@@ -47,14 +39,6 @@ pub fn from_char(val: char) -> Option<Value> {
 /// # Arguments
 ///
 /// * `val` - an unsigned 8-bit integer
-///
-/// # Example
-///
-/// ```
-/// if let Some(val) = value::from_u8(0) {
-///     println!("{}", val);
-/// }
-/// ```
 pub fn from_u8(val: u8) -> Option<Value> {
     from_char(char::from(val + 48))
 }
@@ -64,12 +48,6 @@ pub fn from_u8(val: u8) -> Option<Value> {
 /// # Arguments
 ///
 /// * `value` - a `Value`
-///
-/// # Example
-///
-/// ```
-/// let other_val = value::the_other(Value::First);
-/// ```
 pub fn the_other(value: Value) -> Value {
     match value {
         Value::First => Value::Second,

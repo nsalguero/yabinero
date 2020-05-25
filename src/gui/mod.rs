@@ -6,41 +6,35 @@ mod grid;
 mod menu;
 mod sound;
 
-use fltk::{app::{App, AppScheme}, button::*, frame::Frame, image::PngImage, input::Input, menu::*, window::MenuWindow};
-use std::time::{Duration, Instant};
-use std::thread;
-use std::sync::mpsc;
+use fltk::{app::{App, AppScheme}, enums::Color, image::PngImage, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
 use std::path::Path;
-use tr::tr;
-use crate::engine::Binero;
 
 /// The GUI is represented here
 pub struct Game {
-    binero: Option<Binero>,
     app: App,
-    window: Window,
+    window: MenuWindow,
 }
 
 impl Game {
     /// Returns a GUI
     pub fn new() -> Game {
-        let (app, window) = Game::init_gui();
-        let mut menu = menu::init(window.size());
+        let (app, mut window) = Game::init_gui();
+        let mut menu = menu::init(window.width());
         window.end();
         window.show();
         menu::add_entries(&mut menu);
         app.run().unwrap();
         Game {
-            binero: None,
             app,
             window,
         }
     }
 
     /// Returns the newly created `App` and `Window`
-    fn init_gui() -> (App, Window) {
+    fn init_gui() -> (App, MenuWindow) {
         let app = App::default();
-        let mut window = MenuWindow::new(100, 100, 400, 520, "Hello from rust").center_screen();
+        app.set_scheme(AppScheme::Gtk);
+        let mut window = MenuWindow::new(100, 100, 600, 552, "YABinero").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(&icon);
         }

@@ -27,14 +27,6 @@ impl Binero {
     /// * `size` - an unsigned 8-bit integer that gives the size
     /// * `difficulty` - a level of difficulty
     ///
-    /// # Example
-    ///
-    /// ```
-    /// use engine::Binero;
-    /// use difficulty::Difficulty;
-    /// let game = Binero::new(6, Difficulty.Beginner);
-    /// ```
-    ///
     /// # Panics
     ///
     /// Panics if `size` is an odd number
