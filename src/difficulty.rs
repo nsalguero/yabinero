@@ -2,7 +2,7 @@ use std::fmt;
 use tr::tr;
 
 /// The four possible levels of difficulty
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub enum Difficulty {
     Beginner,
     Easy,

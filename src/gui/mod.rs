@@ -61,7 +61,7 @@ impl Game {
     fn init_gui(theme: &AppScheme) -> (App, MenuWindow) {
         let app = App::default();
         app.set_scheme(*theme);
-        let mut window = MenuWindow::new(100, 100, 600, 552, "YABinero").center_screen();
+        let mut window = MenuWindow::new(0, 0, 600, 552, "YABinero").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(&icon);
         }

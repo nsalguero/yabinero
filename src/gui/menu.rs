@@ -8,9 +8,11 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
+use crate::size::Size;
 use crate::engine::Binero;
 use crate::difficulty::Difficulty;
 use crate::gui::user_data::UserPrefs;
+use crate::gui::grid;
 
 /// Returns an empty menu bar
 ///
@@ -32,25 +34,27 @@ pub fn init(width: i32) -> MenuBar {
 /// * `user_prefs` - the user's preferences
 pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
+    let starting_y = menu.height();
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
+        grid::create(Rc::new(RefCell::new(binero)), starting_y);
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
         exit(0);
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("6x6")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side6))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("8x8")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side8))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("10x10")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side10))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("12x12")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side12))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("14x14")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side14))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some("16x16")), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side16))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", Difficulty::Beginner))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
     }));
