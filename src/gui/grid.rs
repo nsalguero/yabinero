@@ -14,19 +14,19 @@ use crate::value;
 ///
 /// * `binero` - a binero
 /// * `starting_y` - the starting point for the height of the grid in the GUI
-pub fn create(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
-    let boxes = init(&binero, starting_y);
-    populate(&boxes, &binero);
+pub fn create(binero: Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
+    let boxes = init_grid(&binero, starting_y);
+    handle_events(&boxes, binero);
     boxes
 }
 
-/// Returns an empty grid of the game in the GUI
+/// Returns the grid of the game without event handlers
 ///
 /// # Arguments
 ///
 /// * `binero` - a binero
 /// * `starting_y` - the starting point for the height of the grid in the GUI
-fn init(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
+fn init_grid(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
     let mut boxes = Vec::new();
     for i in 0..binero.borrow().size() {
         boxes.push(Vec::new());
@@ -48,16 +48,16 @@ fn init(binero: &Rc<RefCell<Binero>>, starting_y: i32) -> Rc<RefCell<Vec<Vec<Inp
     Rc::new(RefCell::new(boxes))
 }
 
-/// Populates the grid of the game in the GUI
+/// Handles the events for each cell of the grid
 ///
 /// # Arguments
 ///
 /// * `boxes` - an empty grid of the game in the GUI
 /// * `binero` - a binero
-fn populate(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>) {
+fn handle_events(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: Rc<RefCell<Binero>>) {
     for i in 0..binero.borrow().size() {
         for j in 0..binero.borrow().size() {
-            let cloned_boxes = Rc::clone(&boxes);
+            let cloned_boxes = Rc::clone(boxes);
             let cloned_binero = Rc::clone(&binero);
             boxes.borrow_mut()[i as usize][j as usize].handle(Box::new(move |ev: Event| {
                 match ev {

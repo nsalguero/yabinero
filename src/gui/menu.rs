@@ -10,13 +10,13 @@ use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetEx
 use tr::tr;
 use crate::engine::Binero;
 use crate::difficulty::Difficulty;
-use crate::gui::Game;
+use crate::gui::user_data::UserPrefs;
 
 /// Returns an empty menu bar
 ///
 /// # Arguments
 ///
-/// * `width` - the width of the menu
+/// * `width` - the width of the menu bar
 pub fn init(width: i32) -> MenuBar {
     let mut menu = MenuBar::new(0, 0, width, MENU_HEIGHT, "");
     menu.set_color(Color::Light2);
@@ -24,15 +24,16 @@ pub fn init(width: i32) -> MenuBar {
     menu
 }
 
-/// Add the entries to the menu
+/// Adds the entries to the menu bar
 ///
 /// # Arguments
 ///
-/// * `menu` - the menu
-pub fn add_entries(menu: &mut MenuBar, game: &Rc<RefCell<Game>>) {
-    let cloned_game = Rc::clone(game);
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
-        let binero = Binero::new(cloned_game.borrow().size, cloned_game.borrow().difficulty);
+        let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));
@@ -75,6 +76,36 @@ pub fn add_entries(menu: &mut MenuBar, game: &Rc<RefCell<Game>>) {
     }));
 }
 
+/// Sets the menu items according to the user's preferences
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+pub fn set_menu_items(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let size = user_prefs.borrow().size;
+    let size = format!("{}x{}", size, size);
+    let size = entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&size));
+    if let Some(mut menu_item) = menu.find_item(&size) {
+        menu_item.set();
+    }
+    let difficulty = format!("{}", user_prefs.borrow().difficulty);
+    let difficulty = entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&difficulty));
+    if let Some(mut menu_item) = menu.find_item(&difficulty) {
+        menu_item.set();
+    }
+    if user_prefs.borrow().sounds {
+        if let Some(mut menu_item) = menu.find_item(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None)) {
+            menu_item.set();
+        }
+    }
+    let theme = format!("{:?}", user_prefs.borrow().theme);
+    let theme = entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&theme));
+    if let Some(mut menu_item) = menu.find_item(&theme) {
+        menu_item.set();
+    }
+}
+
 /// Returns the label of an entry of the menu
 ///
 /// # Arguments
@@ -98,7 +129,7 @@ enum TopLevelMenu {
 
 impl fmt::Display for TopLevelMenu {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut printable = match *self {
+        let printable = match *self {
             TopLevelMenu::Game => tr!("Game"),
             TopLevelMenu::Options => tr!("Options"),
             TopLevelMenu::Help => tr!("Help"),

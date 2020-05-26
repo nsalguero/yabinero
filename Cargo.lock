@@ -208,16 +208,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "fltk"
-version = "0.4.13"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "fltk-derive 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "fltk-sys 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fltk-derive 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fltk-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "fltk-derive"
-version = "0.4.13"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "quote 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -226,7 +226,7 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "0.4.13"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "cmake 0.1.44 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -677,7 +677,7 @@ name = "yabinero"
 version = "0.1.0"
 dependencies = [
  "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "fltk 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fltk 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "preferences 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rodio 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -711,9 +711,9 @@ dependencies = [
 "checksum dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "13aea89a5c93364a98e9b37b2fa237effbb694d5cfe01c5b70941f7eb087d5e3"
 "checksum dirs-sys 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "afa0b23de8fd801745c471deffa6e12d248f962c9fd4b4c33787b055599bde7b"
 "checksum dtoa 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "4358a9e11b9a09cf52383b451b49a169e8d797b68aa02301ff586d70d9661ea3"
-"checksum fltk 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)" = "db34a4a69ffc8a4f5ad5fb593aa20fa9da0158e82bf80d904db094c6e42d0017"
-"checksum fltk-derive 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)" = "e97856cfbd41c0bd97e8706021095830422f2fcf60fb1fc6281a1198f537e05a"
-"checksum fltk-sys 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)" = "40d9599b10ac3f5ff2f6c63325d016a694af2fa22eb32d4fe8166bcb7c2264d2"
+"checksum fltk 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "44f5f1be8a99346a7410ba5087e70addc5aa7898c47e4f225aef61e9fff0bf0c"
+"checksum fltk-derive 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "04648210d76b1f0c1f4c323f3d5344eafe23ed3234e0703c66d6cb80f3257ff0"
+"checksum fltk-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "01571eeae7ec5ef4ab2aacc57293df9eadb9cb3b066d227f0c5a246b9d4dc1ca"
 "checksum getrandom 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)" = "7abc8dd8451921606d809ba32e95b6111925cd2906060d2dcc29c070220503eb"
 "checksum gettext-rs 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)" = "df454a42d8a718280c78666efe0707c120873736961ae91ead898f17ac66ce7c"
 "checksum gettext-sys 0.19.9 (registry+https://github.com/rust-lang/crates.io-index)" = "e034c4ba5bb796730a6cc5eb0d654c16885006a7c3d6c6603581ed809434f153"

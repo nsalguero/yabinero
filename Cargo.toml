@@ -6,7 +6,7 @@ edition = "2018"
 license = "GPL-3.0+"
 
 [dependencies]
-fltk = "^0.4"
+fltk = "^0.5"
 rand = "^0.7"
 rodio = "^0.11"
 preferences = "^1.1"
