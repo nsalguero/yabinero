@@ -10,8 +10,9 @@ use rand::Rng;
 use rand::prelude::*;
 use grid::Grid;
 use history::{History, Item};
-use crate::value::{self, Value};
+use crate::value::Value;
 use crate::difficulty::Difficulty;
+use crate::size::Size;
 
 /// A binero game is represented here
 pub struct Binero {
@@ -24,13 +25,13 @@ impl Binero {
     ///
     /// # Arguments
     ///
-    /// * `size` - an unsigned 8-bit integer that gives the size
+    /// * `size` - a size
     /// * `difficulty` - a level of difficulty
     ///
     /// # Panics
     ///
     /// Panics if `size` is an odd number
-    pub fn new(size: u8, difficulty: Difficulty) -> Binero {
+    pub fn new(size: Size, difficulty: Difficulty) -> Binero {
         let mut result = Binero {
             grid: Grid::new(size),
             history: History::new(),
@@ -128,7 +129,7 @@ impl Binero {
     }
 
     /// Returns the size of the grid
-    pub fn size(&self) -> u8 {
+    pub fn size(&self) -> Size {
         self.grid.size()
     }
 
@@ -169,7 +170,7 @@ impl Binero {
         if self.grid.must_put(x_axis, y_axis, value) {
             Some(value)
         } else {
-            let other_value = value::the_other(value);
+            let other_value = value.the_other();
             if self.grid.must_put(x_axis, y_axis, other_value) {
                 Some(other_value)
             } else {
@@ -182,8 +183,8 @@ impl Binero {
     /// added and whether or not backtracking was impossible
     fn put_mandatory_values(&mut self) -> (bool, bool) {
         let mut some_value_put = false;
-        for i in 0..self.grid.size() {
-            for j in 0..self.grid.size() {
+        for i in 0..self.grid.size().as_u8() {
+            for j in 0..self.grid.size().as_u8() {
                 if self.grid.get(i, j).is_none() {
                     if let Some(value) = self.mandatory_value(i, j) {
                         if self.grid.can_put(i, j, value) {
@@ -203,8 +204,8 @@ impl Binero {
 
     /// Try to put a choice in the grid and returns whether or not it was possible
     fn try_a_choice(&mut self) -> bool {
-        for i in 0..self.grid.size() {
-            for j in 0..self.grid.size() {
+        for i in 0..self.grid.size().as_u8() {
+            for j in 0..self.grid.size().as_u8() {
                 if self.grid.get(i, j).is_none() {
                     let value = self.rand_value();
                     if self.grid.can_put(i, j, value) {
@@ -229,7 +230,7 @@ impl Binero {
                     if i == current {
                         if let Some(bad_value) = item.new_value() {
                             let (x_axis, y_axis) = (item.x_axis(), item.y_axis());
-                            let other_value = value::the_other(bad_value);
+                            let other_value = bad_value.the_other();
                             if self.grid.can_put(x_axis, y_axis, other_value) {
                                 self.put_a_mandatory_value(x_axis, y_axis, other_value);
                             } else {
@@ -247,7 +248,7 @@ impl Binero {
     /// Returns a random `Value`
     fn rand_value(&self) -> Value {
         let value = rand::thread_rng().gen_range(0, 2);
-        value::from_u8(value).unwrap()
+        Value::from_u8(value).unwrap()
     }
 
     /// Removes a certain amount of values from the grid according to the given difficulty
@@ -256,7 +257,7 @@ impl Binero {
     ///
     /// * `difficulty` - a level of difficulty
     fn make_playable(&mut self, difficulty: Difficulty) {
-        let total = (self.grid.size() as u16).pow(2);
+        let total = (self.grid.size().as_u8() as u16).pow(2);
         let max_removed: u16 = match difficulty {
             Difficulty::Beginner => total / 2,
             Difficulty::Easy => total * 2 / 3,
@@ -287,7 +288,7 @@ impl Binero {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `value` - an `Option<Value>`
     fn check_a_value(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) {
-        let other_value = value::the_other(value.unwrap());
+        let other_value = value.unwrap().the_other();
         self.grid.put(x_axis, y_axis, Some(other_value));
         let non_unique_solution = self.try_to_solve();
         while self.try_to_undo().is_some() {
@@ -303,8 +304,8 @@ impl Binero {
     fn shuffle_indexes(&self) -> Vec<(u8, u8)> {
         let mut rng = rand::thread_rng();
         let mut result: Vec<(u8, u8)> = Vec::new();
-        for i in 0..self.grid.size() {
-            for j in 0..self.grid.size() {
+        for i in 0..self.grid.size().as_u8() {
+            for j in 0..self.grid.size().as_u8() {
                 result.push((i, j));
             }
         }

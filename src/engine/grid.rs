@@ -3,11 +3,12 @@
 //! `grid` represents the grid of the game
 
 use std::fmt;
-use crate::value::{self, Value};
+use crate::size::Size;
+use crate::value::Value;
 
 /// A binero grid is represented here
 pub struct Grid {
-    size: u8,
+    size: Size,
     matrix: Vec<Vec<Option<Value>>>,
     empty_values: u16,
 }
@@ -17,22 +18,23 @@ impl Grid {
     ///
     /// # Arguments
     ///
-    /// * `size` - an unsigned 8-bit integer that gives the size
+    /// * `size` - a size
     ///
     /// # Panics
     ///
     /// Panics if `size` is an odd number
-    pub fn new(size: u8) -> Grid {
-        assert_eq!(size % 2, 0);
+    pub fn new(size: Size) -> Grid {
+        let size_u8 = size.as_u8();
+        assert_eq!(size_u8 % 2, 0);
         Grid {
             size,
-            matrix: vec![vec![None; size as usize]; size as usize],
-            empty_values: (size as u16).pow(2),
+            matrix: vec![vec![None; size_u8 as usize]; size_u8 as usize],
+            empty_values: (size_u8 as u16).pow(2),
         }
     }
 
     /// Returns the size of the grid
-    pub fn size(&self) -> u8 {
+    pub fn size(&self) -> Size {
         self.size
     }
 
@@ -58,8 +60,9 @@ impl Grid {
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
     pub fn must_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
-        assert!(x_axis < self.size && y_axis < self.size);
-        let the_other_value = value::the_other(value);
+        let size = self.size.as_u8();
+        assert!(x_axis < size && y_axis < size);
+        let the_other_value = value.the_other();
         !self.can_put(x_axis, y_axis, the_other_value)
     }
 
@@ -75,7 +78,8 @@ impl Grid {
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
     pub fn can_put(&self, x_axis: u8, y_axis: u8, value: Value) -> bool {
-        assert!(x_axis < self.size && y_axis < self.size);
+        let size = self.size.as_u8();
+        assert!(x_axis < size && y_axis < size);
         self.can_accept(Axis::X, x_axis, y_axis, value) &&
             self.can_accept(Axis::Y, x_axis, y_axis, value)
     }
@@ -92,7 +96,8 @@ impl Grid {
     ///
     /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
     pub fn put(&mut self, x_axis: u8, y_axis: u8, value: Option<Value>) -> Option<Value> {
-        assert!(x_axis < self.size && y_axis < self.size);
+        let size = self.size.as_u8();
+        assert!(x_axis < size && y_axis < size);
         let result = self.get(x_axis, y_axis);
         self.matrix[x_axis as usize][y_axis as usize] = value;
         match value {
@@ -113,7 +118,8 @@ impl Grid {
     ///
     /// Panics if `x_axis` or `y_axis` are not less than the size of the grid
     pub fn get(&self, x_axis: u8, y_axis: u8) -> Option<Value> {
-        assert!(x_axis < self.size && y_axis < self.size);
+        let size = self.size.as_u8();
+        assert!(x_axis < size && y_axis < size);
         self.matrix[x_axis as usize][y_axis as usize]
     }
 
@@ -134,7 +140,7 @@ impl Grid {
             Axis::Y => x_axis,
         };
 
-        for k in 0..self.size {
+        for k in 0..self.size.as_u8() {
             if k == index_in_changing_axis {
                 total_number += 1;
                 adjacent_number += 1;
@@ -174,7 +180,7 @@ impl Grid {
     ///
     /// * `number` - the number of a value in a row or a column
     fn violate_constraint_max_per_row_or_column(&self, number: u8) -> bool {
-        number > self.size / 2
+        number > self.size.as_u8() / 2
     }
 
     /// Returns whether or not the grid violates the constraint saying a row or a column cannot
@@ -192,7 +198,7 @@ impl fmt::Display for Grid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let display_line = || {
             let mut result = "\n".to_owned();
-            for _ in 0..self.size {
+            for _ in 0..self.size.as_u8() {
                 result.push_str("----");
             }
             result.push_str("-");
@@ -201,7 +207,7 @@ impl fmt::Display for Grid {
 
         let display_cell = |i| {
             let mut result = "\n|".to_owned();
-            for j in 0..self.size {
+            for j in 0..self.size.as_u8() {
                 result.push_str(" ");
                 match &self.matrix[i as usize][j as usize] {
                     Some(n) => result.push_str(format!("{}", n).as_str()),
@@ -213,7 +219,7 @@ impl fmt::Display for Grid {
         };
 
         let mut grid = "".to_owned();
-        for i in 0..self.size {
+        for i in 0..self.size.as_u8() {
             grid.push_str(&display_line());
             grid.push_str(&display_cell(i));
         }

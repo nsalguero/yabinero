@@ -12,6 +12,7 @@ use std::cell::RefCell;
 use std::path::Path;
 use fltk::{app::{App, AppScheme}, enums::Color, image::PngImage, menu::MenuBar, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
 use user_data::UserPrefs;
+use grid::GuiGrids;
 
 /// The GUI is represented here
 pub struct Game {
@@ -19,6 +20,7 @@ pub struct Game {
     app: App,
     window: MenuWindow,
     menu: MenuBar,
+    grids: GuiGrids,
 }
 
 impl Game {
@@ -28,11 +30,13 @@ impl Game {
         let (app, window) = Game::init_gui(&user_prefs.theme);
         let menu = menu::init(window.width());
         let user_prefs = Rc::new(RefCell::new(user_prefs));
+        let grids = GuiGrids::new(menu.height());
         Game {
             user_prefs,
             app,
             window,
             menu,
+            grids,
         }
     }
 
@@ -44,7 +48,7 @@ impl Game {
 
     /// Adds the menus to the menu bar
     pub fn add_menu_entries(&mut self) {
-        menu::add_entries(&mut self.menu, &self.user_prefs);
+        menu::add_entries(&mut self.menu, &self.user_prefs, &self.grids);
         menu::set_menu_items(&mut self.menu, &self.user_prefs);
     }
 

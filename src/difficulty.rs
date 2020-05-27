@@ -1,8 +1,13 @@
+//! # Difficulty
+//!
+//! `difficulty` describes the levels of difficulty
+
 use std::fmt;
 use tr::tr;
+use enum_iterator::IntoEnumIterator;
 
 /// The four possible levels of difficulty
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, IntoEnumIterator)]
 pub enum Difficulty {
     Beginner,
     Easy,

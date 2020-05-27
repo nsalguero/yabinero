@@ -14,46 +14,44 @@ pub enum Value {
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let printable = match *self {
-            Value::First => FIRST_CHAR,
-            Value::Second => SECOND_CHAR,
+            Value::First => Value::FIRST_CHAR,
+            Value::Second => Value::SECOND_CHAR,
         };
         write!(f, "{}", printable)
     }
 }
 
-/// Returns a `Some(Value)` if the given character is correct and `None` otherwise
-///
-/// # Arguments
-///
-/// * `val` - a character
-pub fn from_char(val: char) -> Option<Value> {
-    match val {
-        FIRST_CHAR => Some(Value::First),
-        SECOND_CHAR => Some(Value::Second),
-        _ => None,
+impl Value {
+    /// Returns a `Some(Value)` if the given character is correct and `None` otherwise
+    ///
+    /// # Arguments
+    ///
+    /// * `val` - a character
+    pub fn from_char(val: char) -> Option<Value> {
+        match val {
+            Value::FIRST_CHAR => Some(Value::First),
+            Value::SECOND_CHAR => Some(Value::Second),
+            _ => None,
+        }
     }
-}
 
-/// Returns a `Some(Value)` if the given integer is correct and `None` otherwise
-///
-/// # Arguments
-///
-/// * `val` - an unsigned 8-bit integer
-pub fn from_u8(val: u8) -> Option<Value> {
-    from_char(char::from(val + 48))
-}
-
-/// Returns the other `Value` of a given `Value`
-///
-/// # Arguments
-///
-/// * `value` - a `Value`
-pub fn the_other(value: Value) -> Value {
-    match value {
-        Value::First => Value::Second,
-        Value::Second => Value::First,
+    /// Returns a `Some(Value)` if the given integer is correct and `None` otherwise
+    ///
+    /// # Arguments
+    ///
+    /// * `val` - an unsigned 8-bit integer
+    pub fn from_u8(val: u8) -> Option<Value> {
+        Value::from_char(char::from(val + 48))
     }
-}
 
-const FIRST_CHAR: char = '0';
-const SECOND_CHAR: char = '1';
+    /// Returns the other value
+    pub fn the_other(&self) -> Value {
+        match *self {
+            Value::First => Value::Second,
+            Value::Second => Value::First,
+        }
+    }
+
+    const FIRST_CHAR: char = '0';
+    const SECOND_CHAR: char = '1';
+}

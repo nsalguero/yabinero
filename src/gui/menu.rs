@@ -12,7 +12,8 @@ use crate::size::Size;
 use crate::engine::Binero;
 use crate::difficulty::Difficulty;
 use crate::gui::user_data::UserPrefs;
-use crate::gui::grid;
+use crate::gui::grid::GuiGrids;
+use enum_iterator::IntoEnumIterator;
 
 /// Returns an empty menu bar
 ///
@@ -32,38 +33,27 @@ pub fn init(width: i32) -> MenuBar {
 ///
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
-pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+/// * `grids` - the grids
+pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, grids: &GuiGrids) {
     let cloned_prefs = Rc::clone(user_prefs);
-    let starting_y = menu.height();
+    let 
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        grid::create(Rc::new(RefCell::new(binero)), starting_y);
+        grids.fill(Rc::new(RefCell::new(binero)));
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
         exit(0);
     }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side6))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side8))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side10))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side12))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side14))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", Size::Side16))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", Difficulty::Beginner))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", Difficulty::Easy))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", Difficulty::Medium))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", Difficulty::Hard))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-    }));
+    for size in Size::into_enum_iter() {
+        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", size))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+        }));
+    }
+    for difficulty in Difficulty::into_enum_iter() {
+        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", difficulty))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
+        }));
+    }
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(|| {
     }));
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
@@ -87,8 +77,7 @@ pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 pub fn set_menu_items(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
-    let size = user_prefs.borrow().size;
-    let size = format!("{}x{}", size, size);
+    let size = format!("{}", user_prefs.borrow().size);
     let size = entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&size));
     if let Some(mut menu_item) = menu.find_item(&size) {
         menu_item.set();
