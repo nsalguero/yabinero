@@ -34,12 +34,12 @@ pub fn init(width: i32) -> MenuBar {
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 /// * `grids` - the grids
-pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, grids: &GuiGrids) {
+pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, grids: &Rc<RefCell<GuiGrids>>) {
     let cloned_prefs = Rc::clone(user_prefs);
-    let 
+    let cloned_grids = Rc::clone(grids);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        grids.fill(Rc::new(RefCell::new(binero)));
+        GuiGrids::fill(&cloned_grids, Rc::new(RefCell::new(binero)));
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));

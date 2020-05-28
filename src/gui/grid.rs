@@ -36,54 +36,17 @@ impl GuiGrids {
     ///
     /// # Arguments
     ///
+    /// * `grids` - the grids
     /// * `binero` - a binero
-    pub fn fill(&mut self, binero: Rc<RefCell<Binero>>) {
+    pub fn fill(grids: &Rc<RefCell<GuiGrids>>, binero: Rc<RefCell<Binero>>) {
         let size = binero.borrow().size();
-        let boxes = self.grids.get(&size).unwrap();
-        let size = size.as_u8();
-        for i in 0..size {
-            for j in 0..size {
-                let input = &mut boxes.borrow_mut()[i as usize][j as usize];
-                if let Some(val) = binero.borrow().get(i as u8, j as u8) {
-                    input.set_value(&format!(" {}", val));
-                    input.set_readonly(true);
-                    input.set_text_color(Color::Inactive);
-                    input.set_selection_color(Color::Dark1);
-                } else {
-                    input.set_value(" ");
-                    input.set_readonly(false);
-                    input.set_text_color(Color::Black);
-                    input.set_selection_color(Color::Dark3);
-                }
-                input.show();
-                let cloned_boxes = Rc::clone(boxes);
-                let cloned_binero = Rc::clone(&binero);
-                input.handle(Box::new(move |ev: Event| {
-                    match ev {
-                        Event::KeyUp => {
-                            let value = cloned_boxes.borrow()[i as usize][j as usize].value();
-                            if let Ok(val) = value.trim().parse() {
-                                if val != 0 && val != 1 {
-                                    cloned_boxes.borrow_mut()[i as usize][j as usize].undo();
-                                } else {
-                                    let old_value = cloned_binero.borrow().get(i, j);
-                                    if old_value != Value::from_u8(val) {
-                                        if cloned_binero.borrow_mut().try_to_put(i, j, Value::from_u8(val)) {
-                                            cloned_boxes.borrow_mut()[i as usize][j as usize].set_value(&format!(" {}", value.trim()));
-                                        } else {
-                                            cloned_boxes.borrow_mut()[i as usize][j as usize].undo();
-                                        }
-                                    }
-                                }
-                            }
-                            true
-                        },
-                        _ => false,
-                    }
-                }));
+        for (a_size, boxes) in &grids.borrow().grids {
+            if *a_size == size {
+                GuiGrids::fill_selected_grid(&boxes, size.as_u8(), &binero);
+            } else {
+                GuiGrids::hide_selected_grid(&boxes, size.as_u8());
             }
         }
-        // TODO hide all other grids
     }
 
     /// Initialise a grid
@@ -106,6 +69,98 @@ impl GuiGrids {
             }
         }
         Rc::new(RefCell::new(boxes))
+    }
+
+    /// Hides the selected grid
+    ///
+    /// # Arguments
+    ///
+    /// * `boxes` - a grid
+    /// * `size` - an unsigned 8-bit integer that gives the size
+    fn hide_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, size: u8) {
+        for i in 0..size {
+            for j in 0..size {
+                let input = &mut boxes.borrow_mut()[i as usize][j as usize];
+                input.hide();
+            }
+        }
+    }
+
+    /// Fills the selected grid
+    ///
+    /// # Arguments
+    ///
+    /// * `boxes` - a grid
+    /// * `size` - an unsigned 8-bit integer that gives the size
+    /// * `binero` - a binero
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, size: u8, binero: &Rc<RefCell<Binero>>) {
+        for i in 0..size {
+            for j in 0..size {
+                let input = &mut boxes.borrow_mut()[i as usize][j as usize];
+                GuiGrids::fill_box(input, binero, i, j);
+                GuiGrids::add_event_handler(boxes, input, binero, i, j);
+            }
+        }
+    }
+
+    /// Fills a box
+    ///
+    /// # Arguments
+    ///
+    /// * `input` - a box
+    /// * `binero` - a binero
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    fn fill_box(input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8) {
+        if let Some(val) = binero.borrow().get(x_axis, y_axis) {
+            input.set_value(&format!(" {}", val));
+            input.set_readonly(true);
+            input.set_text_color(Color::Inactive);
+            input.set_selection_color(Color::Dark1);
+        } else {
+            input.set_value(" ");
+            input.set_readonly(false);
+            input.set_text_color(Color::Black);
+            input.set_selection_color(Color::Dark3);
+        }
+        input.show();
+    }
+
+    /// Adds the event handler to the box
+    ///
+    /// # Arguments
+    ///
+    /// * `boxes` - a grid
+    /// * `input` - a box
+    /// * `binero` - a binero
+    /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
+    /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
+    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8) {
+        let cloned_boxes = Rc::clone(boxes);
+        let cloned_binero = Rc::clone(&binero);
+        input.handle(Box::new(move |ev: Event| {
+            match ev {
+                Event::KeyUp => {
+                    let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
+                    if let Ok(val) = value.trim().parse() {
+                        if val != 0 && val != 1 {
+                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo();
+                        } else {
+                            let old_value = cloned_binero.borrow().get(x_axis, y_axis);
+                            if old_value != Value::from_u8(val) {
+                                if cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, Value::from_u8(val)) {
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&format!(" {}", value.trim()));
+                                } else {
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo();
+                                }
+                            }
+                        }
+                    }
+                    true
+                },
+                _ => false,
+            }
+        }));
     }
 
     const INPUT_SIZE: i32 = 32;

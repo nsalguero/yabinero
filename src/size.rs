@@ -19,22 +19,8 @@ pub enum Size {
 impl Size {
     /// Returns the size as an unsigned 8-bit integer
     pub fn as_u8(&self) -> u8 {
-        let mut size = format!("{:?}", self).replace("Side", "");
+        let size = format!("{:?}", self).replace("Side", "");
         size.parse().unwrap()
-    }
-
-    /// Returns a `Some(Size)` if the given integer is correct and `None` otherwise
-    ///
-    /// # Arguments
-    ///
-    /// * `a_size` - a size
-    pub fn from_u8(a_size: u8) -> Option<Size> {
-        for size in Size::into_enum_iter() {
-            if size.as_u8() == a_size {
-                return Some(size);
-            }
-        }
-        None
     }
 }
 
