@@ -30,7 +30,7 @@ impl Game {
         let (app, window) = Game::init_gui(&user_prefs.theme);
         let menu = menu::init(window.width());
         let user_prefs = Rc::new(RefCell::new(user_prefs));
-        let grids = Rc::new(RefCell::new(GuiGrids::new(menu.height())));
+        let grids = Rc::new(RefCell::new(GuiGrids::new(menu.height(), window.width(), window.height())));
         Game {
             user_prefs,
             app,

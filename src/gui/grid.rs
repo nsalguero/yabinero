@@ -1,34 +1,60 @@
 //! # Grid
 //!
-//! `grid` represents the grid of the game in the GUI
+//! `grid` represents the part of the GUI used during a game
 
 use std::collections::HashMap;
+use std::fmt;
+use tr::tr;
 use std::rc::Rc;
 use std::cell::RefCell;
-use fltk::{enums::{Color, Event}, prelude::{InputExt, WidgetExt}, input::Input};
+use fltk::{button::Button, enums::{Color, Event}, prelude::{ButtonExt, InputExt, WidgetExt}, frame::Frame, input::Input};
 use crate::engine::Binero;
 use crate::size::Size;
 use crate::value::Value;
 use enum_iterator::IntoEnumIterator;
 
-/// All the possible grids
+/// The part of the GUI used during a game
 pub struct GuiGrids {
-    pub grids: HashMap<Size, Rc<RefCell<Vec<Vec<Input>>>>>,
+    grids: HashMap<Size, Rc<RefCell<Vec<Vec<Input>>>>>,
+    timer: Rc<RefCell<Frame>>,
+    but_pause: Rc<RefCell<Button>>>,
+    but_resume: Rc<RefCell<Button>>>,
+    but_undo: Rc<RefCell<Button>>>,
+    but_redo: Rc<RefCell<Button>>>,
+    but_retry: Rc<RefCell<Button>>>,
 }
 
 impl GuiGrids {
-    /// Returns all the possible grids
+    /// Returns the part of the GUI used during a game
     ///
     /// # Arguments
     ///
     /// * `starting_y` - the starting point for the height of the grid in the GUI
-    pub fn new(starting_y: i32) -> GuiGrids {
+    /// * `ending_x` - the ending point for the width of the part of the GUI used during a game
+    /// * `ending_y` - the ending point for the height of the part of the GUI used during a game
+    pub fn new(starting_y: i32, ending_x: i32, ending_y: i32) -> GuiGrids {
         let mut grids = HashMap::new();
         for size in Size::into_enum_iter() {
             grids.insert(size, GuiGrids::init_grid(size.as_u8(), starting_y));
         }
+        let starting_x = Size::into_enum_iter().last().as_u8() * GuiGrids::INPUT_SIZE;
+        let width = ending_x - starting_x;
+        let timer = Frame::new(starting_x, starting_y, width, GuiGrids::HEIGHT, "test");
+        timer.set_align(Align::AlignRight);
+        timer.hide();
+        let but_pause = Button::new(starting_x, ending_y - GuiGrids::HEIGHT, width, GuiGrids::HEIGHT, &format!("{}", PlayButton::Pause));
+        let but_resume = Button::new(starting_x, ending_y - GuiGrids::HEIGHT, width, GuiGrids::HEIGHT, &format!("{}", PlayButton::Resume));
+        let but_undo = Button::new(starting_x, starting_y, width, GuiGrids::HEIGHT, &format!("{}", PlayButton::Undo));
+        let but_redo = Button::new(starting_x, starting_y, width, GuiGrids::HEIGHT, &format!("{}", PlayButton::Redo));
+        let but_retry = Button::new(starting_x, starting_y, width, GuiGrids::HEIGHT, &format!("{}", PlayButton::Retry));
         GuiGrids {
             grids,
+            timer,
+            but_pause,
+            but_resume,
+            but_undo,
+            but_redo,
+            but_retry,
         }
     }
 
@@ -164,4 +190,27 @@ impl GuiGrids {
     }
 
     const INPUT_SIZE: i32 = 32;
+    const HEIGHT: i32 = 40;
+}
+
+#[derive(IntoEnumIterator)]
+enum PlayButton {
+    Pause,
+    Resume,
+    Undo,
+    Redo,
+    Retry,
+}
+
+impl fmt::Display for PlayButton {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let printable = match *self {
+            PlayButton::Pause => tr!("Pause"),
+            PlayButton::Resume => tr!("Resume"),
+            PlayButton::Undo => tr!("Undo"),
+            PlayButton::Redo => tr!("Redo"),
+            PlayButton::Retry => tr!("Retry"),
+        };
+        write!(f, "{}", printable)
+    }
 }
