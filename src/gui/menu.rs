@@ -39,7 +39,7 @@ pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, chan
     let cloned_changing = Rc::clone(changing);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)));
+        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)), cloned_prefs.borrow().sounds);
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));

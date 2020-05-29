@@ -25,10 +25,6 @@ fn main() {
     game.show_window();
     game.add_menu_entries();
     game.run_app();
-//    let mut frame = Frame::new(0, 40, 320, 40, "");
-//    frame.set_align(Align::AlignRight);
-//    let mut but = Button::new(160, 80, 100, 40, &tr!("Click me!"));
-//    but.set_color(Color::Light2);
 //    if let Ok(_config_file) = File::create(Path::new(&config_dir().unwrap()).join("yabinero")) {
 //        //config_file.write(b"Test");
 //    }

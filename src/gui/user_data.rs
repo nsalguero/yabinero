@@ -18,9 +18,9 @@ impl UserPrefs {
     /// Returns the user's preferences
     pub fn new() -> UserPrefs {
         UserPrefs {
-            size: Size::Side6, // FIXME use preferences dependency
+            size: Size::Side12, // FIXME use preferences dependency
             difficulty: Difficulty::Beginner, // FIXME use preferences dependency
-            sounds: true, // FIXME use preferences dependency
+            sounds: false, // FIXME use preferences dependency
             theme: AppScheme::Gtk, // FIXME use preferences dependency
         }
     }

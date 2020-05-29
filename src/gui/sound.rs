@@ -23,14 +23,12 @@ impl fmt::Display for Sound {
     }
 }
 
-/// Plays the given sound
-///
-/// # Arguments
-///
-/// * `sound` - a sound
-pub fn play(sound: Sound) {
-    let device = rodio::default_output_device().unwrap();
-    let file = File::open(Path::new("sounds").join(format!("{}", sound))).unwrap();
-    let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-    rodio::play_raw(&device, source.convert_samples());
+impl Sound {
+    /// Plays a sound
+    pub fn play(&self) {
+        let device = rodio::default_output_device().unwrap();
+        let file = File::open(Path::new("sounds").join(format!("{}", *self))).unwrap();
+        let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+        rodio::play_raw(&device, source.convert_samples());
+    }
 }
