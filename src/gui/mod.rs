@@ -2,7 +2,7 @@
 //!
 //! `gui` contains the functions that handles the GUI
 
-mod grid;
+mod changing;
 mod menu;
 mod sound;
 mod user_data;
@@ -12,7 +12,7 @@ use std::cell::RefCell;
 use std::path::Path;
 use fltk::{app::{App, AppScheme}, enums::Color, image::PngImage, menu::MenuBar, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
 use user_data::UserPrefs;
-use grid::GuiGrids;
+use changing::ChangingPart;
 
 /// The GUI is represented here
 pub struct Game {
@@ -20,7 +20,7 @@ pub struct Game {
     app: App,
     window: MenuWindow,
     menu: MenuBar,
-    grids: Rc<RefCell<GuiGrids>>,
+    changing: Rc<RefCell<ChangingPart>>,
 }
 
 impl Game {
@@ -30,13 +30,13 @@ impl Game {
         let (app, window) = Game::init_gui(&user_prefs.theme);
         let menu = menu::init(window.width());
         let user_prefs = Rc::new(RefCell::new(user_prefs));
-        let grids = Rc::new(RefCell::new(GuiGrids::new(menu.height(), window.width(), window.height())));
+        let changing = Rc::new(RefCell::new(ChangingPart::new(menu.height(), window.width(), window.height())));
         Game {
             user_prefs,
             app,
             window,
             menu,
-            grids,
+            changing,
         }
     }
 
@@ -48,7 +48,7 @@ impl Game {
 
     /// Adds the menus to the menu bar
     pub fn add_menu_entries(&mut self) {
-        menu::add_entries(&mut self.menu, &self.user_prefs, &self.grids);
+        menu::add_entries(&mut self.menu, &self.user_prefs, &self.changing);
         menu::set_menu_items(&mut self.menu, &self.user_prefs);
     }
 
@@ -65,7 +65,7 @@ impl Game {
     fn init_gui(theme: &AppScheme) -> (App, MenuWindow) {
         let app = App::default();
         app.set_scheme(*theme);
-        let mut window = MenuWindow::new(0, 0, 600, 552, "YABinero").center_screen();
+        let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(&icon);
         }

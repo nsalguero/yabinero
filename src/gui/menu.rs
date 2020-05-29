@@ -12,7 +12,7 @@ use crate::size::Size;
 use crate::engine::Binero;
 use crate::difficulty::Difficulty;
 use crate::gui::user_data::UserPrefs;
-use crate::gui::grid::GuiGrids;
+use crate::gui::changing::ChangingPart;
 use enum_iterator::IntoEnumIterator;
 
 /// Returns an empty menu bar
@@ -33,13 +33,13 @@ pub fn init(width: i32) -> MenuBar {
 ///
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
-/// * `grids` - the grids
-pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, grids: &Rc<RefCell<GuiGrids>>) {
+/// * `changing` - the changing part of the GUI
+pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
     let cloned_prefs = Rc::clone(user_prefs);
-    let cloned_grids = Rc::clone(grids);
+    let cloned_changing = Rc::clone(changing);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        GuiGrids::fill(&cloned_grids, Rc::new(RefCell::new(binero)));
+        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)));
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));
