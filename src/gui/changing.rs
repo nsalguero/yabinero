@@ -8,24 +8,26 @@ use std::path::Path;
 use tr::tr;
 use std::rc::Rc;
 use std::cell::RefCell;
-use fltk::{button::Button, enums::{Color, Event}, prelude::{ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use std::sync::mpsc::Sender;
+use fltk::{app::screen_size, button::Button, dialog::alert, enums::{Color, Event}, prelude::{ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use crate::engine::Binero;
 use crate::size::Size;
 use crate::value::Value;
 use crate::gui::sound::Sound;
+use crate::gui::timer::Timer;
+use crate::gui::user_data::UserPrefs;
 use enum_iterator::IntoEnumIterator;
 
 /// The changing part of the GUI, used during a game
 pub struct ChangingPart {
     grids: HashMap<Size, Rc<RefCell<Vec<Vec<Input>>>>>,
-    waiting: Rc<RefCell<Frame>>,
-    pause: Rc<RefCell<Frame>>,
-    timer: Rc<RefCell<Frame>>,
-    but_pause: Rc<RefCell<Button>>,
-    but_resume: Rc<RefCell<Button>>,
-    but_undo: Rc<RefCell<Button>>,
-    but_redo: Rc<RefCell<Button>>,
-    but_retry: Rc<RefCell<Button>>,
+    pause: Frame,
+    timer: Timer,
+    but_pause: Button,
+    but_resume: Button,
+    but_undo: Button,
+    but_redo: Button,
+    but_retry: Button,
 }
 
 impl ChangingPart {
@@ -45,17 +47,15 @@ impl ChangingPart {
         }
         let starting_x = max_size * ChangingPart::INPUT_SIZE + ChangingPart::MARGIN_X;
         let width = ending_x - starting_x - ChangingPart::MARGIN_X;
-        let timer = ChangingPart::init_timer(starting_x, starting_y + ChangingPart::MARGIN_Y, width);
+        let timer = Timer::new(starting_x, starting_y + ChangingPart::MARGIN_Y, width);
         let but_pause = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Pause);
         let but_resume = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Resume);
         let but_undo = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
         let but_redo = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
         let but_retry = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
-        let waiting = ChangingPart::init_waiting(ending_x, ending_y);
         let pause = ChangingPart::init_pause(starting_x, ending_y);
         ChangingPart {
             grids,
-            waiting,
             pause,
             timer,
             but_pause,
@@ -66,6 +66,59 @@ impl ChangingPart {
         }
     }
 
+    /// Creates a new game
+    ///
+    /// # Arguments
+    ///
+    /// * `user_prefs` - the user's preferences
+    /// * `changing` - the changing part of the GUI
+    pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
+        let cloned_prefs = Rc::clone(user_prefs);
+        let cloned_changing = Rc::clone(changing);
+        let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
+        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)), cloned_prefs.borrow().sounds);
+        let tx_pause = cloned_changing.borrow_mut().timer.start();
+        let tx_resume = Sender::clone(&tx_pause);
+        cloned_changing.borrow_mut().but_pause.show();
+        let cloned2_changing = Rc::clone(&cloned_changing);
+        let size = cloned_prefs.borrow().size;
+        cloned_changing.borrow_mut().but_pause.set_callback(Box::new(move || {
+            tx_pause.send(true).unwrap();
+            cloned2_changing.borrow_mut().but_resume.show();
+            cloned2_changing.borrow_mut().but_pause.hide();
+            if let Some(boxes) = cloned2_changing.borrow().grids.get(&size) {
+                ChangingPart::hide_selected_grid(&boxes);
+            }
+            cloned2_changing.borrow_mut().pause.show();
+        }));
+        cloned_changing.borrow_mut().but_resume.hide();
+        let cloned2_changing = Rc::clone(&cloned_changing);
+        let size = cloned_prefs.borrow().size;
+        cloned_changing.borrow_mut().but_resume.set_callback(Box::new(move || {
+            tx_resume.send(false).unwrap();
+            cloned2_changing.borrow_mut().but_pause.show();
+            cloned2_changing.borrow_mut().but_resume.hide();
+            if let Some(boxes) = cloned2_changing.borrow().grids.get(&size) {
+                ChangingPart::show_selected_grid(&boxes);
+            }
+            cloned2_changing.borrow_mut().pause.hide();
+        }));
+        cloned_changing.borrow_mut().but_undo.show();
+        cloned_changing.borrow_mut().but_redo.show();
+        cloned_changing.borrow_mut().but_retry.show();
+        cloned_changing.borrow_mut().pause.hide();
+    }
+
+    /// Pauses the game
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    pub fn pause_game(changing: &Rc<RefCell<ChangingPart>>) {
+        let cloned_changing = Rc::clone(changing);
+        cloned_changing.borrow_mut().but_pause.do_callback();
+    }
+
     /// Fills the grid of the game with a binero
     ///
     /// # Arguments
@@ -73,13 +126,13 @@ impl ChangingPart {
     /// * `changing` - the changing part of the GUI
     /// * `binero` - a binero
     /// * `sounds` - whether or not the sounds must be played
-    pub fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, sounds: bool) {
+    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, sounds: bool) {
         let size = binero.borrow().size();
         for (a_size, boxes) in &changing.borrow().grids {
             if *a_size == size {
-                ChangingPart::fill_selected_grid(&boxes, size.as_u8(), &binero, sounds);
+                ChangingPart::fill_selected_grid(&boxes, &binero, sounds);
             } else {
-                ChangingPart::hide_selected_grid(&boxes, a_size.as_u8());
+                ChangingPart::hide_selected_grid(&boxes);
             }
         }
     }
@@ -107,49 +160,20 @@ impl ChangingPart {
         Rc::new(RefCell::new(boxes))
     }
 
-    /// Returns the `Frame` with the waiting message
-    ///
-    /// # Arguments
-    ///
-    /// * `ending_x` - the ending point for the width of the part of the GUI used during a game
-    /// * `ending_y` - the ending point for the height of the part of the GUI used during a game
-    fn init_waiting(ending_x: i32, ending_y: i32) -> Rc<RefCell<Frame>> {
-        let mut waiting = Frame::new(0, 0, ending_x, ending_y, &tr!("Please wait..."));
-        waiting.hide();
-        Rc::new(RefCell::new(waiting))
-    }
-
     /// Returns the `Frame` displayed when the game is paused
     ///
     /// # Arguments
     ///
     /// * `ending_x` - the ending point for the width of the part of the GUI used during a game
     /// * `ending_y` - the ending point for the height of the part of the GUI used during a game
-    fn init_pause(ending_x: i32, ending_y: i32) -> Rc<RefCell<Frame>> {
+    fn init_pause(ending_x: i32, ending_y: i32) -> Frame {
         let mut pause = Frame::new(0, 0, ending_x, ending_y, "");
         if let Ok(mut img) = SvgImage::load(&Path::new("icons").join("pause.svg")) {
             img.scale(200, 200, true, true);
             pause.set_image(&img);
         }
         pause.hide();
-        Rc::new(RefCell::new(pause))
-    }
-
-    /// Returns the timer
-    ///
-    /// # Arguments
-    ///
-    /// * `x` - the value in x-axis
-    /// * `y` - the value in y-axis
-    /// * `width` - the width
-    fn init_timer(x: i32, y: i32, width: i32) -> Rc<RefCell<Frame>> {
-        let mut timer = Frame::new(x, y, width, 120, "00:00");
-        if let Ok(mut img) = SvgImage::load(&Path::new("icons").join("chrono.svg")) {
-            img.scale(80, 80, true, true);
-            timer.set_image(&img);
-        }
-        timer.hide();
-        Rc::new(RefCell::new(timer))
+        pause
     }
 
     /// Returns a button
@@ -160,11 +184,11 @@ impl ChangingPart {
     /// * `y` - the value in y-axis
     /// * `width` - the width
     /// * `play_button` - a `PlayButton`
-    fn init_button(x: i32, y: i32, width: i32, play_button: PlayButton) -> Rc<RefCell<Button>> {
+    fn init_button(x: i32, y: i32, width: i32, play_button: PlayButton) -> Button {
         let mut button = Button::new(x, y, width, ChangingPart::HEIGHT, &format!("{}", play_button));
         button.set_color(Color::Light2);
         button.hide();
-        Rc::new(RefCell::new(button))
+        button
     }
 
     /// Hides the selected grid
@@ -172,12 +196,27 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `boxes` - a grid
-    /// * `size` - an unsigned 8-bit integer that gives the size
-    fn hide_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, size: u8) {
+    fn hide_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>) {
+        let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
-                let input = &mut boxes.borrow_mut()[i as usize][j as usize];
+                let input = &mut boxes.borrow_mut()[i][j];
                 input.hide();
+            }
+        }
+    }
+
+    /// Shows the selected grid
+    ///
+    /// # Arguments
+    ///
+    /// * `boxes` - a grid
+    fn show_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>) {
+        let size = boxes.borrow().len();
+        for i in 0..size {
+            for j in 0..size {
+                let input = &mut boxes.borrow_mut()[i][j];
+                input.show();
             }
         }
     }
@@ -187,15 +226,15 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `boxes` - a grid
-    /// * `size` - an unsigned 8-bit integer that gives the size
     /// * `binero` - a binero
     /// * `sounds` - whether or not the sounds must be played
-    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, size: u8, binero: &Rc<RefCell<Binero>>, sounds: bool) {
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, sounds: bool) {
+        let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
-                let input = &mut boxes.borrow_mut()[i as usize][j as usize];
-                ChangingPart::fill_box(input, binero, i, j);
-                ChangingPart::add_event_handler(boxes, input, binero, i, j, sounds);
+                let input = &mut boxes.borrow_mut()[i][j];
+                ChangingPart::fill_box(input, binero, i as u8, j as u8);
+                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, sounds);
             }
         }
     }
@@ -242,7 +281,7 @@ impl ChangingPart {
                     let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
                     if let Ok(val) = value.trim().parse() {
                         if val != 0 && val != 1 {
-                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo();
+                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo(); // FIXME problem with twice a bad value 
                             ChangingPart::display_error(sounds);
                         } else {
                             let old_value = cloned_binero.borrow().get(x_axis, y_axis);
@@ -250,7 +289,7 @@ impl ChangingPart {
                                 if cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, Value::from_u8(val)) {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&format!(" {}", value.trim()));
                                 } else {
-                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo();
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo(); // FIXME problem with twice a bad value
                                     ChangingPart::display_error(sounds);
                                 }
                             }
@@ -269,7 +308,8 @@ impl ChangingPart {
     /// 
     /// * `sounds` - whether or not the sounds must be played
     fn display_error(sounds: bool) {
-        // TODO display a popup "bad value"
+        let (width, height) = screen_size();
+        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Bad value!"));
         if sounds {
             Sound::Error.play();
         }

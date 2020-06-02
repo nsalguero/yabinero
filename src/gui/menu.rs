@@ -6,6 +6,7 @@ use std::process::exit;
 use std::fmt;
 use std::rc::Rc;
 use std::cell::RefCell;
+use std::sync::mpsc::Sender;
 use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use crate::size::Size;
@@ -38,8 +39,8 @@ pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, chan
     let cloned_prefs = Rc::clone(user_prefs);
     let cloned_changing = Rc::clone(changing);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
-        let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)), cloned_prefs.borrow().sounds);
+        ChangingPart::pause_game(&cloned_changing);
+        ChangingPart::new_game(&cloned_prefs, &cloned_changing);
     }));
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
     }));

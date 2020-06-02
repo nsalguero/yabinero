@@ -5,6 +5,7 @@
 mod changing;
 mod menu;
 mod sound;
+mod timer;
 mod user_data;
 
 use std::rc::Rc;
