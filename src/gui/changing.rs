@@ -66,19 +66,20 @@ impl ChangingPart {
         }
     }
 
-    /// Creates a new game
+    /// Creates a new game and returns the `Sender` to pause the game
     ///
     /// # Arguments
     ///
     /// * `user_prefs` - the user's preferences
     /// * `changing` - the changing part of the GUI
-    pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
+    pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) -> Sender<bool> {
         let cloned_prefs = Rc::clone(user_prefs);
         let cloned_changing = Rc::clone(changing);
         let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
         ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)), cloned_prefs.borrow().sounds);
         let tx_pause = cloned_changing.borrow_mut().timer.start();
         let tx_resume = Sender::clone(&tx_pause);
+        let tx_result = Sender::clone(&tx_pause);
         cloned_changing.borrow_mut().but_pause.show();
         let cloned2_changing = Rc::clone(&cloned_changing);
         let size = cloned_prefs.borrow().size;
@@ -107,6 +108,7 @@ impl ChangingPart {
         cloned_changing.borrow_mut().but_redo.show();
         cloned_changing.borrow_mut().but_retry.show();
         cloned_changing.borrow_mut().pause.hide();
+        tx_result
     }
 
     /// Pauses the game
@@ -115,8 +117,11 @@ impl ChangingPart {
     ///
     /// * `changing` - the changing part of the GUI
     pub fn pause_game(changing: &Rc<RefCell<ChangingPart>>) {
-        let cloned_changing = Rc::clone(changing);
-        cloned_changing.borrow_mut().but_pause.do_callback();
+        changing.borrow_mut().but_resume.show();
+        changing.borrow_mut().but_pause.hide();
+        for (_, boxes) in &changing.borrow().grids {
+            ChangingPart::hide_selected_grid(&boxes);
+        }
     }
 
     /// Fills the grid of the game with a binero
