@@ -355,23 +355,44 @@ impl ChangingPart {
         }));
     }
 
+    /// Fills a box
+    ///
+    /// # Arguments
+    ///
+    /// * `input` - a box
+    /// * `value` - a value
+    fn fill_box_with_value(input: &mut Input, value: &Option<Value>) {
+        if let Some(val) = value {
+            input.set_value(&format!(" {}", val));
+        } else {
+            input.set_value(" ");
+        }
+        input.show();
+    }
+
     /// Sets a value in the grid
     ///
     /// # Arguments
     ///
     /// * `changing` - the changing part of the GUI
-    /// * `binero` - a binero
+    /// * `size` - a size
     /// * `item` - an item of the history
-    fn set_value(changing: &Rc<RefCell<ChangingPart>>, binero: &Rc<RefCell<Binero>>, item: &Item) {
+    /// * `undo` - whether or not the operation is undo
+    fn set_value(changing: &Rc<RefCell<ChangingPart>>, size: Size, item: &Item, undo: bool) {
         let mut select_boxes: Option<&Rc<RefCell<Vec<Vec<Input>>>>> = None;
         let grids = &changing.borrow().grids;
-        for (size, boxes) in grids {
-            if *size == binero.borrow().size() {
+        for (a_size, boxes) in grids {
+            if *a_size == size {
                 select_boxes = Some(boxes);
             }
         }
         let boxes = select_boxes.unwrap();
-        ChangingPart::fill_box(&mut boxes.borrow_mut()[item.x_axis() as usize][item.y_axis() as usize], &binero, item.x_axis(), item.y_axis());
+        let value = if undo {
+            item.old_value()
+        } else {
+            item.new_value()
+        };
+        ChangingPart::fill_box_with_value(&mut boxes.borrow_mut()[item.x_axis() as usize][item.y_axis() as usize], &value);
     }
 
     /// Adds the handler to the Undo button
@@ -384,8 +405,9 @@ impl ChangingPart {
         changing.borrow_mut().but_undo.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_undo.set_callback(Box::new(move || {
+            let size = binero.borrow().size();
             if let Some(item) = binero.borrow_mut().try_to_undo() {
-                ChangingPart::set_value(&cloned_changing, &binero, item);
+                ChangingPart::set_value(&cloned_changing, size, item, true);
             }
         }));
     }
@@ -400,8 +422,9 @@ impl ChangingPart {
         changing.borrow_mut().but_redo.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_redo.set_callback(Box::new(move || {
+            let size = binero.borrow().size();
             if let Some(item) = binero.borrow_mut().try_to_redo() {
-                ChangingPart::set_value(&cloned_changing, &binero, item);
+                ChangingPart::set_value(&cloned_changing, size, item, false);
             }
         }));
     }
