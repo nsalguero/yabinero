@@ -4,10 +4,12 @@
 
 use std::process::exit;
 use std::fmt;
+use std::fs;
+use std::path::Path;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::sync::mpsc::Sender;
-use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
+use fltk::{app::AppScheme, enums::{Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
 use crate::size::Size;
 use crate::difficulty::Difficulty;
@@ -238,7 +240,16 @@ fn add_about(menu: &mut MenuBar) {
 /// * `menu` - a menu bar
 fn add_license(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::License, None), Shortcut::None, MenuFlag::Normal, Box::new(|| {
-        // TODO display a window containing the license of the game
+        let mut window = Window::new(0, 0, 560, 600, &tr!("License")).center_screen();
+        window.make_modal(true);
+        window.make_resizable(false);
+        let license = fs::read_to_string(Path::new("LICENSE")).unwrap();
+        let frame = Frame::new(0, 0, 540, 11500, &license);
+        let mut scroll = Scroll::new(0, 0, 560, 600, "");
+        scroll.add(&frame);
+        scroll.set_color(Color::Light2);
+        window.end();
+        window.show();
     }));
 }
 
