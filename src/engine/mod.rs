@@ -3,7 +3,7 @@
 //! `engine` contains the functions that create and solve a binero
 
 mod grid;
-mod history;
+pub mod history;
 
 use std::fmt;
 use rand::Rng;
@@ -116,6 +116,11 @@ impl Binero {
         } else {
             None
         }
+    }
+
+    /// Returns wheter or not the grid is full
+    pub fn is_full(&self) -> bool {
+        self.grid.is_full()
     }
 
     /// Returns a value from the grid

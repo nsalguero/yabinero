@@ -10,7 +10,6 @@ use std::sync::mpsc::Sender;
 use fltk::{app::AppScheme, enums::{Color, Shortcut}, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use crate::size::Size;
-use crate::engine::Binero;
 use crate::difficulty::Difficulty;
 use crate::gui::user_data::UserPrefs;
 use crate::gui::changing::ChangingPart;
@@ -36,53 +35,9 @@ pub fn init(width: i32) -> MenuBar {
 /// * `user_prefs` - the user's preferences
 /// * `changing` - the changing part of the GUI
 pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
-    let cloned_prefs = Rc::clone(user_prefs);
-    let cloned_changing = Rc::clone(changing);
-    let mut tx: Option<Sender<bool>> = None;
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::MenuDivider, Box::new(move || {
-        if let Some(t) = &tx {
-            t.send(true).unwrap();
-            ChangingPart::pause_game(&cloned_changing);
-        }
-        tx = Some(ChangingPart::new_game(&cloned_prefs, &cloned_changing));
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::MenuDivider, Box::new(|| {
-        // TODO display a window with the best scores for the current size and the current difficulty
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
-        exit(0);
-    }));
-    for size in Size::into_enum_iter() {
-        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", size))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-            // TODO update the user's preferences with the choosen size
-        }));
-    }
-    for difficulty in Difficulty::into_enum_iter() {
-        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", difficulty))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-            // TODO update the user's preferences with the choosen difficulty
-        }));
-    }
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(|| {
-        // TODO update the user's preferences with whether or not the sounds must be played
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-        // TODO update the user's preferences with the theme Base
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gtk))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-        // TODO update the user's preferences with the theme Gtk
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gleam))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-        // TODO update the user's preferences with the theme Gleam
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Plastic))), Shortcut::None, MenuFlag::Radio, Box::new(|| {
-        // TODO update the user's preferences with the theme Plastic
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
-        // TODO display a window containing some information about the game
-    }));
-    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::License, None), Shortcut::None, MenuFlag::Normal, Box::new(|| {
-        // TODO display a window containing the license of the game
-    }));
+    add_game_entries(menu, user_prefs, changing);
+    add_options_entries(menu, user_prefs);
+    add_help_entries(menu);
 }
 
 /// Sets the menu items according to the user's preferences
@@ -112,6 +67,179 @@ pub fn set_menu_items(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     if let Some(mut menu_item) = menu.find_item(&theme) {
         menu_item.set();
     }
+}
+
+/// Adds the entries to the "Game" menu
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+/// * `changing` - the changing part of the GUI
+fn add_game_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
+    add_new_game(menu, user_prefs, changing);
+    add_best_scores(menu, user_prefs);
+    add_quit(menu);
+}
+
+/// Adds the entries to the "Options" menu
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_options_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    add_sizes(menu, user_prefs);
+    add_difficulties(menu, user_prefs);
+    add_sounds(menu, user_prefs);
+    add_themes(menu, user_prefs);
+}
+
+/// Adds the entries to the "Help" menu
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+fn add_help_entries(menu: &mut MenuBar) {
+    add_about(menu);
+    add_license(menu);
+}
+
+/// Adds the "Game/New" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+/// * `changing` - the changing part of the GUI
+fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
+    let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_changing = Rc::clone(changing);
+    let mut tx: Option<Sender<bool>> = None;
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::Normal, Box::new(move || {
+        if let Some(t) = &tx {
+            t.send(true).unwrap();
+            ChangingPart::pause_game(&cloned_changing);
+        }
+        tx = Some(ChangingPart::new_game(&cloned_prefs, &cloned_changing));
+    }));
+}
+
+/// Adds the "Game/Best scores" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let size = user_prefs.borrow().size;
+    let difficulty = user_prefs.borrow().difficulty;
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
+        // TODO display a window with the best scores for the current size and the current difficulty
+        println!("{} {}", size, difficulty);
+    }));
+}
+
+/// Adds the "Game/Quit" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+fn add_quit(menu: &mut MenuBar) {
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
+        exit(0);
+    }));
+}
+
+/// Adds the "Options/Size/..." menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_sizes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    for size in Size::into_enum_iter() {
+        let cloned_prefs = Rc::clone(user_prefs);
+        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", size))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+            cloned_prefs.borrow_mut().size = size;
+        }));
+    }
+}
+
+/// Adds the "Options/Difficulty/..." menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_difficulties(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    for difficulty in Difficulty::into_enum_iter() {
+        let cloned_prefs = Rc::clone(user_prefs);
+        menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", difficulty))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+            cloned_prefs.borrow_mut().difficulty = difficulty;
+        }));
+    }
+}
+
+/// Adds the "Options/Sounds" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_sounds(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(move || {
+        let old_value = cloned_prefs.borrow().sounds;
+        cloned_prefs.borrow_mut().sounds = !old_value;
+    }));
+}
+
+/// Adds the "Options/Theme/..." menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+        cloned_prefs.borrow_mut().theme = AppScheme::Base;
+    }));
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gtk))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+        cloned_prefs.borrow_mut().theme = AppScheme::Gtk;
+    }));
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gleam))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+        cloned_prefs.borrow_mut().theme = AppScheme::Gleam;
+    }));
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Plastic))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
+        cloned_prefs.borrow_mut().theme = AppScheme::Plastic;
+    }));
+}
+
+/// Adds the "Help/About" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+fn add_about(menu: &mut MenuBar) {
+    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
+        // TODO display a window containing some information about the game
+    }));
+}
+
+/// Adds the "Help/License" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+fn add_license(menu: &mut MenuBar) {
+    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::License, None), Shortcut::None, MenuFlag::Normal, Box::new(|| {
+        // TODO display a window containing the license of the game
+    }));
 }
 
 /// Returns the label of an entry of the menu

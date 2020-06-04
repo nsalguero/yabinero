@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-03 21:40+0200\n"
-"PO-Revision-Date: 2020-06-03 21:43+0200\n"
+"POT-Creation-Date: 2020-06-04 12:36+0200\n"
+"PO-Revision-Date: 2020-06-04 13:52+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -33,74 +33,78 @@ msgstr ""
 msgid "Hard"
 msgstr ""
 
-#: src/gui/changing.rs:312
+#: src/gui/changing.rs:296
 msgid "Bad value!"
 msgstr ""
 
-#: src/gui/changing.rs:277
+#: src/gui/changing.rs:309
+msgid "Congratulations, you won!"
+msgstr ""
+
+#: src/gui/changing.rs:374
 msgid "Pause"
 msgstr ""
 
-#: src/gui/changing.rs:278
+#: src/gui/changing.rs:375
 msgid "Resume"
 msgstr ""
 
-#: src/gui/changing.rs:279
+#: src/gui/changing.rs:376
 msgid "Undo"
 msgstr ""
 
-#: src/gui/changing.rs:280
+#: src/gui/changing.rs:377
 msgid "Redo"
 msgstr ""
 
-#: src/gui/changing.rs:281
+#: src/gui/changing.rs:378
 msgid "Retry"
 msgstr ""
 
-#: src/gui/menu.rs:126
+#: src/gui/menu.rs:140
 msgid "Game"
 msgstr ""
 
-#: src/gui/menu.rs:127
+#: src/gui/menu.rs:141
 msgid "Options"
 msgstr ""
 
-#: src/gui/menu.rs:128
+#: src/gui/menu.rs:142
 msgid "Help"
 msgstr ""
 
-#: src/gui/menu.rs:150
+#: src/gui/menu.rs:164
 msgid "New"
 msgstr ""
 
-#: src/gui/menu.rs:151
+#: src/gui/menu.rs:165
 msgid "Best scores"
 msgstr ""
 
-#: src/gui/menu.rs:152
+#: src/gui/menu.rs:166
 msgid "Quit"
 msgstr ""
 
-#: src/gui/menu.rs:153
+#: src/gui/menu.rs:167
 msgid "Size"
 msgstr ""
 
-#: src/gui/menu.rs:154
+#: src/gui/menu.rs:168
 msgid "Difficulty"
 msgstr ""
 
-#: src/gui/menu.rs:155
+#: src/gui/menu.rs:169
 msgid "Sounds"
 msgstr ""
 
-#: src/gui/menu.rs:156
+#: src/gui/menu.rs:170
 msgid "Theme"
 msgstr ""
 
-#: src/gui/menu.rs:157
+#: src/gui/menu.rs:171
 msgid "About"
 msgstr ""
 
-#: src/gui/menu.rs:158
+#: src/gui/menu.rs:172
 msgid "License"
 msgstr ""

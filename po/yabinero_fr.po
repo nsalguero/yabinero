@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-03 21:40+0200\n"
-"PO-Revision-Date: 2020-06-03 21:45+0200\n"
+"POT-Creation-Date: 2020-06-04 12:36+0200\n"
+"PO-Revision-Date: 2020-06-04 13:54+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: French <fr@li.org>\n"
 "Language: \n"
@@ -33,74 +33,78 @@ msgstr "Moyen"
 msgid "Hard"
 msgstr "Difficile"
 
-#: src/gui/changing.rs:312
+#: src/gui/changing.rs:296
 msgid "Bad value!"
 msgstr "Mauvaise valeur !"
 
-#: src/gui/changing.rs:277
+#: src/gui/changing.rs:309
+msgid "Congratulations, you won!"
+msgstr "Félicitations, vous avez gagné !"
+
+#: src/gui/changing.rs:374
 msgid "Pause"
 msgstr "Pause"
 
-#: src/gui/changing.rs:278
+#: src/gui/changing.rs:375
 msgid "Resume"
 msgstr "Reprendre"
 
-#: src/gui/changing.rs:279
+#: src/gui/changing.rs:376
 msgid "Undo"
 msgstr "Annuler"
 
-#: src/gui/changing.rs:280
+#: src/gui/changing.rs:377
 msgid "Redo"
 msgstr "Refaire"
 
-#: src/gui/changing.rs:281
+#: src/gui/changing.rs:378
 msgid "Retry"
 msgstr "Recommencer"
 
-#: src/gui/menu.rs:126
+#: src/gui/menu.rs:140
 msgid "Game"
 msgstr "Jeu"
 
-#: src/gui/menu.rs:127
+#: src/gui/menu.rs:141
 msgid "Options"
 msgstr "Options"
 
-#: src/gui/menu.rs:128
+#: src/gui/menu.rs:142
 msgid "Help"
 msgstr "Aide"
 
-#: src/gui/menu.rs:150
+#: src/gui/menu.rs:164
 msgid "New"
 msgstr "Nouveau"
 
-#: src/gui/menu.rs:151
+#: src/gui/menu.rs:165
 msgid "Best scores"
 msgstr "Meilleurs scores"
 
-#: src/gui/menu.rs:152
+#: src/gui/menu.rs:166
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/gui/menu.rs:153
+#: src/gui/menu.rs:167
 msgid "Size"
 msgstr "Taille"
 
-#: src/gui/menu.rs:154
+#: src/gui/menu.rs:168
 msgid "Difficulty"
 msgstr "Difficulté"
 
-#: src/gui/menu.rs:155
+#: src/gui/menu.rs:169
 msgid "Sounds"
 msgstr "Sons"
 
-#: src/gui/menu.rs:156
+#: src/gui/menu.rs:170
 msgid "Theme"
 msgstr "Thème"
 
-#: src/gui/menu.rs:157
+#: src/gui/menu.rs:171
 msgid "About"
 msgstr "À propos"
 
-#: src/gui/menu.rs:158
+#: src/gui/menu.rs:172
 msgid "License"
 msgstr "Licence"

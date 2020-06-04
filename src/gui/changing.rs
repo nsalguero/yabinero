@@ -11,6 +11,7 @@ use std::cell::RefCell;
 use std::sync::mpsc::Sender;
 use fltk::{app::screen_size, button::Button, dialog::alert, enums::{Color, Event}, prelude::{ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use crate::engine::Binero;
+use crate::engine::history::Item;
 use crate::size::Size;
 use crate::value::Value;
 use crate::gui::sound::Sound;
@@ -75,38 +76,14 @@ impl ChangingPart {
     pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) -> Sender<bool> {
         let cloned_prefs = Rc::clone(user_prefs);
         let cloned_changing = Rc::clone(changing);
-        let binero = Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty);
-        ChangingPart::fill(&cloned_changing, Rc::new(RefCell::new(binero)), cloned_prefs.borrow().sounds);
-        let tx_pause = cloned_changing.borrow_mut().timer.start();
-        let tx_resume = Sender::clone(&tx_pause);
-        let tx_result = Sender::clone(&tx_pause);
-        cloned_changing.borrow_mut().but_pause.show();
-        let cloned2_changing = Rc::clone(&cloned_changing);
-        let size = cloned_prefs.borrow().size;
-        cloned_changing.borrow_mut().but_pause.set_callback(Box::new(move || {
-            tx_pause.send(true).unwrap();
-            cloned2_changing.borrow_mut().but_resume.show();
-            cloned2_changing.borrow_mut().but_pause.hide();
-            if let Some(boxes) = cloned2_changing.borrow().grids.get(&size) {
-                ChangingPart::hide_selected_grid(&boxes);
-            }
-            cloned2_changing.borrow_mut().pause.show();
-        }));
-        cloned_changing.borrow_mut().but_resume.hide();
-        let cloned2_changing = Rc::clone(&cloned_changing);
-        let size = cloned_prefs.borrow().size;
-        cloned_changing.borrow_mut().but_resume.set_callback(Box::new(move || {
-            tx_resume.send(false).unwrap();
-            cloned2_changing.borrow_mut().but_pause.show();
-            cloned2_changing.borrow_mut().but_resume.hide();
-            if let Some(boxes) = cloned2_changing.borrow().grids.get(&size) {
-                ChangingPart::show_selected_grid(&boxes);
-            }
-            cloned2_changing.borrow_mut().pause.hide();
-        }));
-        cloned_changing.borrow_mut().but_undo.show();
-        cloned_changing.borrow_mut().but_redo.show();
-        cloned_changing.borrow_mut().but_retry.show();
+        let binero = Rc::new(RefCell::new(Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty)));
+        ChangingPart::fill(&cloned_changing, Rc::clone(&binero), cloned_prefs.borrow().sounds);
+        let tx_result = cloned_changing.borrow_mut().timer.start();
+        ChangingPart::add_pause_handler(&cloned_changing, cloned_prefs.borrow().size, Sender::clone(&tx_result));
+        ChangingPart::add_resume_handler(&cloned_changing, cloned_prefs.borrow().size, Sender::clone(&tx_result));
+        ChangingPart::add_undo_handler(&cloned_changing, Rc::clone(&binero));
+        ChangingPart::add_redo_handler(&cloned_changing, Rc::clone(&binero));
+        ChangingPart::add_retry_handler(&cloned_changing, Rc::clone(&binero));
         cloned_changing.borrow_mut().pause.hide();
         tx_result
     }
@@ -286,15 +263,18 @@ impl ChangingPart {
                     let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
                     if let Ok(val) = value.trim().parse() {
                         if val != 0 && val != 1 {
-                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo(); // FIXME problem with twice a bad value 
+                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo().unwrap(); // FIXME problem with twice a bad value 
                             ChangingPart::display_error(sounds);
                         } else {
                             let old_value = cloned_binero.borrow().get(x_axis, y_axis);
                             if old_value != Value::from_u8(val) {
                                 if cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, Value::from_u8(val)) {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&format!(" {}", value.trim()));
+                                    if cloned_binero.borrow().is_full() {
+                                        ChangingPart::display_success(sounds);
+                                    }
                                 } else {
-                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo(); // FIXME problem with twice a bad value
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo().unwrap(); // FIXME problem with twice a bad value
                                     ChangingPart::display_error(sounds);
                                 }
                             }
@@ -310,7 +290,7 @@ impl ChangingPart {
     /// Displays a popup with an error message and play the error sound if sounds are activated
     ///
     /// # Arguments
-    /// 
+    ///
     /// * `sounds` - whether or not the sounds must be played
     fn display_error(sounds: bool) {
         let (width, height) = screen_size();
@@ -318,6 +298,126 @@ impl ChangingPart {
         if sounds {
             Sound::Error.play();
         }
+    }
+
+    /// Displays a popup with a success message and play the success sound if sounds are activated
+    ///
+    /// # Arguments
+    ///
+    /// * `sounds` - whether or not the sounds must be played
+    fn display_success(sounds: bool) {
+        let (width, height) = screen_size();
+        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
+        if sounds {
+            Sound::Success.play();
+        }
+    }
+
+    /// Adds the handler to the Pause button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `size` - a size
+    /// * `tx` - a `Sender`
+    fn add_pause_handler(changing: &Rc<RefCell<ChangingPart>>, size: Size, tx: Sender<bool>) {
+        let cloned_changing = Rc::clone(changing);
+        cloned_changing.borrow_mut().but_pause.show();
+        changing.borrow_mut().but_pause.set_callback(Box::new(move || {
+            tx.send(true).unwrap();
+            cloned_changing.borrow_mut().but_resume.show();
+            cloned_changing.borrow_mut().but_pause.hide();
+            if let Some(boxes) = cloned_changing.borrow().grids.get(&size) {
+                ChangingPart::hide_selected_grid(&boxes);
+            }
+            cloned_changing.borrow_mut().pause.show();
+        }));
+    }
+
+    /// Adds the handler to the Resume button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `size` - a size
+    /// * `tx` - a `Sender`
+    fn add_resume_handler(changing: &Rc<RefCell<ChangingPart>>, size: Size, tx: Sender<bool>) {
+        let cloned_changing = Rc::clone(changing);
+        cloned_changing.borrow_mut().but_resume.hide();
+        changing.borrow_mut().but_resume.set_callback(Box::new(move || {
+            tx.send(false).unwrap();
+            cloned_changing.borrow_mut().but_pause.show();
+            cloned_changing.borrow_mut().but_resume.hide();
+            if let Some(boxes) = cloned_changing.borrow().grids.get(&size) {
+                ChangingPart::show_selected_grid(&boxes);
+            }
+            cloned_changing.borrow_mut().pause.hide();
+        }));
+    }
+
+    /// Sets a value in the grid
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `binero` - a binero
+    /// * `item` - an item of the history
+    fn set_value(changing: &Rc<RefCell<ChangingPart>>, binero: &Rc<RefCell<Binero>>, item: &Item) {
+        let mut select_boxes: Option<&Rc<RefCell<Vec<Vec<Input>>>>> = None;
+        let grids = &changing.borrow().grids;
+        for (size, boxes) in grids {
+            if *size == binero.borrow().size() {
+                select_boxes = Some(boxes);
+            }
+        }
+        let boxes = select_boxes.unwrap();
+        ChangingPart::fill_box(&mut boxes.borrow_mut()[item.x_axis() as usize][item.y_axis() as usize], &binero, item.x_axis(), item.y_axis());
+    }
+
+    /// Adds the handler to the Undo button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `binero` - a binero
+    fn add_undo_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
+        changing.borrow_mut().but_undo.show();
+        let cloned_changing = Rc::clone(changing);
+        changing.borrow_mut().but_undo.set_callback(Box::new(move || {
+            if let Some(item) = binero.borrow_mut().try_to_undo() {
+                ChangingPart::set_value(&cloned_changing, &binero, item);
+            }
+        }));
+    }
+
+    /// Adds the handler to the Redo button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `binero` - a binero
+    fn add_redo_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
+        changing.borrow_mut().but_redo.show();
+        let cloned_changing = Rc::clone(changing);
+        changing.borrow_mut().but_redo.set_callback(Box::new(move || {
+            if let Some(item) = binero.borrow_mut().try_to_redo() {
+                ChangingPart::set_value(&cloned_changing, &binero, item);
+            }
+        }));
+    }
+
+    /// Adds the handler to the Retry button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `binero` - a binero
+    fn add_retry_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
+        changing.borrow_mut().but_retry.show();
+        let cloned_changing = Rc::clone(changing);
+        changing.borrow_mut().but_retry.set_callback(Box::new(move || {
+            
+        }));
     }
 
     const INPUT_SIZE: i32 = 32;
