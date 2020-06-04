@@ -96,7 +96,7 @@ impl Binero {
         true
     }
 
-    /// Cancels the latest action and returns it if it is possible or returns None
+    /// Cancels the latest action and returns it if it is possible or returns `None`
     pub fn try_to_undo(&mut self) -> Option<&Item> {
         if self.history.is_undo_possible() {
             let item = self.history.undo();
@@ -107,7 +107,7 @@ impl Binero {
         }
     }
 
-    /// Replays the next action that was undone and returns it if it is possible or returns None
+    /// Replays the next action that was undone and returns it if it is possible or returns `None`
     pub fn try_to_redo(&mut self) -> Option<&Item> {
         if self.history.is_redo_possible() {
             let item = self.history.redo();
@@ -116,6 +116,11 @@ impl Binero {
         } else {
             None
         }
+    }
+
+    /// Clears the history of the game
+    pub fn clear_history(&mut self) {
+        self.history.clear();
     }
 
     /// Returns wheter or not the grid is full

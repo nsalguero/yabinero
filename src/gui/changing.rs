@@ -257,24 +257,26 @@ impl ChangingPart {
     fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, sounds: bool) {
         let cloned_boxes = Rc::clone(boxes);
         let cloned_binero = Rc::clone(&binero);
+        let mut box_value = String::from(" ");
         input.handle(Box::new(move |ev: Event| {
             match ev {
                 Event::KeyUp => {
                     let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
                     if let Ok(val) = value.trim().parse() {
                         if val != 0 && val != 1 {
-                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo().unwrap(); // FIXME problem with twice a bad value 
+                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                             ChangingPart::display_error(sounds);
                         } else {
                             let old_value = cloned_binero.borrow().get(x_axis, y_axis);
                             if old_value != Value::from_u8(val) {
                                 if cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, Value::from_u8(val)) {
-                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&format!(" {}", value.trim()));
+                                    box_value = format!(" {}", value.trim());
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                                     if cloned_binero.borrow().is_full() {
                                         ChangingPart::display_success(sounds);
                                     }
                                 } else {
-                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].undo().unwrap(); // FIXME problem with twice a bad value
+                                    cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                                     ChangingPart::display_error(sounds);
                                 }
                             }
@@ -367,7 +369,6 @@ impl ChangingPart {
         } else {
             input.set_value(" ");
         }
-        input.show();
     }
 
     /// Sets a value in the grid
@@ -439,7 +440,11 @@ impl ChangingPart {
         changing.borrow_mut().but_retry.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_retry.set_callback(Box::new(move || {
-            
+            let size = binero.borrow().size();
+            while let Some(item) = binero.borrow_mut().try_to_undo() {
+                ChangingPart::set_value(&cloned_changing, size, item, true);
+            }
+            binero.borrow_mut().clear_history();
         }));
     }
 
