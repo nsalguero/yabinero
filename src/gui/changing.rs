@@ -82,8 +82,8 @@ impl ChangingPart {
         let cloned_prefs = Rc::clone(user_prefs);
         let cloned_changing = Rc::clone(changing);
         let binero = Rc::new(RefCell::new(Binero::new(cloned_prefs.borrow().size, cloned_prefs.borrow().difficulty)));
-        ChangingPart::fill(&cloned_changing, Rc::clone(&binero), cloned_prefs.borrow().sounds);
         let tx_result = cloned_changing.borrow_mut().timer.start();
+        ChangingPart::fill(&cloned_changing, Rc::clone(&binero), cloned_prefs.borrow().sounds, &tx_result);
         ChangingPart::add_pause_handler(&cloned_changing, cloned_prefs.borrow().size, Sender::clone(&tx_result));
         ChangingPart::add_resume_handler(&cloned_changing, cloned_prefs.borrow().size, Sender::clone(&tx_result));
         ChangingPart::add_undo_handler(&cloned_changing, Rc::clone(&binero));
@@ -114,11 +114,12 @@ impl ChangingPart {
     /// * `changing` - the changing part of the GUI
     /// * `binero` - a binero
     /// * `sounds` - whether or not the sounds must be played
-    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, sounds: bool) {
+    /// * `tx` - a `Sender`
+    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, sounds: bool, tx: &Sender<bool>) {
         let size = binero.borrow().size();
         for (a_size, boxes) in &changing.borrow().grids {
             if *a_size == size {
-                ChangingPart::fill_selected_grid(&boxes, &binero, sounds);
+                ChangingPart::fill_selected_grid(&boxes, &binero, sounds, tx);
             } else {
                 ChangingPart::hide_selected_grid(&boxes);
             }
@@ -216,13 +217,14 @@ impl ChangingPart {
     /// * `boxes` - a grid
     /// * `binero` - a binero
     /// * `sounds` - whether or not the sounds must be played
-    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, sounds: bool) {
+    /// * `tx` - a `Sender`
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, sounds: bool, tx: &Sender<bool>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
                 let input = &mut boxes.borrow_mut()[i][j];
                 ChangingPart::fill_box(input, binero, i as u8, j as u8);
-                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, sounds);
+                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, sounds, tx);
             }
         }
     }
@@ -260,9 +262,11 @@ impl ChangingPart {
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `sounds` - whether or not the sounds must be played
-    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, sounds: bool) {
+    /// * `tx` - a `Sender`
+    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, sounds: bool, tx: &Sender<bool>) {
         let cloned_boxes = Rc::clone(boxes);
         let cloned_binero = Rc::clone(&binero);
+        let cloned_tx = Sender::clone(tx);
         let mut box_value = String::from(" ");
         input.handle(Box::new(move |ev: Event| {
             match ev {
@@ -279,6 +283,7 @@ impl ChangingPart {
                                     box_value = format!(" {}", value.trim());
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                                     if cloned_binero.borrow().is_full() {
+                                        cloned_tx.send(true).unwrap();
                                         ChangingPart::display_success(sounds);
                                     }
                                 } else {
