@@ -29,6 +29,7 @@ pub struct ChangingPart {
     but_undo: Button,
     but_redo: Button,
     but_retry: Button,
+    but_solve: Button,
 }
 
 impl ChangingPart {
@@ -51,11 +52,12 @@ impl ChangingPart {
         let timer = Timer::new(starting_x, starting_y + ChangingPart::MARGIN_Y, width);
         let but_pause = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Pause);
         let but_resume = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Resume);
-        let mut but_undo = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
+        let mut but_undo = ChangingPart::init_button(starting_x, ending_y - 5 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
         but_undo.set_shortcut(Shortcut::Ctrl + 'z');
-        let mut but_redo = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
+        let mut but_redo = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
         but_redo.set_shortcut(Shortcut::Ctrl + 'Z');
-        let but_retry = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
+        let but_retry = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
+        let but_solve = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Solve);
         let pause = ChangingPart::init_pause(starting_x, ending_y);
         ChangingPart {
             grids,
@@ -66,6 +68,7 @@ impl ChangingPart {
             but_undo,
             but_redo,
             but_retry,
+            but_solve,
         }
     }
 
@@ -86,6 +89,7 @@ impl ChangingPart {
         ChangingPart::add_undo_handler(&cloned_changing, Rc::clone(&binero));
         ChangingPart::add_redo_handler(&cloned_changing, Rc::clone(&binero));
         ChangingPart::add_retry_handler(&cloned_changing, Rc::clone(&binero));
+        ChangingPart::add_solve_handler(&cloned_changing, Rc::clone(&binero), cloned_prefs.borrow().sounds);
         cloned_changing.borrow_mut().pause.hide();
         tx_result
     }
@@ -267,7 +271,7 @@ impl ChangingPart {
                     if let Ok(val) = value.trim().parse() {
                         if val != 0 && val != 1 {
                             cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
-                            ChangingPart::display_error(sounds);
+                            ChangingPart::display_error(&tr!("Bad value!"), sounds);
                         } else {
                             let old_value = cloned_binero.borrow().get(x_axis, y_axis);
                             if old_value != Value::from_u8(val) {
@@ -279,7 +283,7 @@ impl ChangingPart {
                                     }
                                 } else {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
-                                    ChangingPart::display_error(sounds);
+                                    ChangingPart::display_error(&tr!("Bad value!"), sounds);
                                 }
                             }
                         }
@@ -295,10 +299,11 @@ impl ChangingPart {
     ///
     /// # Arguments
     ///
+    /// * `msg` - the error message
     /// * `sounds` - whether or not the sounds must be played
-    fn display_error(sounds: bool) {
+    fn display_error(msg: &str, sounds: bool) {
         let (width, height) = screen_size();
-        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Bad value!"));
+        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
         if sounds {
             Sound::Error.play();
         }
@@ -450,6 +455,31 @@ impl ChangingPart {
         }));
     }
 
+    /// Adds the handler to the Solve button
+    ///
+    /// # Arguments
+    ///
+    /// * `changing` - the changing part of the GUI
+    /// * `binero` - a binero
+    /// * `sounds` - whether or not the sounds must be played
+    fn add_solve_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, sounds: bool) {
+        changing.borrow_mut().but_solve.show();
+        let cloned_changing = Rc::clone(changing);
+        changing.borrow_mut().but_solve.set_callback(Box::new(move || {
+            let size = binero.borrow().size();
+            if binero.borrow_mut().try_to_solve() {
+                while let Some(item) = binero.borrow_mut().try_to_undo() {
+                    ChangingPart::set_value(&cloned_changing, size, item, true);
+                }
+                while let Some(item) = binero.borrow_mut().try_to_redo() {
+                    ChangingPart::set_value(&cloned_changing, size, item, false);
+                }
+            } else {
+                ChangingPart::display_error(&tr!("No solution!"), sounds);
+            }
+        }));
+    }
+
     const INPUT_SIZE: i32 = 32;
     const HEIGHT: i32 = 60;
     const MARGIN_X: i32 = 20;
@@ -462,6 +492,7 @@ enum PlayButton {
     Undo,
     Redo,
     Retry,
+    Solve,
 }
 
 impl fmt::Display for PlayButton {
@@ -472,6 +503,7 @@ impl fmt::Display for PlayButton {
             PlayButton::Undo => tr!("Undo"),
             PlayButton::Redo => tr!("Redo"),
             PlayButton::Retry => tr!("Retry"),
+            PlayButton::Solve => tr!("Solve"),
         };
         write!(f, "{}", printable)
     }

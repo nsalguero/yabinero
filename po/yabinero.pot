@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-04 12:36+0200\n"
-"PO-Revision-Date: 2020-06-04 13:52+0200\n"
+"POT-Creation-Date: 2020-06-05 12:30+0200\n"
+"PO-Revision-Date: 2020-06-05 12:34+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -33,78 +33,134 @@ msgstr ""
 msgid "Hard"
 msgstr ""
 
-#: src/gui/changing.rs:296
+#: src/gui/changing.rs:274 src/gui/changing.rs:286
 msgid "Bad value!"
 msgstr ""
 
-#: src/gui/changing.rs:309
+#: src/gui/changing.rs:319
 msgid "Congratulations, you won!"
 msgstr ""
 
-#: src/gui/changing.rs:374
+#: src/gui/changing.rs:478
+msgid "No solution!"
+msgstr ""
+
+#: src/gui/changing.rs:501
 msgid "Pause"
 msgstr ""
 
-#: src/gui/changing.rs:375
+#: src/gui/changing.rs:502
 msgid "Resume"
 msgstr ""
 
-#: src/gui/changing.rs:376
+#: src/gui/changing.rs:503
 msgid "Undo"
 msgstr ""
 
-#: src/gui/changing.rs:377
+#: src/gui/changing.rs:504
 msgid "Redo"
 msgstr ""
 
-#: src/gui/changing.rs:378
+#: src/gui/changing.rs:505
 msgid "Retry"
 msgstr ""
 
-#: src/gui/menu.rs:140
-msgid "Game"
+#: src/gui/changing.rs:506
+msgid "Solve"
 msgstr ""
 
-#: src/gui/menu.rs:141
-msgid "Options"
+#: src/gui/menu.rs:226
+msgid "		Yet Another Binero puzzle game, version 1.0.0."
 msgstr ""
 
-#: src/gui/menu.rs:142
-msgid "Help"
+#: src/gui/menu.rs:228
+msgid "This software is a mathematical puzzle game."
 msgstr ""
 
-#: src/gui/menu.rs:164
-msgid "New"
+#: src/gui/menu.rs:230
+msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
 msgstr ""
 
-#: src/gui/menu.rs:165
-msgid "Best scores"
+#: src/gui/menu.rs:232
+msgid "two constraints:"
 msgstr ""
 
-#: src/gui/menu.rs:166
-msgid "Quit"
+#: src/gui/menu.rs:234
+msgid "In each line or column, there must be the same number"
 msgstr ""
 
-#: src/gui/menu.rs:167
-msgid "Size"
+#: src/gui/menu.rs:236
+msgid "of the two values."
 msgstr ""
 
-#: src/gui/menu.rs:168
-msgid "Difficulty"
+#: src/gui/menu.rs:238
+msgid "In each line or column, the same value cannot be side by"
 msgstr ""
 
-#: src/gui/menu.rs:169
-msgid "Sounds"
+#: src/gui/menu.rs:240
+msgid "side more than twice."
 msgstr ""
 
-#: src/gui/menu.rs:170
-msgid "Theme"
+#: src/gui/menu.rs:242
+msgid "Developper: Nicolas Salguero."
 msgstr ""
 
-#: src/gui/menu.rs:171
+#: src/gui/menu.rs:244
+msgid "This software is released under the GNU General Public Licence"
+msgstr ""
+
+#: src/gui/menu.rs:246
+msgid "version 3.0 or any later version."
+msgstr ""
+
+#: src/gui/menu.rs:248
+msgid "For more information, please see:"
+msgstr ""
+
+#: src/gui/menu.rs:260 src/gui/menu.rs:349
 msgid "About"
 msgstr ""
 
-#: src/gui/menu.rs:172
+#: src/gui/menu.rs:281 src/gui/menu.rs:350
 msgid "License"
+msgstr ""
+
+#: src/gui/menu.rs:318
+msgid "Game"
+msgstr ""
+
+#: src/gui/menu.rs:319
+msgid "Options"
+msgstr ""
+
+#: src/gui/menu.rs:320
+msgid "Help"
+msgstr ""
+
+#: src/gui/menu.rs:342
+msgid "New"
+msgstr ""
+
+#: src/gui/menu.rs:343
+msgid "Best scores"
+msgstr ""
+
+#: src/gui/menu.rs:344
+msgid "Quit"
+msgstr ""
+
+#: src/gui/menu.rs:345
+msgid "Size"
+msgstr ""
+
+#: src/gui/menu.rs:346
+msgid "Difficulty"
+msgstr ""
+
+#: src/gui/menu.rs:347
+msgid "Sounds"
+msgstr ""
+
+#: src/gui/menu.rs:348
+msgid "Theme"
 msgstr ""

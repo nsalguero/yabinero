@@ -9,7 +9,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::sync::mpsc::Sender;
-use fltk::{app::AppScheme, enums::{Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use fltk::{app::AppScheme, enums::{Align, Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
 use crate::size::Size;
 use crate::difficulty::Difficulty;
@@ -222,6 +222,34 @@ fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     }));
 }
 
+fn about() -> String {
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.0.0.");
+    result.push_str("\n\n\n");
+    result.push_str(&tr!("This software is a mathematical puzzle game."));
+    result.push_str("\n\n\n");
+    result.push_str(&tr!("The aim of the game is to fill in a grid with 0 and 1 respecting"));
+    result.push_str("\n");
+    result.push_str(&tr!("two constraints:"));
+    result.push_str("\n\n\t- ");
+    result.push_str(&tr!("In each line or column, there must be the same number"));
+    result.push_str("\n\t  ");
+    result.push_str(&tr!("of the two values."));
+    result.push_str("\n\n\t- ");
+    result.push_str(&tr!("In each line or column, the same value cannot be side by"));
+    result.push_str("\n\t  ");
+    result.push_str(&tr!("side more than twice."));
+    result.push_str("\n\n\n");
+    result.push_str(&tr!("Developper: Nicolas Salguero."));
+    result.push_str("\n\n\n");
+    result.push_str(&tr!("This software is released under the GNU General Public Licence"));
+    result.push_str("\n");
+    result.push_str(&tr!("version 3.0 or any later version."));
+    result.push_str("\n\n\n");
+    result.push_str(&tr!("For more information, please see:"));
+    result.push_str("\nhttps://github.com/nsalguero/yabinero");
+    result
+}
+
 /// Adds the "Help/About" menu entry
 ///
 /// # Arguments
@@ -229,7 +257,17 @@ fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `menu` - a menu bar
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
-        // TODO display a window containing some information about the game
+        let mut window = Window::new(0, 0, 490, 460, &tr!("About")).center_screen();
+        window.make_modal(true);
+        window.make_resizable(false);
+        let about = about();
+        let mut frame = Frame::new(0, 0, 20, 460, &about);
+        frame.set_align(Align::AlignRight);
+        let mut scroll = Scroll::new(0, 0, 490, 460, "");
+        scroll.add(&frame);
+        scroll.set_color(Color::Light2);
+        window.end();
+        window.show();
     }));
 }
 
