@@ -9,7 +9,7 @@ use tr::tr;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::sync::mpsc::Sender;
-use fltk::{app::screen_size, button::Button, dialog::alert, enums::{Color, Event}, prelude::{ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use fltk::{app::screen_size, button::Button, dialog::alert, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use crate::engine::Binero;
 use crate::engine::history::Item;
 use crate::size::Size;
@@ -51,9 +51,11 @@ impl ChangingPart {
         let timer = Timer::new(starting_x, starting_y + ChangingPart::MARGIN_Y, width);
         let but_pause = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Pause);
         let but_resume = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Resume);
-        let but_undo = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
-        let but_redo = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
-        let but_retry = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
+        let mut but_undo = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
+        but_undo.set_shortcut(Shortcut::Ctrl + 'z');
+        let mut but_redo = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
+        but_redo.set_shortcut(Shortcut::Ctrl + 'Z');
+        let but_retry = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
         let pause = ChangingPart::init_pause(starting_x, ending_y);
         ChangingPart {
             grids,
