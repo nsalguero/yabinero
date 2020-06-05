@@ -292,6 +292,9 @@ impl ChangingPart {
                                 }
                             }
                         }
+                    } else if value.trim() == "" && box_value.trim() != "" {
+                        box_value = String::from(" ");
+                        cloned_binero.borrow_mut().try_to_undo().unwrap();
                     }
                     true
                 },
