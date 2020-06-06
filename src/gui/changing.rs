@@ -475,14 +475,14 @@ impl ChangingPart {
         let cloned_prefs = Rc::clone(user_prefs);
         changing.borrow_mut().but_solve.set_callback(Box::new(move || {
             let size = binero.borrow().size();
-            if binero.borrow_mut().try_to_solve() {
-                while let Some(item) = binero.borrow_mut().try_to_undo() {
-                    ChangingPart::set_value(&cloned_changing, size, item, true);
-                }
-                while let Some(item) = binero.borrow_mut().try_to_redo() {
-                    ChangingPart::set_value(&cloned_changing, size, item, false);
-                }
-            } else {
+            let result = binero.borrow_mut().try_to_solve();
+            while let Some(item) = binero.borrow_mut().try_to_undo() {
+                ChangingPart::set_value(&cloned_changing, size, item, true);
+            }
+            while let Some(item) = binero.borrow_mut().try_to_redo() {
+                ChangingPart::set_value(&cloned_changing, size, item, false);
+            }
+            if !result {
                 ChangingPart::display_error(&tr!("No solution!"), cloned_prefs.borrow().sounds());
             }
         }));
