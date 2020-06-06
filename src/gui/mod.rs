@@ -18,7 +18,7 @@ use changing::ChangingPart;
 /// The GUI is represented here
 pub struct Game {
     user_prefs: Rc<RefCell<UserPrefs>>,
-    app: App,
+    app: Rc<RefCell<App>>,
     window: MenuWindow,
     menu: MenuBar,
     changing: Rc<RefCell<ChangingPart>>,
@@ -49,13 +49,13 @@ impl Game {
 
     /// Adds the menus to the menu bar
     pub fn add_menu_entries(&mut self) {
-        menu::add_entries(&mut self.menu, &self.user_prefs, &self.changing);
+        menu::add_entries(&mut self.menu, &self.user_prefs, &self.changing, &self.app);
         menu::set_menu_items(&mut self.menu, &self.user_prefs);
     }
 
     /// Runs the game
     pub fn run_app(&self) {
-        self.app.run().unwrap();
+        self.app.borrow().run().unwrap();
     }
 
     /// Returns the newly created `App` and `Window`
@@ -63,7 +63,7 @@ impl Game {
     /// # Arguments
     ///
     /// * `theme` - an `AppScheme`
-    fn init_gui(theme: &AppScheme) -> (App, MenuWindow) {
+    fn init_gui(theme: &AppScheme) -> (Rc<RefCell<App>>, MenuWindow) {
         let app = App::default();
         app.set_scheme(*theme);
         let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero").center_screen();
@@ -72,6 +72,6 @@ impl Game {
         }
         window.set_color(Color::Light2);
         window.make_resizable(false);
-        (app, window)
+        (Rc::new(RefCell::new(app)), window)
     }
 }

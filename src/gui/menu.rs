@@ -9,7 +9,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::sync::mpsc::Sender;
-use fltk::{app::AppScheme, enums::{Align, Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use fltk::{app::{App, AppScheme}, enums::{Align, Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
 use crate::size::Size;
 use crate::difficulty::Difficulty;
@@ -36,9 +36,10 @@ pub fn init(width: i32) -> MenuBar {
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 /// * `changing` - the changing part of the GUI
-pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
+/// * `app` - the app
+pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>, app: &Rc<RefCell<App>>) {
     add_game_entries(menu, user_prefs, changing);
-    add_options_entries(menu, user_prefs);
+    add_options_entries(menu, user_prefs, app);
     add_help_entries(menu);
 }
 
@@ -90,11 +91,12 @@ fn add_game_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, cha
 ///
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
-fn add_options_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+/// * `app` - the app
+fn add_options_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, app: &Rc<RefCell<App>>) {
     add_sizes(menu, user_prefs);
     add_difficulties(menu, user_prefs);
     add_sounds(menu, user_prefs);
-    add_themes(menu, user_prefs);
+    add_themes(menu, user_prefs, app);
 }
 
 /// Adds the entries to the "Help" menu
@@ -202,22 +204,31 @@ fn add_sounds(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 ///
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
-fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+/// * `app` - the app
+fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, app: &Rc<RefCell<App>>) {
     let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Base);
+        cloned_app.borrow().set_scheme(AppScheme::Base);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gtk))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Gtk);
+        cloned_app.borrow().set_scheme(AppScheme::Gtk);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gleam))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Gleam);
+        cloned_app.borrow().set_scheme(AppScheme::Gleam);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Plastic))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Plastic);
+        cloned_app.borrow().set_scheme(AppScheme::Plastic);
     }));
 }
 
