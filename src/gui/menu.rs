@@ -138,8 +138,18 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
-        // TODO display a window with the best scores for the current size and the current difficulty
-        println!("{} {}", cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
+        let mut window = Window::new(0, 0, 490, 460, &tr!("Best scores")).center_screen();
+        window.make_modal(true);
+        window.make_resizable(false);
+        // TODO get best scores
+        let best_scores = format!("{} {}", cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
+        let mut frame = Frame::new(0, 0, 20, 460, &best_scores);
+        frame.set_align(Align::AlignRight);
+        let mut scroll = Scroll::new(0, 0, 490, 460, "");
+        scroll.add(&frame);
+        scroll.set_color(Color::Light2);
+        window.end();
+        window.show();
     }));
 }
 
