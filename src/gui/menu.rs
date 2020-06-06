@@ -49,22 +49,22 @@ pub fn add_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, chan
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 pub fn set_menu_items(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
-    let size = format!("{}", user_prefs.borrow().size);
+    let size = format!("{}", user_prefs.borrow().size());
     let size = entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&size));
     if let Some(mut menu_item) = menu.find_item(&size) {
         menu_item.set();
     }
-    let difficulty = format!("{}", user_prefs.borrow().difficulty);
+    let difficulty = format!("{}", user_prefs.borrow().difficulty());
     let difficulty = entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&difficulty));
     if let Some(mut menu_item) = menu.find_item(&difficulty) {
         menu_item.set();
     }
-    if user_prefs.borrow().sounds {
+    if user_prefs.borrow().sounds() {
         if let Some(mut menu_item) = menu.find_item(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None)) {
             menu_item.set();
         }
     }
-    let theme = format!("{:?}", user_prefs.borrow().theme);
+    let theme = format!("{:?}", user_prefs.borrow().theme());
     let theme = entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&theme));
     if let Some(mut menu_item) = menu.find_item(&theme) {
         menu_item.set();
@@ -134,11 +134,10 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
-    let size = user_prefs.borrow().size;
-    let difficulty = user_prefs.borrow().difficulty;
+    let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
         // TODO display a window with the best scores for the current size and the current difficulty
-        println!("{} {}", size, difficulty);
+        println!("{} {}", cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
     }));
 }
 
@@ -163,7 +162,7 @@ fn add_sizes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     for size in Size::into_enum_iter() {
         let cloned_prefs = Rc::clone(user_prefs);
         menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", size))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-            cloned_prefs.borrow_mut().size = size;
+            cloned_prefs.borrow_mut().set_size(size);
         }));
     }
 }
@@ -178,7 +177,7 @@ fn add_difficulties(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     for difficulty in Difficulty::into_enum_iter() {
         let cloned_prefs = Rc::clone(user_prefs);
         menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", difficulty))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-            cloned_prefs.borrow_mut().difficulty = difficulty;
+            cloned_prefs.borrow_mut().set_difficulty(difficulty);
         }));
     }
 }
@@ -192,8 +191,8 @@ fn add_difficulties(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 fn add_sounds(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Sounds, None), Shortcut::None, MenuFlag::Toggle, Box::new(move || {
-        let old_value = cloned_prefs.borrow().sounds;
-        cloned_prefs.borrow_mut().sounds = !old_value;
+        let old_value = cloned_prefs.borrow().sounds();
+        cloned_prefs.borrow_mut().set_sounds(!old_value);
     }));
 }
 
@@ -206,19 +205,19 @@ fn add_sounds(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-        cloned_prefs.borrow_mut().theme = AppScheme::Base;
+        cloned_prefs.borrow_mut().set_theme(AppScheme::Base);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gtk))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-        cloned_prefs.borrow_mut().theme = AppScheme::Gtk;
+        cloned_prefs.borrow_mut().set_theme(AppScheme::Gtk);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gleam))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-        cloned_prefs.borrow_mut().theme = AppScheme::Gleam;
+        cloned_prefs.borrow_mut().set_theme(AppScheme::Gleam);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Plastic))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
-        cloned_prefs.borrow_mut().theme = AppScheme::Plastic;
+        cloned_prefs.borrow_mut().set_theme(AppScheme::Plastic);
     }));
 }
 
