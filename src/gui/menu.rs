@@ -14,6 +14,7 @@ use tr::tr;
 use crate::size::Size;
 use crate::difficulty::Difficulty;
 use crate::gui::user_data::UserPrefs;
+use crate::gui::user_data::BestScores;
 use crate::gui::changing::ChangingPart;
 use enum_iterator::IntoEnumIterator;
 
@@ -141,8 +142,7 @@ fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
         let mut window = Window::new(0, 0, 490, 460, &tr!("Best scores")).center_screen();
         window.make_modal(true);
         window.make_resizable(false);
-        // TODO get best scores
-        let best_scores = format!("{} {}", cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
+        let best_scores = BestScores::new().best_scores(cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
         let mut frame = Frame::new(0, 0, 20, 460, &best_scores);
         frame.set_align(Align::AlignRight);
         let mut scroll = Scroll::new(0, 0, 490, 460, "");

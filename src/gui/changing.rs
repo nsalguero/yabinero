@@ -23,7 +23,7 @@ use enum_iterator::IntoEnumIterator;
 pub struct ChangingPart {
     grids: HashMap<Size, Rc<RefCell<Vec<Vec<Input>>>>>,
     pause: Frame,
-    timer: Timer,
+    timer: Rc<RefCell<Timer>>,
     but_pause: Button,
     but_resume: Button,
     but_undo: Button,
@@ -49,7 +49,7 @@ impl ChangingPart {
         }
         let starting_x = max_size * ChangingPart::INPUT_SIZE + ChangingPart::MARGIN_X;
         let width = ending_x - starting_x - ChangingPart::MARGIN_X;
-        let timer = Timer::new(starting_x, starting_y + ChangingPart::MARGIN_Y, width);
+        let timer = Rc::new(RefCell::new(Timer::new(starting_x, starting_y + ChangingPart::MARGIN_Y, width)));
         let but_pause = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Pause);
         let but_resume = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Resume);
         let mut but_undo = ChangingPart::init_button(starting_x, ending_y - 5 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
@@ -80,8 +80,8 @@ impl ChangingPart {
     /// * `changing` - the changing part of the GUI
     pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) -> Sender<bool> {
         let binero = Rc::new(RefCell::new(Binero::new(user_prefs.borrow().size(), user_prefs.borrow().difficulty())));
-        let tx_result = changing.borrow_mut().timer.start();
-        ChangingPart::fill(changing, Rc::clone(&binero), user_prefs, &tx_result);
+        let tx_result = changing.borrow_mut().timer.borrow_mut().start();
+        ChangingPart::fill(changing, Rc::clone(&binero), user_prefs, &tx_result, &changing.borrow().timer);
         ChangingPart::add_pause_handler(changing, user_prefs.borrow().size(), Sender::clone(&tx_result));
         ChangingPart::add_resume_handler(changing, user_prefs.borrow().size(), Sender::clone(&tx_result));
         ChangingPart::add_undo_handler(changing, Rc::clone(&binero));
@@ -113,11 +113,12 @@ impl ChangingPart {
     /// * `binero` - a binero
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
-    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>) {
+    /// * `timer` - a timer
+    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
         let size = binero.borrow().size();
         for (a_size, boxes) in &changing.borrow().grids {
             if *a_size == size {
-                ChangingPart::fill_selected_grid(&boxes, &binero, user_prefs, tx);
+                ChangingPart::fill_selected_grid(&boxes, &binero, user_prefs, tx, timer);
             } else {
                 ChangingPart::hide_selected_grid(&boxes);
             }
@@ -216,13 +217,14 @@ impl ChangingPart {
     /// * `binero` - a binero
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
-    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>) {
+    /// * `timer` - a timer
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
                 let input = &mut boxes.borrow_mut()[i][j];
                 ChangingPart::fill_box(input, binero, i as u8, j as u8);
-                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, user_prefs, tx);
+                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, user_prefs, tx, timer);
             }
         }
     }
@@ -261,11 +263,13 @@ impl ChangingPart {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
-    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>) {
+    /// * `timer` - a timer
+    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
         let cloned_boxes = Rc::clone(boxes);
         let cloned_binero = Rc::clone(&binero);
         let cloned_prefs = Rc::clone(user_prefs);
         let cloned_tx = Sender::clone(tx);
+        let cloned_timer = Rc::clone(timer);
         let mut box_value = String::from(" ");
         input.handle(Box::new(move |ev: Event| {
             match ev {
@@ -283,7 +287,7 @@ impl ChangingPart {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                                     if cloned_binero.borrow().is_full() {
                                         cloned_tx.send(true).unwrap();
-                                        ChangingPart::display_success(cloned_prefs.borrow().sounds());
+                                        ChangingPart::display_success(cloned_prefs.borrow().sounds(), &cloned_timer);
                                     }
                                 } else {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
@@ -321,10 +325,12 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `sounds` - whether or not the sounds must be played
-    fn display_success(sounds: bool) {
+    /// * `timer` - a timer
+    fn display_success(sounds: bool, timer: &Rc<RefCell<Timer>>) {
         if sounds {
             Sound::Success.play();
         }
+        // TODO call best scores
         let (width, height) = screen_size();
         message(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
     }

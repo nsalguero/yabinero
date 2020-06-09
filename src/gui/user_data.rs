@@ -2,13 +2,17 @@
 //!
 //! `user_data` contains the functions that handles the user's preferences and best scores
 
-std::collections::HashMap
+use std::collections::HashMap;
 use std::str::FromStr;
+use std::rc::Rc;
+use std::cell::RefCell;
 use preferences::{AppInfo, PreferencesMap, Preferences};
 use crate::size::Size;
 use crate::difficulty::Difficulty;
 use fltk::{app::{AppScheme, screen_size}, dialog::alert};
 use tr::tr;
+use enum_iterator::IntoEnumIterator;
+use crate::gui::timer::Timer;
 
 /// The user's preferences
 pub struct UserPrefs {
@@ -18,7 +22,7 @@ pub struct UserPrefs {
 impl UserPrefs {
     /// Returns the user's preferences
     pub fn new() -> UserPrefs {
-        let load_result = PreferencesMap::load(&APP_INFO, PREFS_KEY);
+        let load_result = PreferencesMap::load(&APP_INFO, UserPrefs::PREFS_KEY);
         if load_result.is_ok() {
             UserPrefs {
                 faves: load_result.unwrap(),
@@ -145,7 +149,7 @@ impl UserPrefs {
 
     /// Saves the user's preferences
     fn save(&self) {
-        let save_result = self.faves.save(&APP_INFO, PREFS_KEY);
+        let save_result = self.faves.save(&APP_INFO, UserPrefs::PREFS_KEY);
         if !save_result.is_ok() {
             UserPrefs::display_error(&tr!("User preferences cannot be saved!"));
         }
@@ -174,7 +178,90 @@ impl UserPrefs {
         UserPrefs::display_error(&tr!("Bad theme!"));
         AppScheme::Base
     }
+
+    const PREFS_KEY: &'static str = "yabinero";
+}
+
+/// The best scores
+pub struct BestScores {
+    scores: HashMap<String, PreferencesMap<String>>,
+}
+
+impl BestScores {
+    /// Returns the best scores
+    pub fn new() -> BestScores {
+        let mut scores = HashMap::new();
+        for size in Size::into_enum_iter() {
+            for difficulty in Difficulty::into_enum_iter() {
+                let key = BestScores::key(size, difficulty);
+                let load_result = PreferencesMap::<String>::load(&APP_INFO, &key);
+                let score = if load_result.is_ok() {
+                    load_result.unwrap()
+                } else {
+                    PreferencesMap::new()
+                };
+                scores.insert(key, score);
+            }
+        }
+        BestScores {
+            scores,
+        }
+    }
+
+    /// Returns the best scores for a size and a difficulty
+    ///
+    /// # Arguments
+    ///
+    /// * `size` - a size
+    /// * `difficulty` - a difficulty
+    pub fn best_scores(&self, size: Size, difficulty: Difficulty) -> String {
+        let key = BestScores::key(size, difficulty);
+        let best_scores = self.scores.get(&key).unwrap();
+        let mut result = "".to_owned();
+        for (ranking, score) in best_scores {
+            result.push_str(&format!("{:>2}\t", ranking));
+            result.push_str(score);
+            result.push_str("\n");
+        }
+        result
+    }
+
+    /// Adds a score to the bests scores if that score is a best one
+    ///
+    /// # Arguments
+    ///
+    /// * `size` - a size
+    /// * `difficulty` - a difficulty
+    /// * `timer` - a timer
+    pub fn add_best_score(&mut self, size: Size, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
+        let duration = timer.borrow().duration();
+        let mut ranking = format!("{}", BestScores::MAX_BEST_SCORE + 1);
+        let key = BestScores::key(size, difficulty);
+        let best_scores = self.scores.get(&key).unwrap();
+        for (rank, score) in best_scores {
+            let dur = score.split(" - ").collect()[0].split(":");
+            let dur = dur[0].parse().unwrap() * 60 + dur[1].parse().unwrap();
+            if dur > duration {
+                ranking = rank;
+                break;
+            }
+        }
+        while ranking.parse().unwrap() as u8 <= BestScores::MAX_BEST_SCORE {
+            let old_score = best_scores.insert(ranking, ""); // FIXME use chrono to get something like "05:24 - 2020-06-09"
+        }
+    }
+
+    /// Returns the key for a size and a difficulty
+    ///
+    /// # Arguments
+    ///
+    /// * `size` - a size
+    /// * `difficulty` - a difficulty
+    fn key(size: Size, difficulty: Difficulty) -> String {
+        format!("{}-{}", size, difficulty)
+    }
+
+    const MAX_BEST_SCORE: u8 = 10;
 }
 
 const APP_INFO: AppInfo = AppInfo{name: "yabinero", author: "Nicolas Salguero"};
-const PREFS_KEY: &'static str = "yabinero";

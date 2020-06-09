@@ -63,6 +63,11 @@ impl Timer {
         tx
     }
 
+    /// Returns the current duration
+    pub fn duration(&self) -> u64 {
+        *self.old_duration.lock().unwrap()
+    }
+
     /// Returns the `Frame` displaying the timer
     ///
     /// # Arguments
