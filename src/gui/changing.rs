@@ -9,7 +9,7 @@ use tr::tr;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::sync::mpsc::Sender;
-use fltk::{app::screen_size, button::Button, dialog::alert, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use fltk::{app::screen_size, button::Button, dialog::{alert, message}, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use crate::engine::Binero;
 use crate::engine::history::Item;
 use crate::size::Size;
@@ -326,7 +326,7 @@ impl ChangingPart {
             Sound::Success.play();
         }
         let (width, height) = screen_size();
-        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
+        message(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
     }
 
     /// Adds the handler to the Pause button

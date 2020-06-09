@@ -22,6 +22,21 @@ impl Size {
         let size = format!("{:?}", self).replace("Side", "");
         size.parse().unwrap()
     }
+
+    /// Returns the `Size` corresponding to a given string slice
+    ///
+    /// # Arguments
+    ///
+    /// * `size` - a string slice representing a size
+    pub fn from_str(size: &str) -> Option<Size> {
+        let side = format!("{}x{}", size, size);
+        for a_size in Size::into_enum_iter() {
+            if format!("{}", a_size) == side {
+                return Some(a_size);
+            }
+        }
+        None
+    }
 }
 
 impl fmt::Display for Size {
