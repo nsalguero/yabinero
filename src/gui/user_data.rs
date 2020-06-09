@@ -7,12 +7,13 @@ use std::str::FromStr;
 use std::rc::Rc;
 use std::cell::RefCell;
 use preferences::{AppInfo, PreferencesMap, Preferences};
-use crate::size::Size;
-use crate::difficulty::Difficulty;
 use fltk::{app::{AppScheme, screen_size}, dialog::alert};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
+use chrono::Local;
 use crate::gui::timer::Timer;
+use crate::size::Size;
+use crate::difficulty::Difficulty;
 
 /// The user's preferences
 pub struct UserPrefs {
@@ -184,7 +185,7 @@ impl UserPrefs {
 
 /// The best scores
 pub struct BestScores {
-    scores: HashMap<String, PreferencesMap<String>>,
+    scores: HashMap<String, Rc<RefCell<PreferencesMap<String>>>>,
 }
 
 impl BestScores {
@@ -200,7 +201,7 @@ impl BestScores {
                 } else {
                     PreferencesMap::new()
                 };
-                scores.insert(key, score);
+                scores.insert(key, Rc::new(RefCell::new(score)));
             }
         }
         BestScores {
@@ -218,7 +219,7 @@ impl BestScores {
         let key = BestScores::key(size, difficulty);
         let best_scores = self.scores.get(&key).unwrap();
         let mut result = "".to_owned();
-        for (ranking, score) in best_scores {
+        for (ranking, score) in best_scores.borrow().iter() {
             result.push_str(&format!("{:>2}\t", ranking));
             result.push_str(score);
             result.push_str("\n");
@@ -238,17 +239,30 @@ impl BestScores {
         let mut ranking = format!("{}", BestScores::MAX_BEST_SCORE + 1);
         let key = BestScores::key(size, difficulty);
         let best_scores = self.scores.get(&key).unwrap();
-        for (rank, score) in best_scores {
-            let dur = score.split(" - ").collect()[0].split(":");
-            let dur = dur[0].parse().unwrap() * 60 + dur[1].parse().unwrap();
+        for (rank, score) in best_scores.borrow().iter() {
+            let dur: Vec<&str> = score.split(" - ").collect();
+            let dur: Vec<&str> = dur[0].split(":").collect();
+            let dur: u64 = BestScores::duration_as_u64(dur[0]) * 60 + BestScores::duration_as_u64(dur[1]);
             if dur > duration {
-                ranking = rank;
+                ranking = rank.to_string();
                 break;
             }
         }
-        while ranking.parse().unwrap() as u8 <= BestScores::MAX_BEST_SCORE {
-            let old_score = best_scores.insert(ranking, ""); // FIXME use chrono to get something like "05:24 - 2020-06-09"
+        let mut score = Timer::format(duration);
+        score.push_str(&Local::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        let mut old_score = Some(score);
+        while BestScores::ranking_as_u8(&ranking) <= BestScores::MAX_BEST_SCORE && old_score.is_some() {
+            old_score = best_scores.borrow_mut().insert(ranking.clone(), old_score.unwrap());
+            ranking = format!("{}", BestScores::ranking_as_u8(&ranking) + 1);
         }
+    }
+
+    fn ranking_as_u8(ranking: &str) -> u8 {
+        ranking.parse().unwrap()
+    }
+
+    fn duration_as_u64(duration: &str) -> u64 {
+        duration.parse().unwrap()
     }
 
     /// Returns the key for a size and a difficulty

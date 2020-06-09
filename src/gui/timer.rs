@@ -55,7 +55,7 @@ impl Timer {
                 }
                 if !pause {
                     let duration = cloned_curr_start.lock().unwrap().elapsed().as_secs() + *cloned_old_duration.lock().unwrap();
-                    let duration_as_str = format!("{:02}:{:02}", duration / 60, duration % 60);
+                    let duration_as_str = Timer::format(duration);
                     cloned_timer.lock().unwrap().set_label(&duration_as_str);
                 }
             }
@@ -66,6 +66,15 @@ impl Timer {
     /// Returns the current duration
     pub fn duration(&self) -> u64 {
         *self.old_duration.lock().unwrap()
+    }
+
+    /// Formats a duration
+    ///
+    /// # Arguments
+    ///
+    /// * `duration` - a duration
+    pub fn format(duration: u64) -> String {
+        format!("{:02}:{:02}", duration / 60, duration % 60)
     }
 
     /// Returns the `Frame` displaying the timer

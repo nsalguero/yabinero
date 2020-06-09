@@ -330,7 +330,8 @@ impl ChangingPart {
         if sounds {
             Sound::Success.play();
         }
-        // TODO call best scores
+        let best_scores = BestScores::new();
+        best_scores.add_best_score(); // FIXME add size and difficulty
         let (width, height) = screen_size();
         message(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
     }
