@@ -2,21 +2,13 @@
 //!
 //! `menu` contains the functions that handles the menu
 
-use std::process::exit;
-use std::fmt;
-use std::fs;
-use std::path::Path;
-use std::rc::Rc;
-use std::cell::RefCell;
-use std::sync::mpsc::Sender;
-use fltk::{app::{App, AppScheme}, enums::{Align, Color, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use std::{cell::RefCell, fmt, fs, path::Path, process::exit, rc::Rc, sync::mpsc::Sender};
+use fltk::{app::{App, AppScheme}, enums::{Align, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
+use enum_iterator::IntoEnumIterator;
 use crate::size::Size;
 use crate::difficulty::Difficulty;
-use crate::gui::user_data::UserPrefs;
-use crate::gui::user_data::BestScores;
-use crate::gui::changing::ChangingPart;
-use enum_iterator::IntoEnumIterator;
+use crate::gui::{BG_COLOR, SELECT_COLOR, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
 /// Returns an empty menu bar
 ///
@@ -25,8 +17,8 @@ use enum_iterator::IntoEnumIterator;
 /// * `width` - the width of the menu bar
 pub fn init(width: i32) -> MenuBar {
     let mut menu = MenuBar::new(0, 0, width, MENU_HEIGHT, "");
-    menu.set_color(Color::Light2);
-    menu.set_selection_color(Color::Dark3);
+    menu.set_color(BG_COLOR);
+    menu.set_selection_color(SELECT_COLOR);
     menu
 }
 
@@ -139,15 +131,15 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
-        let mut window = Window::new(0, 0, 490, 460, &tr!("Best scores")).center_screen();
+        let mut window = Window::new(0, 0, 326, 190, &tr!("Best scores")).center_screen();
         window.make_modal(true);
         window.make_resizable(false);
         let best_scores = BestScores::new().best_scores(cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
-        let mut frame = Frame::new(0, 0, 20, 460, &best_scores);
+        let mut frame = Frame::new(0, 0, 20, 184, &best_scores);
         frame.set_align(Align::AlignRight);
-        let mut scroll = Scroll::new(0, 0, 490, 460, "");
+        let mut scroll = Scroll::new(0, 0, 326, 190, "");
         scroll.add(&frame);
-        scroll.set_color(Color::Light2);
+        scroll.set_color(BG_COLOR);
         window.end();
         window.show();
     }));
@@ -285,7 +277,7 @@ fn add_about(menu: &mut MenuBar) {
         frame.set_align(Align::AlignRight);
         let mut scroll = Scroll::new(0, 0, 490, 460, "");
         scroll.add(&frame);
-        scroll.set_color(Color::Light2);
+        scroll.set_color(BG_COLOR);
         window.end();
         window.show();
     }));
@@ -305,7 +297,7 @@ fn add_license(menu: &mut MenuBar) {
         let frame = Frame::new(0, 0, 540, 11500, &license);
         let mut scroll = Scroll::new(0, 0, 560, 600, "");
         scroll.add(&frame);
-        scroll.set_color(Color::Light2);
+        scroll.set_color(BG_COLOR);
         window.end();
         window.show();
     }));

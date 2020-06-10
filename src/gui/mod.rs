@@ -8,10 +8,8 @@ mod sound;
 mod timer;
 mod user_data;
 
-use std::rc::Rc;
-use std::cell::RefCell;
-use std::path::Path;
-use fltk::{app::{App, AppScheme}, enums::Color, image::PngImage, menu::MenuBar, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
+use std::{cell::RefCell, path::Path, rc::Rc};
+use fltk::{app::{App, AppScheme, screen_size}, dialog::{alert, message}, enums::Color, image::PngImage, menu::MenuBar, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
 use user_data::UserPrefs;
 use changing::ChangingPart;
 
@@ -70,8 +68,34 @@ impl Game {
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(&icon);
         }
-        window.set_color(Color::Light2);
+        window.set_color(BG_COLOR);
         window.make_resizable(false);
         (Rc::new(RefCell::new(app)), window)
     }
 }
+
+/// Displays a popup with an error message
+///
+/// # Arguments
+///
+/// * `msg` - the error message
+pub fn display_alert(msg: &str) {
+    let (width, height) = screen_size();
+    alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
+}
+
+/// Displays a popup with a message
+///
+/// # Arguments
+///
+/// * `msg` - the message
+fn display_message(msg: &str) {
+    let (width, height) = screen_size();
+    message(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
+}
+
+pub const BG_COLOR: Color = Color::Light2;
+pub const FG_COLOR: Color = Color::Black;
+pub const SELECT_COLOR: Color = Color::Dark3;
+pub const RO_FG_COLOR: Color = Color::Inactive;
+pub const RO_SELECT_COLOR: Color = Color::Dark1;

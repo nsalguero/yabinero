@@ -2,16 +2,13 @@
 //!
 //! `user_data` contains the functions that handles the user's preferences and best scores
 
-use std::collections::HashMap;
-use std::str::FromStr;
-use std::rc::Rc;
-use std::cell::RefCell;
+use std::{cell::RefCell, collections::HashMap, rc::Rc, str::FromStr};
 use preferences::{AppInfo, PreferencesMap, Preferences};
-use fltk::{app::{AppScheme, screen_size}, dialog::alert};
+use fltk::app::AppScheme;
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use chrono::Local;
-use crate::gui::timer::Timer;
+use crate::gui::{display_alert, timer::Timer};
 use crate::size::Size;
 use crate::difficulty::Difficulty;
 
@@ -138,45 +135,35 @@ impl UserPrefs {
         self.save();
     }
 
-    /// Displays an error
-    ///
-    /// # Arguments
-    ///
-    /// * `msg` - an error message
-    fn display_error(msg: &str) {
-        let (width, height) = screen_size();
-        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
-    }
-
     /// Saves the user's preferences
     fn save(&self) {
         let save_result = self.faves.save(&APP_INFO, UserPrefs::PREFS_KEY);
         if !save_result.is_ok() {
-            UserPrefs::display_error(&tr!("User preferences cannot be saved!"));
+            display_alert(&tr!("User preferences cannot be saved!"));
         }
     }
 
     /// Returns the default size when the size cannot be read from the user's preferences
     fn bad_size() -> Size {
-        UserPrefs::display_error(&tr!("Bad size!"));
+        display_alert(&tr!("Bad size!"));
         Size::Side6
     }
 
     /// Returns the default difficulty when the difficulty cannot be read from the user's preferences
     fn bad_difficulty() -> Difficulty {
-        UserPrefs::display_error(&tr!("Bad difficulty!"));
+        display_alert(&tr!("Bad difficulty!"));
         Difficulty::Beginner
     }
 
     /// Returns `true` when the choice about playing the sounds cannot be read from the user's preferences
     fn bad_sounds() -> bool {
-        UserPrefs::display_error(&tr!("Unable to know whether or not the sounds must be played!"));
+        display_alert(&tr!("Unable to know whether or not the sounds must be played!"));
         true
     }
 
     /// Returns the default theme when the theme cannot be read from the user's preferences
     fn bad_theme() -> AppScheme {
-        UserPrefs::display_error(&tr!("Bad theme!"));
+        display_alert(&tr!("Bad theme!"));
         AppScheme::Base
     }
 
@@ -185,7 +172,7 @@ impl UserPrefs {
 
 /// The best scores
 pub struct BestScores {
-    scores: HashMap<String, Rc<RefCell<PreferencesMap<String>>>>,
+    scores: HashMap<String, PreferencesMap<String>>,
 }
 
 impl BestScores {
@@ -201,7 +188,7 @@ impl BestScores {
                 } else {
                     PreferencesMap::new()
                 };
-                scores.insert(key, Rc::new(RefCell::new(score)));
+                scores.insert(key, score);
             }
         }
         BestScores {
@@ -219,10 +206,16 @@ impl BestScores {
         let key = BestScores::key(size, difficulty);
         let best_scores = self.scores.get(&key).unwrap();
         let mut result = "".to_owned();
-        for (ranking, score) in best_scores.borrow().iter() {
-            result.push_str(&format!("{:>2}\t", ranking));
-            result.push_str(score);
-            result.push_str("\n");
+        let mut ranking: u8 = 1;
+        while ranking <= BestScores::MAX_BEST_SCORE {
+            if let Some(score) = best_scores.get(&format!("{}", ranking)) {
+                result.push_str(&format!("{:02}\t", ranking));
+                result.push_str(score);
+                result.push_str("\n");
+                ranking += 1;
+            } else {
+                break;
+            }
         }
         result
     }
@@ -236,31 +229,81 @@ impl BestScores {
     /// * `timer` - a timer
     pub fn add_best_score(&mut self, size: Size, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let duration = timer.borrow().duration();
-        let mut ranking = format!("{}", BestScores::MAX_BEST_SCORE + 1);
         let key = BestScores::key(size, difficulty);
-        let best_scores = self.scores.get(&key).unwrap();
-        for (rank, score) in best_scores.borrow().iter() {
-            let dur: Vec<&str> = score.split(" - ").collect();
-            let dur: Vec<&str> = dur[0].split(":").collect();
-            let dur: u64 = BestScores::duration_as_u64(dur[0]) * 60 + BestScores::duration_as_u64(dur[1]);
-            if dur > duration {
-                ranking = rank.to_string();
+        let best_scores = self.scores.get_mut(&key).unwrap();
+        let mut ranking = String::from("1");
+        let mut rank: u8 = 1;
+        while rank <= BestScores::MAX_BEST_SCORE {
+            let rank_str = format!("{}", rank);
+            ranking = rank_str.clone();
+            if let Some(score) = best_scores.get(&rank_str) {
+                let dur = BestScores::duration(&score);
+                if dur > duration {
+                    break;
+                }
+                rank += 1;
+            } else {
                 break;
             }
         }
-        let mut score = Timer::format(duration);
-        score.push_str(&Local::now().format("%Y-%m-%d %H:%M:%S").to_string());
-        let mut old_score = Some(score);
+        let mut old_score = Some(BestScores::score(duration));
         while BestScores::ranking_as_u8(&ranking) <= BestScores::MAX_BEST_SCORE && old_score.is_some() {
-            old_score = best_scores.borrow_mut().insert(ranking.clone(), old_score.unwrap());
+            old_score = best_scores.insert(ranking.clone(), old_score.unwrap());
             ranking = format!("{}", BestScores::ranking_as_u8(&ranking) + 1);
+        }
+        BestScores::save(best_scores, key);
+    }
+
+    /// Extracts the duration from a score and returns it
+    ///
+    /// # Arguments
+    ///
+    /// * `score` - a score
+    fn duration(score: &str) -> u64 {
+        let duration: Vec<&str> = score.split("\t\t").collect();
+        let duration: Vec<&str> = duration[0].split(":").collect();
+        BestScores::duration_as_u64(duration[0]) * 60 + BestScores::duration_as_u64(duration[1])
+    }
+
+    /// Returns a score created using a duration
+    ///
+    /// # Arguments
+    ///
+    /// * `duration` - a duration
+    fn score(duration: u64) -> String {
+        let mut score = Timer::format(duration);
+        score.push_str("\t\t");
+        score.push_str(&Local::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        score
+    }
+
+    /// Saves some best scores
+    ///
+    /// # Arguments
+    ///
+    /// * `best_scores` - some best scores
+    /// * `key` - a key
+    fn save(best_scores: &mut PreferencesMap<String>, key: String) {
+        let save_result = best_scores.save(&APP_INFO, key);
+        if !save_result.is_ok() {
+            display_alert(&tr!("Best scores cannot be saved!"));
         }
     }
 
+    /// Returns a ranking as an unsigned 8-bit integer
+    ///
+    /// # Arguments
+    ///
+    /// * `ranking` - a ranking
     fn ranking_as_u8(ranking: &str) -> u8 {
         ranking.parse().unwrap()
     }
 
+    /// Returns a duration as an unsigned 64-bit integer
+    ///
+    /// # Arguments
+    ///
+    /// * `duration` - a duration
     fn duration_as_u64(duration: &str) -> u64 {
         duration.parse().unwrap()
     }
@@ -272,7 +315,7 @@ impl BestScores {
     /// * `size` - a size
     /// * `difficulty` - a difficulty
     fn key(size: Size, difficulty: Difficulty) -> String {
-        format!("{}-{}", size, difficulty)
+        format!("{}-{:?}", size, difficulty)
     }
 
     const MAX_BEST_SCORE: u8 = 10;

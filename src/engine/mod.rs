@@ -6,8 +6,7 @@ mod grid;
 pub mod history;
 
 use std::fmt;
-use rand::Rng;
-use rand::prelude::*;
+use rand::{Rng, prelude::*};
 use grid::Grid;
 use history::{History, Item};
 use crate::value::Value;

@@ -2,10 +2,7 @@
 //!
 //! `sound` contains the functions to play the sounds of the game
 
-use std::fmt;
-use std::fs::File;
-use std::path::Path;
-use std::io::BufReader;
+use std::{fmt, fs::File, path::Path, io::BufReader};
 use rodio::Source;
 
 /// The two possible types of sound

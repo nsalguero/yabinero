@@ -2,22 +2,15 @@
 //!
 //! `changing` represents the changing part of the GUI, used during a game
 
-use std::collections::HashMap;
-use std::fmt;
-use std::path::Path;
+use std::{cell::RefCell, collections::HashMap, fmt, path::Path, rc::Rc, sync::mpsc::Sender, thread, time::Duration};
 use tr::tr;
-use std::rc::Rc;
-use std::cell::RefCell;
-use std::sync::mpsc::Sender;
-use fltk::{app::screen_size, button::Button, dialog::{alert, message}, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
-use crate::engine::Binero;
-use crate::engine::history::Item;
+use fltk::{button::Button, enums::{Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use enum_iterator::IntoEnumIterator;
+use crate::engine::{Binero, history::Item};
+use crate::difficulty::Difficulty;
 use crate::size::Size;
 use crate::value::Value;
-use crate::gui::sound::Sound;
-use crate::gui::timer::Timer;
-use crate::gui::user_data::UserPrefs;
-use enum_iterator::IntoEnumIterator;
+use crate::gui::{BG_COLOR, FG_COLOR, SELECT_COLOR, RO_FG_COLOR, RO_SELECT_COLOR, display_alert, display_message, sound::Sound, timer::Timer, user_data::{UserPrefs, BestScores}};
 
 /// The changing part of the GUI, used during a game
 pub struct ChangingPart {
@@ -81,7 +74,7 @@ impl ChangingPart {
     pub fn new_game(user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) -> Sender<bool> {
         let binero = Rc::new(RefCell::new(Binero::new(user_prefs.borrow().size(), user_prefs.borrow().difficulty())));
         let tx_result = changing.borrow_mut().timer.borrow_mut().start();
-        ChangingPart::fill(changing, Rc::clone(&binero), user_prefs, &tx_result, &changing.borrow().timer);
+        ChangingPart::fill(changing, Rc::clone(&binero), user_prefs, &tx_result, user_prefs.borrow().difficulty(), &changing.borrow().timer);
         ChangingPart::add_pause_handler(changing, user_prefs.borrow().size(), Sender::clone(&tx_result));
         ChangingPart::add_resume_handler(changing, user_prefs.borrow().size(), Sender::clone(&tx_result));
         ChangingPart::add_undo_handler(changing, Rc::clone(&binero));
@@ -113,12 +106,13 @@ impl ChangingPart {
     /// * `binero` - a binero
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
+    /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
+    fn fill(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let size = binero.borrow().size();
         for (a_size, boxes) in &changing.borrow().grids {
             if *a_size == size {
-                ChangingPart::fill_selected_grid(&boxes, &binero, user_prefs, tx, timer);
+                ChangingPart::fill_selected_grid(&boxes, &binero, user_prefs, tx, difficulty, timer);
             } else {
                 ChangingPart::hide_selected_grid(&boxes);
             }
@@ -174,7 +168,7 @@ impl ChangingPart {
     /// * `play_button` - a `PlayButton`
     fn init_button(x: i32, y: i32, width: i32, play_button: PlayButton) -> Button {
         let mut button = Button::new(x, y, width, ChangingPart::HEIGHT, &format!("{}", play_button));
-        button.set_color(Color::Light2);
+        button.set_color(BG_COLOR);
         button.hide();
         button
     }
@@ -217,14 +211,15 @@ impl ChangingPart {
     /// * `binero` - a binero
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
+    /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
                 let input = &mut boxes.borrow_mut()[i][j];
                 ChangingPart::fill_box(input, binero, i as u8, j as u8);
-                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, user_prefs, tx, timer);
+                ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, user_prefs, tx, difficulty, timer);
             }
         }
     }
@@ -241,13 +236,13 @@ impl ChangingPart {
         if let Some(val) = binero.borrow().get(x_axis, y_axis) {
             input.set_value(&format!(" {}", val));
             input.set_readonly(true);
-            input.set_text_color(Color::Inactive);
-            input.set_selection_color(Color::Dark1);
+            input.set_text_color(RO_FG_COLOR);
+            input.set_selection_color(RO_SELECT_COLOR);
         } else {
             input.set_value(" ");
             input.set_readonly(false);
-            input.set_text_color(Color::Black);
-            input.set_selection_color(Color::Dark3);
+            input.set_text_color(FG_COLOR);
+            input.set_selection_color(SELECT_COLOR);
         }
         input.show();
     }
@@ -263,8 +258,9 @@ impl ChangingPart {
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `user_prefs` - the user's preferences
     /// * `tx` - a `Sender`
+    /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, timer: &Rc<RefCell<Timer>>) {
+    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let cloned_boxes = Rc::clone(boxes);
         let cloned_binero = Rc::clone(&binero);
         let cloned_prefs = Rc::clone(user_prefs);
@@ -287,7 +283,7 @@ impl ChangingPart {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
                                     if cloned_binero.borrow().is_full() {
                                         cloned_tx.send(true).unwrap();
-                                        ChangingPart::display_success(cloned_prefs.borrow().sounds(), &cloned_timer);
+                                        ChangingPart::display_success(cloned_prefs.borrow().sounds(), cloned_binero.borrow().size(), difficulty, &cloned_timer);
                                     }
                                 } else {
                                     cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].set_value(&box_value);
@@ -316,8 +312,7 @@ impl ChangingPart {
         if sounds {
             Sound::Error.play();
         }
-        let (width, height) = screen_size();
-        alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
+        display_alert(msg);
     }
 
     /// Displays a popup with a success message and play the success sound if sounds are activated
@@ -325,15 +320,18 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `sounds` - whether or not the sounds must be played
+    /// * `size` - a size
+    /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn display_success(sounds: bool, timer: &Rc<RefCell<Timer>>) {
+    fn display_success(sounds: bool, size: Size, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
+        const WAITING_DURATION: Duration = Duration::from_millis(Timer::WAITING * 2);
+        thread::sleep(WAITING_DURATION);
         if sounds {
             Sound::Success.play();
         }
-        let best_scores = BestScores::new();
-        best_scores.add_best_score(); // FIXME add size and difficulty
-        let (width, height) = screen_size();
-        message(width as i32 / 2 - 302, height as i32 / 2 - 14, &tr!("Congratulations, you won!"));
+        let mut best_scores = BestScores::new();
+        best_scores.add_best_score(size, difficulty, timer);
+        display_message(&tr!("Congratulations, you won!"));
     }
 
     /// Adds the handler to the Pause button

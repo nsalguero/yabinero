@@ -2,10 +2,7 @@
 //!
 //! `timer` handles the timer
 
-use std::time::{Duration, Instant};
-use std::thread;
-use std::path::Path;
-use std::sync::{Arc, Mutex, mpsc::{self, Sender}};
+use std::{path::Path, sync::{Arc, Mutex, mpsc::{self, Sender}}, thread, time::{Duration, Instant}};
 use fltk::{prelude::{ImageExt, WidgetExt}, frame::Frame, image::SvgImage};
 
 pub struct Timer {
@@ -29,20 +26,15 @@ impl Timer {
 
     /// Starts the timer
     pub fn start(&mut self) -> Sender<bool> {
-        let mut curr_start = self.curr_start.lock().unwrap();
-        *curr_start = Instant::now();
-        let mut old_duration = self.old_duration.lock().unwrap();
-        *old_duration = 0;
-        self.timer.lock().unwrap().show();
+        self.reset();
         let cloned_timer = Arc::clone(&self.timer);
         let cloned_old_duration = Arc::clone(&self.old_duration);
         let cloned_curr_start = Arc::clone(&self.curr_start);
-        const WAITING_DURATION: Duration = Duration::from_millis(100);
         let (tx, rx) = mpsc::channel();
         thread::spawn(move || {
             let mut pause = false;
             loop {
-                thread::sleep(WAITING_DURATION);
+                thread::sleep(Timer::WAITING_DURATION);
                 if let Ok(p) = rx.try_recv() {
                     pause = p;
                     if pause {
@@ -55,8 +47,7 @@ impl Timer {
                 }
                 if !pause {
                     let duration = cloned_curr_start.lock().unwrap().elapsed().as_secs() + *cloned_old_duration.lock().unwrap();
-                    let duration_as_str = Timer::format(duration);
-                    cloned_timer.lock().unwrap().set_label(&duration_as_str);
+                    cloned_timer.lock().unwrap().set_label(&Timer::format(duration));
                 }
             }
         });
@@ -93,4 +84,17 @@ impl Timer {
         timer.hide();
         Arc::new(Mutex::new(timer))
     }
+
+    /// Resets the timer
+    fn reset(&mut self) {
+        let mut curr_start = self.curr_start.lock().unwrap();
+        *curr_start = Instant::now();
+        let mut old_duration = self.old_duration.lock().unwrap();
+        *old_duration = 0;
+        self.timer.lock().unwrap().show();
+    }
+
+    pub const WAITING: u64 = 100;
+
+    const WAITING_DURATION: Duration = Duration::from_millis(Timer::WAITING);
 }
