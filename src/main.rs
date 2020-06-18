@@ -1,9 +1,7 @@
 //! # Yet Another Binero puzzle game
 
 mod engine;
-mod size;
-mod value;
-mod difficulty;
+mod enums;
 mod gui;
 
 use tr::tr_init;

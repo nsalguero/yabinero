@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0.0\n"
+"Project-Id-Version: 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 15:00+0200\n"
-"PO-Revision-Date: 2020-06-10 15:04+0200\n"
+"POT-Creation-Date: 2020-06-18 16:23+0200\n"
+"PO-Revision-Date: 2020-06-18 16:32+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/difficulty.rs:37
+#: src/enums.rs:37
 msgid "Beginner"
 msgstr ""
 
-#: src/difficulty.rs:38
+#: src/enums.rs:38
 msgid "Easy"
 msgstr ""
 
-#: src/difficulty.rs:39
+#: src/enums.rs:39
 msgid "Medium"
 msgstr ""
 
-#: src/difficulty.rs:40
+#: src/enums.rs:40
 msgid "Hard"
 msgstr ""
 
@@ -69,122 +69,142 @@ msgstr ""
 msgid "Solve"
 msgstr ""
 
-#: src/gui/menu.rs:134 src/gui/menu.rs:355
+#: src/gui/menu.rs:134 src/gui/menu.rs:416
 msgid "Best scores"
 msgstr ""
 
-#: src/gui/menu.rs:238
-msgid "		Yet Another Binero puzzle game, version 1.0.0."
-msgstr ""
-
-#: src/gui/menu.rs:240
-msgid "This software is a mathematical puzzle game."
-msgstr ""
-
-#: src/gui/menu.rs:242
-msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
-msgstr ""
-
-#: src/gui/menu.rs:244
-msgid "two constraints:"
-msgstr ""
-
-#: src/gui/menu.rs:246
-msgid "In each line or column, there must be the same number"
-msgstr ""
-
-#: src/gui/menu.rs:248
-msgid "of the two values."
+#: src/gui/menu.rs:143 src/gui/menu.rs:271 src/gui/menu.rs:331 src/gui/menu.rs:356
+msgid "OK"
 msgstr ""
 
 #: src/gui/menu.rs:250
-msgid "In each line or column, the same value cannot be side by"
-msgstr ""
-
-#: src/gui/menu.rs:252
-msgid "side more than twice."
+msgid "Color of actives boxes"
 msgstr ""
 
 #: src/gui/menu.rs:254
+msgid "Color of inactives boxes"
+msgstr ""
+
+#: src/gui/menu.rs:267
+msgid "Choose"
+msgstr ""
+
+#: src/gui/menu.rs:288
+msgid "		Yet Another Binero puzzle game, version 1.1.0."
+msgstr ""
+
+#: src/gui/menu.rs:290
+msgid "This software is a mathematical puzzle game."
+msgstr ""
+
+#: src/gui/menu.rs:292
+msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
+msgstr ""
+
+#: src/gui/menu.rs:294
+msgid "two constraints:"
+msgstr ""
+
+#: src/gui/menu.rs:296
+msgid "In each line or column, there must be the same number"
+msgstr ""
+
+#: src/gui/menu.rs:298
+msgid "of the two values."
+msgstr ""
+
+#: src/gui/menu.rs:300
+msgid "In each line or column, the same value cannot be side by"
+msgstr ""
+
+#: src/gui/menu.rs:302
+msgid "side more than twice."
+msgstr ""
+
+#: src/gui/menu.rs:304
 msgid "Developper: Nicolas Salguero."
 msgstr ""
 
-#: src/gui/menu.rs:256
+#: src/gui/menu.rs:306
 msgid "This software is released under the GNU General Public Licence"
 msgstr ""
 
-#: src/gui/menu.rs:258
+#: src/gui/menu.rs:308
 msgid "version 3.0 or any later version."
 msgstr ""
 
-#: src/gui/menu.rs:260
+#: src/gui/menu.rs:310
 msgid "For more information, please see:"
 msgstr ""
 
-#: src/gui/menu.rs:272 src/gui/menu.rs:361
+#: src/gui/menu.rs:322 src/gui/menu.rs:423
 msgid "About"
 msgstr ""
 
-#: src/gui/menu.rs:293 src/gui/menu.rs:362
+#: src/gui/menu.rs:348 src/gui/menu.rs:424
 msgid "License"
 msgstr ""
 
-#: src/gui/menu.rs:330
+#: src/gui/menu.rs:390
 msgid "Game"
 msgstr ""
 
-#: src/gui/menu.rs:331
+#: src/gui/menu.rs:391
 msgid "Options"
 msgstr ""
 
-#: src/gui/menu.rs:332
+#: src/gui/menu.rs:392
 msgid "Help"
 msgstr ""
 
-#: src/gui/menu.rs:354
+#: src/gui/menu.rs:415
 msgid "New"
 msgstr ""
 
-#: src/gui/menu.rs:356
+#: src/gui/menu.rs:417
 msgid "Quit"
 msgstr ""
 
-#: src/gui/menu.rs:357
+#: src/gui/menu.rs:418
 msgid "Size"
 msgstr ""
 
-#: src/gui/menu.rs:358
+#: src/gui/menu.rs:419
 msgid "Difficulty"
 msgstr ""
 
-#: src/gui/menu.rs:359
+#: src/gui/menu.rs:420
 msgid "Sounds"
 msgstr ""
 
-#: src/gui/menu.rs:360
+#: src/gui/menu.rs:421
 msgid "Theme"
 msgstr ""
 
-#: src/gui/user_data.rs:142
+#: src/gui/menu.rs:422
+msgid "Colors"
+msgstr ""
+
+#: src/gui/user_data.rs:189
 msgid "User preferences cannot be saved!"
 msgstr ""
 
-#: src/gui/user_data.rs:148
+#: src/gui/user_data.rs:212
 msgid "Bad size!"
 msgstr ""
 
-#: src/gui/user_data.rs:154
+#: src/gui/user_data.rs:218
 msgid "Bad difficulty!"
 msgstr ""
 
-#: src/gui/user_data.rs:160
+#: src/gui/user_data.rs:224
 msgid "Unable to know whether or not the sounds must be played!"
 msgstr ""
 
-#: src/gui/user_data.rs:166
+#: src/gui/user_data.rs:230
 msgid "Bad theme!"
 msgstr ""
 
-#: src/gui/user_data.rs:289
+#: src/gui/user_data.rs:353
 msgid "Best scores cannot be saved!"
 msgstr ""

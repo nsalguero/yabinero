@@ -4,13 +4,11 @@
 
 use std::{cell::RefCell, collections::HashMap, fmt, path::Path, rc::Rc, sync::mpsc::Sender, thread, time::Duration};
 use tr::tr;
-use fltk::{button::Button, enums::{Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use fltk::{button::Button, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use enum_iterator::IntoEnumIterator;
 use crate::engine::{Binero, history::Item};
-use crate::difficulty::Difficulty;
-use crate::size::Size;
-use crate::value::Value;
-use crate::gui::{BG_COLOR, FG_COLOR, SELECT_COLOR, RO_FG_COLOR, RO_SELECT_COLOR, display_alert, display_message, sound::Sound, timer::Timer, user_data::{UserPrefs, BestScores}};
+use crate::enums::{Difficulty, Size, Value};
+use crate::gui::{BG_COLOR, SELECT_COLOR, RO_SELECT_COLOR, display_alert, display_message, sound::Sound, timer::Timer, user_data::{UserPrefs, BestScores}};
 
 /// The changing part of the GUI, used during a game
 pub struct ChangingPart {
@@ -218,7 +216,7 @@ impl ChangingPart {
         for i in 0..size {
             for j in 0..size {
                 let input = &mut boxes.borrow_mut()[i][j];
-                ChangingPart::fill_box(input, binero, i as u8, j as u8);
+                ChangingPart::fill_box(input, binero, i as u8, j as u8, user_prefs.borrow().color(), user_prefs.borrow().ro_color());
                 ChangingPart::add_event_handler(boxes, input, binero, i as u8, j as u8, user_prefs, tx, difficulty, timer);
             }
         }
@@ -232,16 +230,18 @@ impl ChangingPart {
     /// * `binero` - a binero
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
-    fn fill_box(input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8) {
+    /// * `color` - the color of the writable boxes
+    /// * `ro_ color` - the color of the read-only boxes
+    fn fill_box(input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, color: Color, ro_color: Color) {
         if let Some(val) = binero.borrow().get(x_axis, y_axis) {
             input.set_value(&format!(" {}", val));
             input.set_readonly(true);
-            input.set_text_color(RO_FG_COLOR);
+            input.set_text_color(ro_color);
             input.set_selection_color(RO_SELECT_COLOR);
         } else {
             input.set_value(" ");
             input.set_readonly(false);
-            input.set_text_color(FG_COLOR);
+            input.set_text_color(color);
             input.set_selection_color(SELECT_COLOR);
         }
         input.show();

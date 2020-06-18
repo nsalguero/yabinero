@@ -4,13 +4,12 @@
 
 use std::{cell::RefCell, collections::HashMap, rc::Rc, str::FromStr};
 use preferences::{AppInfo, PreferencesMap, Preferences};
-use fltk::app::AppScheme;
+use fltk::{app::AppScheme, enums::Color};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use chrono::Local;
-use crate::gui::{display_alert, timer::Timer};
-use crate::size::Size;
-use crate::difficulty::Difficulty;
+use crate::gui::{FG_COLOR, RO_FG_COLOR, display_alert, timer::Timer};
+use crate::enums::{Difficulty, Size};
 
 /// The user's preferences
 pub struct UserPrefs {
@@ -31,6 +30,8 @@ impl UserPrefs {
             faves.insert("difficulty".to_owned(), "Beginner".to_owned());
             faves.insert("sounds".to_owned(), "true".to_owned());
             faves.insert("theme".to_owned(), "Gtk".to_owned());
+            faves.insert("color".to_owned(), "(0, 0, 0)".to_owned());
+            faves.insert("ro_color".to_owned(), "(55, 55, 55)".to_owned());
             let result = UserPrefs {
                 faves,
             };
@@ -135,12 +136,75 @@ impl UserPrefs {
         self.save();
     }
 
+    /// Returns the current color of writable boxes
+    pub fn color(&self) -> Color {
+        if let Some(color_str) = self.faves.get("color") {
+            if let Some(color) = UserPrefs::color_from_str(color_str) {
+                color
+            } else {
+                FG_COLOR
+            }
+        } else {
+            FG_COLOR
+        }
+    }
+
+    /// Sets the color of writable boxes
+    ///
+    /// # Arguments
+    ///
+    /// * `color` - a RGB value
+    pub fn set_color(&mut self, color: (u8, u8, u8)) {
+        self.faves.insert("color".to_owned(), format!("{:?}", color));
+        self.save();
+    }
+
+    /// Returns the current color of read-only boxes
+    pub fn ro_color(&self) -> Color {
+        if let Some(color_str) = self.faves.get("ro_color") {
+            if let Some(color) = UserPrefs::color_from_str(color_str) {
+                color
+            } else {
+                RO_FG_COLOR
+            }
+        } else {
+            RO_FG_COLOR
+        }
+    }
+
+    /// Sets the color of read-only boxes
+    ///
+    /// # Arguments
+    ///
+    /// * `color` - a RGB value
+    pub fn set_ro_color(&mut self, color: (u8, u8, u8)) {
+        self.faves.insert("ro_color".to_owned(), format!("{:?}", color));
+        self.save();
+    }
+
     /// Saves the user's preferences
     fn save(&self) {
         let save_result = self.faves.save(&APP_INFO, UserPrefs::PREFS_KEY);
         if !save_result.is_ok() {
             display_alert(&tr!("User preferences cannot be saved!"));
         }
+    }
+
+    /// Returns the color extracted from a string or `None` if there is a problem
+    ///
+    /// * `color_str` - a string that contains a color
+    fn color_from_str(color_str: &str) -> Option<Color> {
+        let color: Vec<&str> = color_str.split(",").collect();
+        if color.len() == 3 {
+            if let Ok(red) = color[0].replace("(", "").trim().parse() {
+                if let Ok(green) = color[1].trim().parse() {
+                    if let Ok(blue) = color[2].replace(")", "").trim().parse() {
+                        return Some(Color::from_rgb(red, green, blue));
+                    }
+                }
+            }
+        }
+        None
     }
 
     /// Returns the default size when the size cannot be read from the user's preferences
@@ -211,11 +275,9 @@ impl BestScores {
             if let Some(score) = best_scores.get(&format!("{}", ranking)) {
                 result.push_str(&format!("{:02}\t", ranking));
                 result.push_str(score);
-                result.push_str("\n");
-                ranking += 1;
-            } else {
-                break;
             }
+            result.push_str("\n");
+            ranking += 1;
         }
         result
     }

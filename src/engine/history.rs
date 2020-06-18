@@ -3,7 +3,7 @@
 //! `history` manages the history of the game
 
 use std::fmt;
-use crate::value::Value;
+use crate::enums::Value;
 
 /// The history of the game is represented here
 pub struct History {

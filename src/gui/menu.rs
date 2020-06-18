@@ -3,11 +3,10 @@
 //! `menu` contains the functions that handles the menu
 
 use std::{cell::RefCell, fmt, fs, path::Path, process::exit, rc::Rc, sync::mpsc::Sender};
-use fltk::{app::{App, AppScheme}, enums::{Align, Shortcut}, frame::Frame, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use fltk::{app::{App, AppScheme}, button::Button, enums::{Align, Shortcut}, frame::Frame, group::ColorChooser, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
-use crate::size::Size;
-use crate::difficulty::Difficulty;
+use crate::enums::{Difficulty, Size};
 use crate::gui::{BG_COLOR, SELECT_COLOR, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
 /// Returns an empty menu bar
@@ -90,6 +89,7 @@ fn add_options_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, 
     add_difficulties(menu, user_prefs);
     add_sounds(menu, user_prefs);
     add_themes(menu, user_prefs, app);
+    add_colors(menu, user_prefs);
 }
 
 /// Adds the entries to the "Help" menu
@@ -131,17 +131,22 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
-        let mut window = Window::new(0, 0, 326, 190, &tr!("Best scores")).center_screen();
+        let mut window = Window::new(0, 0, 326, 230, &tr!("Best scores")).center_screen();
         window.make_modal(true);
         window.make_resizable(false);
         let best_scores = BestScores::new().best_scores(cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
         let mut frame = Frame::new(0, 0, 20, 184, &best_scores);
-        frame.set_align(Align::AlignRight);
-        let mut scroll = Scroll::new(0, 0, 326, 190, "");
+        frame.set_align(Align::Right);
+        let mut scroll = Scroll::new(0, 0, 326, 230, "");
         scroll.add(&frame);
         scroll.set_color(BG_COLOR);
+        let mut but_ok = Button::new(128, 184, 70, 40, &tr!("OK"));
+        but_ok.set_color(BG_COLOR);
         window.end();
         window.show();
+        but_ok.set_callback(Box::new(move || {
+            window.hide();
+        }));
     }));
 }
 
@@ -234,8 +239,53 @@ fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, app: &Rc<
     }));
 }
 
+/// Adds the "Options/Colors/..." menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `user_prefs` - the user's preferences
+fn add_colors(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Colors, Some(&tr!("Color of actives boxes"))), Shortcut::None, MenuFlag::Normal, Box::new(move || {
+        display_color_chooser(&cloned_prefs, false);
+    }));
+    let cloned_prefs = Rc::clone(user_prefs);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Colors, Some(&tr!("Color of inactives boxes"))), Shortcut::None, MenuFlag::Normal, Box::new(move || {
+        display_color_chooser(&cloned_prefs, true);
+    }));
+}
+
+/// Displays a color chooser
+///
+/// # Arguments
+///
+/// * `user_prefs` - the user's preferences
+/// * `read_only` - whether or not the color is for read-only boxes
+fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
+    let cloned_prefs = Rc::clone(user_prefs);
+    let mut window = Window::new(0, 0, 200, 142, &tr!("Choose")).center_screen();
+    window.make_modal(true);
+    window.make_resizable(false);
+    let chooser = ColorChooser::new(0, 0, 200, 95, "");
+    let mut but_ok = Button::new(65, 100, 70, 40, &tr!("OK"));
+    but_ok.set_color(BG_COLOR);
+    window.end();
+    window.show();
+    but_ok.set_callback(Box::new(move || {
+        let color = chooser.rgb_color();
+        if read_only {
+            cloned_prefs.borrow_mut().set_ro_color(color);
+        } else {
+            cloned_prefs.borrow_mut().set_color(color);
+        }
+        window.hide();
+    }));
+}
+
+/// Returns the help of the game
 fn about() -> String {
-    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.0.0.");
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.1.0.");
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
     result.push_str("\n\n\n");
@@ -269,17 +319,22 @@ fn about() -> String {
 /// * `menu` - a menu bar
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
-        let mut window = Window::new(0, 0, 490, 460, &tr!("About")).center_screen();
+        let mut window = Window::new(0, 0, 490, 510, &tr!("About")).center_screen();
         window.make_modal(true);
         window.make_resizable(false);
         let about = about();
         let mut frame = Frame::new(0, 0, 20, 460, &about);
-        frame.set_align(Align::AlignRight);
-        let mut scroll = Scroll::new(0, 0, 490, 460, "");
+        frame.set_align(Align::Right);
+        let mut scroll = Scroll::new(0, 0, 490, 510, "");
         scroll.add(&frame);
         scroll.set_color(BG_COLOR);
+        let mut but_ok = Button::new(210, 460, 70, 40, &tr!("OK"));
+        but_ok.set_color(BG_COLOR);
         window.end();
         window.show();
+        but_ok.set_callback(Box::new(move || {
+            window.hide();
+        }));
     }));
 }
 
@@ -298,8 +353,13 @@ fn add_license(menu: &mut MenuBar) {
         let mut scroll = Scroll::new(0, 0, 560, 600, "");
         scroll.add(&frame);
         scroll.set_color(BG_COLOR);
+        let mut but_ok = Button::new(245, 11500, 70, 40, &tr!("OK"));
+        but_ok.set_color(BG_COLOR);
         window.end();
         window.show();
+        but_ok.set_callback(Box::new(move || {
+            window.hide();
+        }));
     }));
 }
 
@@ -344,6 +404,7 @@ enum Submenu {
     Difficulty,
     Sounds,
     Theme,
+    Colors,
     About,
     License,
 }
@@ -358,6 +419,7 @@ impl fmt::Display for Submenu {
             Submenu::Difficulty => tr!("Difficulty"),
             Submenu::Sounds => tr!("Sounds"),
             Submenu::Theme => tr!("Theme"),
+            Submenu::Colors => tr!("Colors"),
             Submenu::About => tr!("About"),
             Submenu::License => tr!("License"),
         };

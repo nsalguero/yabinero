@@ -3,8 +3,7 @@
 //! `grid` represents the grid of the game
 
 use std::fmt;
-use crate::size::Size;
-use crate::value::Value;
+use crate::enums::{Size, Value};
 
 /// A binero grid is represented here
 pub struct Grid {

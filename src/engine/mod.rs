@@ -9,9 +9,7 @@ use std::fmt;
 use rand::{Rng, prelude::*};
 use grid::Grid;
 use history::{History, Item};
-use crate::value::Value;
-use crate::difficulty::Difficulty;
-use crate::size::Size;
+use crate::enums::{Difficulty, Size, Value};
 
 /// A binero game is represented here
 pub struct Binero {
