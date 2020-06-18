@@ -31,7 +31,7 @@ impl UserPrefs {
             faves.insert("sounds".to_owned(), "true".to_owned());
             faves.insert("theme".to_owned(), "Gtk".to_owned());
             faves.insert("color".to_owned(), "(0, 0, 0)".to_owned());
-            faves.insert("ro_color".to_owned(), "(55, 55, 55)".to_owned());
+            faves.insert("ro_color".to_owned(), "(88, 88, 88)".to_owned());
             let result = UserPrefs {
                 faves,
             };
