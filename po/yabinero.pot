@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.1.0\n"
+"Project-Id-Version: 1.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-18 16:23+0200\n"
-"PO-Revision-Date: 2020-06-18 16:32+0200\n"
+"POT-Creation-Date: 2020-06-19 16:46+0200\n"
+"PO-Revision-Date: 2020-06-19 16:47+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -33,39 +33,39 @@ msgstr ""
 msgid "Hard"
 msgstr ""
 
-#: src/gui/changing.rs:277 src/gui/changing.rs:290
+#: src/gui/changing.rs:291 src/gui/changing.rs:302
 msgid "Bad value!"
 msgstr ""
 
-#: src/gui/changing.rs:334
+#: src/gui/changing.rs:340
 msgid "Congratulations, you won!"
 msgstr ""
 
-#: src/gui/changing.rs:491
+#: src/gui/changing.rs:499
 msgid "No solution!"
 msgstr ""
 
-#: src/gui/changing.rs:514
+#: src/gui/changing.rs:522
 msgid "Pause"
 msgstr ""
 
-#: src/gui/changing.rs:515
+#: src/gui/changing.rs:523
 msgid "Resume"
 msgstr ""
 
-#: src/gui/changing.rs:516
+#: src/gui/changing.rs:524
 msgid "Undo"
 msgstr ""
 
-#: src/gui/changing.rs:517
+#: src/gui/changing.rs:525
 msgid "Redo"
 msgstr ""
 
-#: src/gui/changing.rs:518
+#: src/gui/changing.rs:526
 msgid "Retry"
 msgstr ""
 
-#: src/gui/changing.rs:519
+#: src/gui/changing.rs:527
 msgid "Solve"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgid "Choose"
 msgstr ""
 
 #: src/gui/menu.rs:288
-msgid "		Yet Another Binero puzzle game, version 1.1.0."
+msgid "		Yet Another Binero puzzle game, version 1.2.0."
 msgstr ""
 
 #: src/gui/menu.rs:290
@@ -205,6 +205,6 @@ msgstr ""
 msgid "Bad theme!"
 msgstr ""
 
-#: src/gui/user_data.rs:353
+#: src/gui/user_data.rs:351
 msgid "Best scores cannot be saved!"
 msgstr ""
