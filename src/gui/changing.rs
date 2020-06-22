@@ -151,7 +151,7 @@ impl ChangingPart {
         let mut pause = Frame::new(0, 0, ending_x, ending_y, "");
         if let Ok(mut img) = SvgImage::load(&Path::new("icons").join("pause.svg")) {
             img.scale(200, 200, true, true);
-            pause.set_image(&img);
+            pause.set_image(Some(img));
         }
         pause.hide();
         pause

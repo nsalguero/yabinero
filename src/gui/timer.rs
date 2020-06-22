@@ -79,7 +79,7 @@ impl Timer {
         let mut timer = Frame::new(x, y, width, 120, "00:00");
         if let Ok(mut img) = SvgImage::load(&Path::new("icons").join("chrono.svg")) {
             img.scale(80, 80, true, true);
-            timer.set_image(&img);
+            timer.set_image(Some(img));
         }
         timer.hide();
         Arc::new(Mutex::new(timer))

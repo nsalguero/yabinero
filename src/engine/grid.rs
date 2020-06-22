@@ -18,13 +18,8 @@ impl Grid {
     /// # Arguments
     ///
     /// * `size` - a size
-    ///
-    /// # Panics
-    ///
-    /// Panics if `size` is an odd number
     pub fn new(size: Size) -> Grid {
         let size_u8 = size.as_u8();
-        assert_eq!(size_u8 % 2, 0);
         Grid {
             size,
             matrix: vec![vec![None; size_u8 as usize]; size_u8 as usize],
@@ -99,10 +94,11 @@ impl Grid {
         assert!(x_axis < size && y_axis < size);
         let result = self.get(x_axis, y_axis);
         self.matrix[x_axis as usize][y_axis as usize] = value;
-        match value {
-            Some(_) => self.empty_values -= 1,
-            None => self.empty_values += 1,
-        };
+        if value.is_some() && result.is_none() {
+            self.empty_values -= 1;
+        } else if value.is_none() && result.is_some() {
+            self.empty_values += 1;
+        }
         result
     }
 
@@ -115,7 +111,7 @@ impl Grid {
     ///
     /// # Panics
     ///
-    /// Panics if `x_axis` or `y_axis` are not less than the size of the grid
+    /// Panics if `x_axis` or `y_axis` are greater than the size of the grid
     pub fn get(&self, x_axis: u8, y_axis: u8) -> Option<Value> {
         let size = self.size.as_u8();
         assert!(x_axis < size && y_axis < size);

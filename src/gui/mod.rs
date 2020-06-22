@@ -66,7 +66,7 @@ impl Game {
         app.set_scheme(*theme);
         let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
-            window.set_icon(&icon);
+            window.set_icon(Some(icon));
         }
         window.set_color(BG_COLOR);
         window.make_resizable(false);

@@ -24,10 +24,6 @@ impl Binero {
     ///
     /// * `size` - a size
     /// * `difficulty` - a level of difficulty
-    ///
-    /// # Panics
-    ///
-    /// Panics if `size` is an odd number
     pub fn new(size: Size, difficulty: Difficulty) -> Binero {
         let mut result = Binero {
             grid: Grid::new(size),
@@ -197,9 +193,8 @@ impl Binero {
                         if self.grid.can_put(i, j, value) {
                             self.put_a_mandatory_value(i, j, value);
                         } else {
-                            if !self.backtrack_to_latest_choice() {
-                                return (false, true);
-                            }
+                            let result = self.backtrack_to_latest_choice();
+                            return (result, !result);
                         }
                         some_value_put = true;
                     }
