@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.2.0
+%define version 1.3.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -125,6 +125,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Mon Jun 22 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.3.0-1.mga7
+- fix a bug in the engine
+
 * Fri Jun 19 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.2.0-1.mga7
 - fix some bugs in the GUI
 
