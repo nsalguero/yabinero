@@ -12,7 +12,7 @@ use crate::gui::{BG_COLOR, SELECT_COLOR, RO_SELECT_COLOR, display_alert, display
 
 /// The changing part of the GUI, used during a game
 pub struct ChangingPart {
-    grids: HashMap<Size, Rc<RefCell<Vec<Vec<InputBox>>>>>,
+    grids: HashMap<Size, Rc<RefCell<Vec<Vec<Input>>>>>,
     pause: Frame,
     timer: Rc<RefCell<Timer>>,
     but_pause: Button,
@@ -124,7 +124,7 @@ impl ChangingPart {
     /// * `size` - a size
     /// * `starting_y` - the starting point for the height of the grid in the GUI
     /// * `delta_to_center` - the delta to center the grid
-    fn init_grid(size: u8, starting_y: i32, delta_to_center: i32) -> Rc<RefCell<Vec<Vec<InputBox>>>> {
+    fn init_grid(size: u8, starting_y: i32, delta_to_center: i32) -> Rc<RefCell<Vec<Vec<Input>>>> {
         let mut boxes = Vec::new();
         for i in 0..size {
             boxes.push(Vec::new());
@@ -134,7 +134,6 @@ impl ChangingPart {
                                            ChangingPart::INPUT_SIZE, ChangingPart::INPUT_SIZE, "");
                 input.set_text_size(20);
                 input.hide();
-                let input = InputBox::new(input, String::from(" "));
                 boxes[i as usize].push(input);
             }
         }
@@ -177,11 +176,11 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `boxes` - a grid
-    fn hide_selected_grid(boxes: &Rc<RefCell<Vec<Vec<InputBox>>>>) {
+    fn hide_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
-                let input = &mut boxes.borrow_mut()[i][j].input;
+                let input = &mut boxes.borrow_mut()[i][j];
                 input.hide();
             }
         }
@@ -192,11 +191,11 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `boxes` - a grid
-    fn show_selected_grid(boxes: &Rc<RefCell<Vec<Vec<InputBox>>>>) {
+    fn show_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
-                let input = &mut boxes.borrow_mut()[i][j].input;
+                let input = &mut boxes.borrow_mut()[i][j];
                 input.show();
             }
         }
@@ -212,7 +211,7 @@ impl ChangingPart {
     /// * `tx` - a `Sender`
     /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<InputBox>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
+    fn fill_selected_grid(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, binero: &Rc<RefCell<Binero>>, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let size = boxes.borrow().len();
         for i in 0..size {
             for j in 0..size {
@@ -228,24 +227,39 @@ impl ChangingPart {
     /// # Arguments
     ///
     /// * `input` - a box
+    /// * `value` - a value
+    fn fill_box_with_value(input: &mut Input, value: &Option<Value>) {
+        let val = if let Some(v) = value {
+            format!(" {}", v)
+        } else {
+            String::from(" ")
+        };
+        input.set_value(&val);
+    }
+
+    /// Fills a box
+    ///
+    /// # Arguments
+    ///
+    /// * `input` - a box
     /// * `binero` - a binero
     /// * `x_axis` - an unsigned 8-bit integer that gives the x-axis
     /// * `y_axis` - an unsigned 8-bit integer that gives the y-axis
     /// * `color` - the color of the writable boxes
     /// * `ro_ color` - the color of the read-only boxes
-    fn fill_box(input: &mut InputBox, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, color: Color, ro_color: Color) {
-        if let Some(val) = binero.borrow().get(x_axis, y_axis) {
-            input.input.set_value(&format!(" {}", val));
-            input.input.set_readonly(true);
-            input.input.set_text_color(ro_color);
-            input.input.set_selection_color(RO_SELECT_COLOR);
+    fn fill_box(input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, color: Color, ro_color: Color) {
+        let value = binero.borrow().get(x_axis, y_axis);
+        ChangingPart::fill_box_with_value(input, &value);
+        if value.is_some() {
+            input.set_readonly(true);
+            input.set_text_color(ro_color);
+            input.set_selection_color(RO_SELECT_COLOR);
         } else {
-            input.input.set_value(" ");
-            input.input.set_readonly(false);
-            input.input.set_text_color(color);
-            input.input.set_selection_color(SELECT_COLOR);
+            input.set_readonly(false);
+            input.set_text_color(color);
+            input.set_selection_color(SELECT_COLOR);
         }
-        input.input.show();
+        input.show();
     }
 
     /// Adds the event handler to the box
@@ -261,44 +275,39 @@ impl ChangingPart {
     /// * `tx` - a `Sender`
     /// * `difficulty` - a difficulty
     /// * `timer` - a timer
-    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<InputBox>>>>, input: &mut InputBox, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
+    fn add_event_handler(boxes: &Rc<RefCell<Vec<Vec<Input>>>>, input: &mut Input, binero: &Rc<RefCell<Binero>>, x_axis: u8, y_axis: u8, user_prefs: &Rc<RefCell<UserPrefs>>, tx: &Sender<bool>, difficulty: Difficulty, timer: &Rc<RefCell<Timer>>) {
         let cloned_boxes = Rc::clone(boxes);
         let cloned_binero = Rc::clone(&binero);
         let cloned_prefs = Rc::clone(user_prefs);
         let cloned_tx = Sender::clone(tx);
         let cloned_timer = Rc::clone(timer);
-        input.input.handle(Box::new(move |ev: Event| {
+        input.handle(Box::new(move |ev: Event| {
             match ev {
                 Event::KeyUp => {
-                    let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].input.value();
+                    let old_value = cloned_binero.borrow().get(x_axis, y_axis);
+                    let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
                     let val = value.trim();
                     if val == "0" || val == "1" {
                         let val = Value::from_u8(val.parse().unwrap());
-                        let old_value = cloned_binero.borrow().get(x_axis, y_axis);
                         if old_value != val {
                             if cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, val) {
-                                let box_value = format!(" {}", value.trim());
-                                let inp = &mut cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize];
-                                inp.input.set_value(&box_value);
-                                inp.old_value = box_value;
+                                ChangingPart::fill_box_with_value(&mut cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize], &val);
                                 if cloned_binero.borrow().is_full() {
                                     cloned_tx.send(true).unwrap();
                                     ChangingPart::display_success(cloned_prefs.borrow().sounds(), cloned_binero.borrow().size(), difficulty, &cloned_timer);
                                 }
                             } else {
-                                let box_value = &cloned_boxes.borrow()[x_axis as usize][y_axis as usize].old_value.clone();
-                                cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].input.set_value(box_value);
+                                ChangingPart::fill_box_with_value(&mut cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize], &old_value);
                                 ChangingPart::display_error(&tr!("Bad value!"), cloned_prefs.borrow().sounds());
                             }
                         }
                     } else if val == "" {
-                        if cloned_boxes.borrow()[x_axis as usize][y_axis as usize].old_value.trim() != "" {
-                            cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].old_value = String::from(" ");
+                        if old_value.is_some() {
+                            ChangingPart::fill_box_with_value(&mut cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize], &None);
                             cloned_binero.borrow_mut().try_to_put(x_axis, y_axis, None);
                         }
                     } else {
-                        let box_value = &cloned_boxes.borrow()[x_axis as usize][y_axis as usize].old_value.clone();
-                        cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize].input.set_value(box_value);
+                        ChangingPart::fill_box_with_value(&mut cloned_boxes.borrow_mut()[x_axis as usize][y_axis as usize], &old_value);
                         ChangingPart::display_error(&tr!("Bad value!"), cloned_prefs.borrow().sounds());
                     }
                     true
@@ -382,22 +391,6 @@ impl ChangingPart {
         }));
     }
 
-    /// Fills a box
-    ///
-    /// # Arguments
-    ///
-    /// * `input` - a box
-    /// * `value` - a value
-    fn fill_box_with_value(input: &mut InputBox, value: &Option<Value>) {
-        let val = if let Some(v) = value {
-            format!(" {}", v)
-        } else {
-            String::from(" ")
-        };
-        input.input.set_value(&val);
-        input.old_value = val;
-    }
-
     /// Sets a value in the grid
     ///
     /// # Arguments
@@ -407,7 +400,7 @@ impl ChangingPart {
     /// * `item` - an item of the history
     /// * `undo` - whether or not the operation is undo
     fn set_value(changing: &Rc<RefCell<ChangingPart>>, size: Size, item: &Item, undo: bool) {
-        let mut select_boxes: Option<&Rc<RefCell<Vec<Vec<InputBox>>>>> = None;
+        let mut select_boxes: Option<&Rc<RefCell<Vec<Vec<Input>>>>> = None;
         let grids = &changing.borrow().grids;
         for (a_size, boxes) in grids {
             if *a_size == size {
@@ -527,19 +520,5 @@ impl fmt::Display for PlayButton {
             PlayButton::Solve => tr!("Solve"),
         };
         write!(f, "{}", printable)
-    }
-}
-
-struct InputBox {
-    pub input: Input,
-    pub old_value: String,
-}
-
-impl InputBox {
-    pub fn new(input: Input, old_value: String) -> InputBox {
-        InputBox {
-            input,
-            old_value,
-        }
     }
 }

@@ -122,6 +122,42 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
     }));
 }
 
+/// Displays a modal window
+///
+/// # Arguments
+///
+/// * `width` - the width of the window
+/// * `height` - the height of the window
+/// * `title` - the title of the window
+/// * `content` - the displayed content
+/// * `right_align` - whether or not the content of the internal frame is right aligned
+/// * `frame_height` - the height of the internal frame
+fn display_window(width: i32, height: i32, title: &str, content: &str, right_align: bool, frame_height: i32) {
+    let mut window = Window::new(0, 0, width, height, title).center_screen();
+    window.make_modal(true);
+    window.make_resizable(false);
+    let frame_width = if right_align {
+        20
+    } else {
+        width - 20
+    };
+    let mut frame = Frame::new(0, 0, frame_width, frame_height, content);
+    if right_align {
+        frame.set_align(Align::Right);
+    }
+    let mut scroll = Scroll::new(0, 0, width, height, "");
+    scroll.add(&frame);
+    scroll.set_color(BG_COLOR);
+    let but_width = 70;
+    let mut but_ok = Button::new((width - but_width) / 2, frame_height, but_width, BUTTON_OK_HEIGHT, &tr!("OK"));
+    but_ok.set_color(BG_COLOR);
+    window.end();
+    window.show();
+    but_ok.set_callback(Box::new(move || {
+        window.hide();
+    }));
+}
+
 /// Adds the "Game/Best scores" menu entry
 ///
 /// # Arguments
@@ -131,22 +167,8 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
-        let mut window = Window::new(0, 0, 326, 230, &tr!("Best scores")).center_screen();
-        window.make_modal(true);
-        window.make_resizable(false);
         let best_scores = BestScores::new().best_scores(cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
-        let mut frame = Frame::new(0, 0, 20, 184, &best_scores);
-        frame.set_align(Align::Right);
-        let mut scroll = Scroll::new(0, 0, 326, 230, "");
-        scroll.add(&frame);
-        scroll.set_color(BG_COLOR);
-        let mut but_ok = Button::new(128, 184, 70, 40, &tr!("OK"));
-        but_ok.set_color(BG_COLOR);
-        window.end();
-        window.show();
-        but_ok.set_callback(Box::new(move || {
-            window.hide();
-        }));
+        display_window(326, 230, &tr!("Best scores"), &best_scores, true, 184);
     }));
 }
 
@@ -264,11 +286,14 @@ fn add_colors(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `read_only` - whether or not the color is for read-only boxes
 fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
     let cloned_prefs = Rc::clone(user_prefs);
-    let mut window = Window::new(0, 0, 200, 142, &tr!("Choose")).center_screen();
+    let width = 200;
+    let mut window = Window::new(0, 0, width, 142, &tr!("Choose")).center_screen();
     window.make_modal(true);
     window.make_resizable(false);
-    let chooser = ColorChooser::new(0, 0, 200, 95, "");
-    let mut but_ok = Button::new(65, 100, 70, 40, &tr!("OK"));
+    let chooser_height = 95;
+    let chooser = ColorChooser::new(0, 0, width, chooser_height, "");
+    let but_width = 70;
+    let mut but_ok = Button::new((width - but_width) / 2, chooser_height, but_width, BUTTON_OK_HEIGHT, &tr!("OK"));
     but_ok.set_color(BG_COLOR);
     window.end();
     window.show();
@@ -285,7 +310,7 @@ fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
 
 /// Returns the help of the game
 fn about() -> String {
-    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.3.0.");
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.4.0.");
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
     result.push_str("\n\n\n");
@@ -319,22 +344,8 @@ fn about() -> String {
 /// * `menu` - a menu bar
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
-        let mut window = Window::new(0, 0, 490, 510, &tr!("About")).center_screen();
-        window.make_modal(true);
-        window.make_resizable(false);
         let about = about();
-        let mut frame = Frame::new(0, 0, 20, 460, &about);
-        frame.set_align(Align::Right);
-        let mut scroll = Scroll::new(0, 0, 490, 510, "");
-        scroll.add(&frame);
-        scroll.set_color(BG_COLOR);
-        let mut but_ok = Button::new(210, 460, 70, 40, &tr!("OK"));
-        but_ok.set_color(BG_COLOR);
-        window.end();
-        window.show();
-        but_ok.set_callback(Box::new(move || {
-            window.hide();
-        }));
+        display_window(490, 510, &tr!("About"), &about, true, 460);
     }));
 }
 
@@ -345,21 +356,8 @@ fn add_about(menu: &mut MenuBar) {
 /// * `menu` - a menu bar
 fn add_license(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::License, None), Shortcut::None, MenuFlag::Normal, Box::new(|| {
-        let mut window = Window::new(0, 0, 560, 600, &tr!("License")).center_screen();
-        window.make_modal(true);
-        window.make_resizable(false);
         let license = fs::read_to_string(Path::new("LICENSE")).unwrap();
-        let frame = Frame::new(0, 0, 540, 11500, &license);
-        let mut scroll = Scroll::new(0, 0, 560, 600, "");
-        scroll.add(&frame);
-        scroll.set_color(BG_COLOR);
-        let mut but_ok = Button::new(245, 11500, 70, 40, &tr!("OK"));
-        but_ok.set_color(BG_COLOR);
-        window.end();
-        window.show();
-        but_ok.set_callback(Box::new(move || {
-            window.hide();
-        }));
+        display_window(560, 600, &tr!("License"), &license, false, 11500);
     }));
 }
 
@@ -428,3 +426,4 @@ impl fmt::Display for Submenu {
 }
 
 const MENU_HEIGHT: i32 = 40;
+const BUTTON_OK_HEIGHT: i32 = 40;
