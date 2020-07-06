@@ -9,7 +9,7 @@ mod timer;
 mod user_data;
 
 use std::{cell::RefCell, path::Path, rc::Rc};
-use fltk::{app::{App, AppScheme, screen_size}, dialog::{alert, message}, enums::Color, image::PngImage, menu::MenuBar, prelude::{GroupExt, WidgetExt, WindowExt}, window::MenuWindow};
+use fltk::{app::{App, AppScheme, screen_size}, dialog::{alert, message}, enums::Color, image::PngImage, menu::MenuBar, prelude::{WidgetExt, WindowExt}, window::MenuWindow};
 use user_data::UserPrefs;
 use changing::ChangingPart;
 
@@ -41,8 +41,7 @@ impl Game {
 
     /// Shows the window of the game
     pub fn show_window(&mut self) {
-        self.window.end();
-        self.window.show();
+        show(&mut self.window);
     }
 
     /// Adds the menus to the menu bar
@@ -63,7 +62,7 @@ impl Game {
     /// * `theme` - an `AppScheme`
     fn init_gui(theme: &AppScheme) -> (Rc<RefCell<App>>, MenuWindow) {
         let app = App::default();
-        app.set_scheme(*theme);
+        app.with_scheme(*theme);
         let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero").center_screen();
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(Some(icon));
@@ -79,7 +78,7 @@ impl Game {
 /// # Arguments
 ///
 /// * `msg` - the error message
-pub fn display_alert(msg: &str) {
+fn display_alert(msg: &str) {
     let (width, height) = screen_size();
     alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
 }
@@ -94,8 +93,18 @@ fn display_message(msg: &str) {
     message(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
 }
 
-pub const BG_COLOR: Color = Color::Light2;
-pub const FG_COLOR: Color = Color::Black;
-pub const SELECT_COLOR: Color = Color::Dark3;
-pub const RO_FG_COLOR: Color = Color::Inactive;
-pub const RO_SELECT_COLOR: Color = Color::Dark1;
+/// Shows a window
+///
+/// # Arguments
+///
+/// * `window` - a window
+fn show(window: &mut impl WindowExt) {
+    window.end();
+    window.show();
+}
+
+const BG_COLOR: Color = Color::Light2;
+const FG_COLOR: Color = Color::Black;
+const SELECT_COLOR: Color = Color::Dark3;
+const RO_FG_COLOR: Color = Color::Inactive;
+const RO_SELECT_COLOR: Color = Color::Dark1;

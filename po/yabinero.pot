@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.4.0\n"
+"Project-Id-Version: 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 12:03+0200\n"
-"PO-Revision-Date: 2020-06-23 14:24+0200\n"
+"POT-Creation-Date: 2020-07-06 14:51+0200\n"
+"PO-Revision-Date: 2020-07-06 14:54+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -69,119 +69,127 @@ msgstr ""
 msgid "Solve"
 msgstr ""
 
-#: src/gui/menu.rs:152 src/gui/menu.rs:296
-msgid "OK"
+#: src/gui/menu.rs:177
+msgid "Close"
 msgstr ""
 
-#: src/gui/menu.rs:171 src/gui/menu.rs:414
+#: src/gui/menu.rs:194 src/gui/menu.rs:438
 msgid "Best scores"
 msgstr ""
 
-#: src/gui/menu.rs:272
+#: src/gui/menu.rs:295
 msgid "Color of actives boxes"
 msgstr ""
 
-#: src/gui/menu.rs:276
+#: src/gui/menu.rs:299
 msgid "Color of inactives boxes"
 msgstr ""
 
-#: src/gui/menu.rs:290
+#: src/gui/menu.rs:313
 msgid "Choose"
 msgstr ""
 
-#: src/gui/menu.rs:313
-msgid "		Yet Another Binero puzzle game, version 1.4.0."
-msgstr ""
-
-#: src/gui/menu.rs:315
-msgid "This software is a mathematical puzzle game."
+#: src/gui/menu.rs:316
+msgid "Cancel"
 msgstr ""
 
 #: src/gui/menu.rs:317
+msgid "OK"
+msgstr ""
+
+#: src/gui/menu.rs:337
+msgid "		Yet Another Binero puzzle game, version 1.5.0."
+msgstr ""
+
+#: src/gui/menu.rs:339
+msgid "This software is a mathematical puzzle game."
+msgstr ""
+
+#: src/gui/menu.rs:341
 msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
 msgstr ""
 
-#: src/gui/menu.rs:319
+#: src/gui/menu.rs:343
 msgid "two constraints:"
 msgstr ""
 
-#: src/gui/menu.rs:321
+#: src/gui/menu.rs:345
 msgid "In each line or column, there must be the same number"
 msgstr ""
 
-#: src/gui/menu.rs:323
+#: src/gui/menu.rs:347
 msgid "of the two values."
 msgstr ""
 
-#: src/gui/menu.rs:325
+#: src/gui/menu.rs:349
 msgid "In each line or column, the same value cannot be side by"
 msgstr ""
 
-#: src/gui/menu.rs:327
+#: src/gui/menu.rs:351
 msgid "side more than twice."
 msgstr ""
 
-#: src/gui/menu.rs:329
+#: src/gui/menu.rs:353
 msgid "Developper: Nicolas Salguero."
 msgstr ""
 
-#: src/gui/menu.rs:331
+#: src/gui/menu.rs:355
 msgid "This software is released under the GNU General Public Licence"
 msgstr ""
 
-#: src/gui/menu.rs:333
+#: src/gui/menu.rs:357
 msgid "version 3.0 or any later version."
 msgstr ""
 
-#: src/gui/menu.rs:335
+#: src/gui/menu.rs:359
 msgid "For more information, please see:"
 msgstr ""
 
-#: src/gui/menu.rs:348 src/gui/menu.rs:421
+#: src/gui/menu.rs:372 src/gui/menu.rs:445
 msgid "About"
 msgstr ""
 
-#: src/gui/menu.rs:360 src/gui/menu.rs:422
+#: src/gui/menu.rs:384 src/gui/menu.rs:446
 msgid "License"
 msgstr ""
 
-#: src/gui/menu.rs:388
+#: src/gui/menu.rs:412
 msgid "Game"
 msgstr ""
 
-#: src/gui/menu.rs:389
+#: src/gui/menu.rs:413
 msgid "Options"
 msgstr ""
 
-#: src/gui/menu.rs:390
+#: src/gui/menu.rs:414
 msgid "Help"
 msgstr ""
 
-#: src/gui/menu.rs:413
+#: src/gui/menu.rs:437
 msgid "New"
 msgstr ""
 
-#: src/gui/menu.rs:415
+#: src/gui/menu.rs:439
 msgid "Quit"
 msgstr ""
 
-#: src/gui/menu.rs:416
+#: src/gui/menu.rs:440
 msgid "Size"
 msgstr ""
 
-#: src/gui/menu.rs:417
+#: src/gui/menu.rs:441
 msgid "Difficulty"
 msgstr ""
 
-#: src/gui/menu.rs:418
+#: src/gui/menu.rs:442
 msgid "Sounds"
 msgstr ""
 
-#: src/gui/menu.rs:419
+#: src/gui/menu.rs:443
 msgid "Theme"
 msgstr ""
 
-#: src/gui/menu.rs:420
+#: src/gui/menu.rs:444
 msgid "Colors"
 msgstr ""
 

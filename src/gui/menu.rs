@@ -7,7 +7,7 @@ use fltk::{app::{App, AppScheme}, button::Button, enums::{Align, Shortcut}, fram
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use crate::enums::{Difficulty, Size};
-use crate::gui::{BG_COLOR, SELECT_COLOR, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
+use crate::gui::{BG_COLOR, SELECT_COLOR, show, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
 /// Returns an empty menu bar
 ///
@@ -122,6 +122,34 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
     }));
 }
 
+/// Creates a modal window
+///
+/// # Arguments
+///
+/// * `width` - the width of the window
+/// * `height` - the height of the window
+/// * `title` - the title of the window
+fn popup_window(width: i32, height: i32, title: &str) -> Window {
+    let mut window = Window::new(0, 0, width, height, title);
+    window.make_modal(true);
+    window.make_resizable(false);
+    window.set_color(BG_COLOR);
+    window.center_screen()
+}
+
+/// Creates a button
+///
+/// # Arguments
+///
+/// * `x` - the horizontal starting point
+/// * `y` - the vertical starting point
+/// * `title` - the title of the window
+fn button(x: i32, y: i32, title: &str) -> Button {
+    let mut button = Button::new(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, title);
+    button.set_color(BG_COLOR);
+    button
+}
+
 /// Displays a modal window
 ///
 /// # Arguments
@@ -133,9 +161,7 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 /// * `right_align` - whether or not the content of the internal frame is right aligned
 /// * `frame_height` - the height of the internal frame
 fn display_window(width: i32, height: i32, title: &str, content: &str, right_align: bool, frame_height: i32) {
-    let mut window = Window::new(0, 0, width, height, title).center_screen();
-    window.make_modal(true);
-    window.make_resizable(false);
+    let mut window = popup_window(width, height, title);
     let frame_width = if right_align {
         20
     } else {
@@ -148,12 +174,9 @@ fn display_window(width: i32, height: i32, title: &str, content: &str, right_ali
     let mut scroll = Scroll::new(0, 0, width, height, "");
     scroll.add(&frame);
     scroll.set_color(BG_COLOR);
-    let but_width = 70;
-    let mut but_ok = Button::new((width - but_width) / 2, frame_height, but_width, BUTTON_OK_HEIGHT, &tr!("OK"));
-    but_ok.set_color(BG_COLOR);
-    window.end();
-    window.show();
-    but_ok.set_callback(Box::new(move || {
+    let mut button = button((width - BUTTON_WIDTH) / 2, frame_height, &tr!("Close"));
+    show(&mut window);
+    button.set_callback(Box::new(move || {
         window.hide();
     }));
 }
@@ -239,25 +262,25 @@ fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, app: &Rc<
     let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Base))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Base);
-        cloned_app.borrow().set_scheme(AppScheme::Base);
+        cloned_app.borrow().with_scheme(AppScheme::Base);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gtk))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Gtk);
-        cloned_app.borrow().set_scheme(AppScheme::Gtk);
+        cloned_app.borrow().with_scheme(AppScheme::Gtk);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Gleam))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Gleam);
-        cloned_app.borrow().set_scheme(AppScheme::Gleam);
+        cloned_app.borrow().with_scheme(AppScheme::Gleam);
     }));
     let cloned_prefs = Rc::clone(user_prefs);
     let cloned_app = Rc::clone(app);
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Plastic))), Shortcut::None, MenuFlag::Radio, Box::new(move || {
         cloned_prefs.borrow_mut().set_theme(AppScheme::Plastic);
-        cloned_app.borrow().set_scheme(AppScheme::Plastic);
+        cloned_app.borrow().with_scheme(AppScheme::Plastic);
     }));
 }
 
@@ -287,16 +310,17 @@ fn add_colors(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
     let cloned_prefs = Rc::clone(user_prefs);
     let width = 200;
-    let mut window = Window::new(0, 0, width, 142, &tr!("Choose")).center_screen();
-    window.make_modal(true);
-    window.make_resizable(false);
+    let mut window = popup_window(width, 142, &tr!("Choose"));
     let chooser_height = 95;
     let chooser = ColorChooser::new(0, 0, width, chooser_height, "");
-    let but_width = 70;
-    let mut but_ok = Button::new((width - but_width) / 2, chooser_height, but_width, BUTTON_OK_HEIGHT, &tr!("OK"));
-    but_ok.set_color(BG_COLOR);
-    window.end();
-    window.show();
+    let mut but_cancel = button(width / 2 - BUTTON_WIDTH - 5, chooser_height, &tr!("Cancel"));
+    let mut but_ok = button(width / 2 + 5, chooser_height, &tr!("OK"));
+    show(&mut window);
+    let window = Rc::new(RefCell::new(window));
+    let window2 = Rc::clone(&window);
+    but_cancel.set_callback(Box::new(move || {
+        window.borrow_mut().hide();
+    }));
     but_ok.set_callback(Box::new(move || {
         let color = chooser.rgb_color();
         if read_only {
@@ -304,13 +328,13 @@ fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
         } else {
             cloned_prefs.borrow_mut().set_color(color);
         }
-        window.hide();
+        window2.borrow_mut().hide();
     }));
 }
 
 /// Returns the help of the game
 fn about() -> String {
-    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.4.0.");
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.5.0.");
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
     result.push_str("\n\n\n");
@@ -426,4 +450,5 @@ impl fmt::Display for Submenu {
 }
 
 const MENU_HEIGHT: i32 = 40;
-const BUTTON_OK_HEIGHT: i32 = 40;
+const BUTTON_HEIGHT: i32 = 40;
+const BUTTON_WIDTH: i32 = 70;
