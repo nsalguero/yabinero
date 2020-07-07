@@ -63,14 +63,25 @@ impl Game {
     fn init_gui(theme: &AppScheme) -> (Rc<RefCell<App>>, MenuWindow) {
         let app = App::default();
         app.with_scheme(*theme);
-        let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero").center_screen();
+        let mut window = MenuWindow::new(0, 0, 700, 552, "YABinero");
+        window = init_window(window, false);
         if let Ok(icon) = PngImage::load(&Path::new("icons").join("icon.png")) {
             window.set_icon(Some(icon));
         }
-        window.set_color(BG_COLOR);
-        window.make_resizable(false);
         (Rc::new(RefCell::new(app)), window)
     }
+}
+/// Sets some parameters to a window
+///
+/// # Arguments
+///
+/// * `window` - a window
+/// * `modal` - whether or not the window is a modal one
+fn init_window<T: WindowExt>(mut window: T, modal: bool) -> T {
+    window.set_color(BG_COLOR);
+    window.make_resizable(false);
+    window.make_modal(modal);
+    window.center_screen()
 }
 
 /// Displays a popup with an error message

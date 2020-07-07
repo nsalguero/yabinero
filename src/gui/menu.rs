@@ -3,11 +3,11 @@
 //! `menu` contains the functions that handles the menu
 
 use std::{cell::RefCell, fmt, fs, path::Path, process::exit, rc::Rc, sync::mpsc::Sender};
-use fltk::{app::{App, AppScheme}, button::Button, enums::{Align, Shortcut}, frame::Frame, group::ColorChooser, prelude::{GroupExt, MenuExt, WidgetExt, WindowExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use fltk::{app::{App, AppScheme}, button::Button, enums::{Align, Shortcut}, frame::Frame, group::ColorChooser, prelude::{GroupExt, MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use crate::enums::{Difficulty, Size};
-use crate::gui::{BG_COLOR, SELECT_COLOR, show, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
+use crate::gui::{BG_COLOR, SELECT_COLOR, init_window, show, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
 /// Returns an empty menu bar
 ///
@@ -130,11 +130,8 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
 /// * `height` - the height of the window
 /// * `title` - the title of the window
 fn popup_window(width: i32, height: i32, title: &str) -> Window {
-    let mut window = Window::new(0, 0, width, height, title);
-    window.make_modal(true);
-    window.make_resizable(false);
-    window.set_color(BG_COLOR);
-    window.center_screen()
+    let window = Window::new(0, 0, width, height, title);
+    init_window(window, true)
 }
 
 /// Creates a button
@@ -334,7 +331,7 @@ fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
 
 /// Returns the help of the game
 fn about() -> String {
-    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.5.0.");
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.6.0.");
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
     result.push_str("\n\n\n");

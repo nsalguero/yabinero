@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.5.0\n"
+"Project-Id-Version: 1.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-06 14:51+0200\n"
-"PO-Revision-Date: 2020-07-06 14:58+0200\n"
+"POT-Creation-Date: 2020-07-07 13:17+0200\n"
+"PO-Revision-Date: 2020-07-07 13:20+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: French <fr@li.org>\n"
 "Language: \n"
@@ -69,127 +69,127 @@ msgstr "Recommencer"
 msgid "Solve"
 msgstr "Résoudre"
 
-#: src/gui/menu.rs:177
+#: src/gui/menu.rs:174
 msgid "Close"
 msgstr "Fermer"
 
-#: src/gui/menu.rs:194 src/gui/menu.rs:438
+#: src/gui/menu.rs:191 src/gui/menu.rs:435
 msgid "Best scores"
 msgstr "Meilleurs scores"
 
-#: src/gui/menu.rs:295
+#: src/gui/menu.rs:292
 msgid "Color of actives boxes"
 msgstr "Couleur des cellules actives"
 
-#: src/gui/menu.rs:299
+#: src/gui/menu.rs:296
 msgid "Color of inactives boxes"
 msgstr "Couleur des cellules inactives"
 
-#: src/gui/menu.rs:313
+#: src/gui/menu.rs:310
 msgid "Choose"
 msgstr "Choisir"
 
-#: src/gui/menu.rs:316
+#: src/gui/menu.rs:313
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/gui/menu.rs:317
+#: src/gui/menu.rs:314
 msgid "OK"
 msgstr "Valider"
 
-#: src/gui/menu.rs:337
-msgid "		Yet Another Binero puzzle game, version 1.5.0."
-msgstr "			Encore un Binero, version 1.5.0."
+#: src/gui/menu.rs:334
+msgid "		Yet Another Binero puzzle game, version 1.6.0."
+msgstr "			Encore un Binero, version 1.6.0."
 
-#: src/gui/menu.rs:339
+#: src/gui/menu.rs:336
 msgid "This software is a mathematical puzzle game."
 msgstr "Ce logiciel est un jeu mathématique."
 
-#: src/gui/menu.rs:341
+#: src/gui/menu.rs:338
 msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
 msgstr "Le but du jeu est de remplir une grille avec des 0 et des 1"
 
-#: src/gui/menu.rs:343
+#: src/gui/menu.rs:340
 msgid "two constraints:"
 msgstr "en respectant deux contraintes :"
 
-#: src/gui/menu.rs:345
+#: src/gui/menu.rs:342
 msgid "In each line or column, there must be the same number"
 msgstr "Dans chaque ligne ou colonne, il doit y avoir autant"
 
-#: src/gui/menu.rs:347
+#: src/gui/menu.rs:344
 msgid "of the two values."
 msgstr "de 0 que de 1."
 
-#: src/gui/menu.rs:349
+#: src/gui/menu.rs:346
 msgid "In each line or column, the same value cannot be side by"
 msgstr "Dans chaque ligne ou colonne, la même valeur ne peut"
 
-#: src/gui/menu.rs:351
+#: src/gui/menu.rs:348
 msgid "side more than twice."
 msgstr "être côte à côte plus de deux fois."
 
-#: src/gui/menu.rs:353
+#: src/gui/menu.rs:350
 msgid "Developper: Nicolas Salguero."
 msgstr "Développeur : Nicolas Salguero."
 
-#: src/gui/menu.rs:355
+#: src/gui/menu.rs:352
 msgid "This software is released under the GNU General Public Licence"
 msgstr "Ce logiciel est fourni sous la License Publique Générale GNU"
 
-#: src/gui/menu.rs:357
+#: src/gui/menu.rs:354
 msgid "version 3.0 or any later version."
 msgstr "version 3.0 ou toute version plus récente."
 
-#: src/gui/menu.rs:359
+#: src/gui/menu.rs:356
 msgid "For more information, please see:"
 msgstr "Pour plus d'informations, vous pouvez consulter :"
 
-#: src/gui/menu.rs:372 src/gui/menu.rs:445
+#: src/gui/menu.rs:369 src/gui/menu.rs:442
 msgid "About"
 msgstr "À propos"
 
-#: src/gui/menu.rs:384 src/gui/menu.rs:446
+#: src/gui/menu.rs:381 src/gui/menu.rs:443
 msgid "License"
 msgstr "Licence"
 
-#: src/gui/menu.rs:412
+#: src/gui/menu.rs:409
 msgid "Game"
 msgstr "Jeu"
 
-#: src/gui/menu.rs:413
+#: src/gui/menu.rs:410
 msgid "Options"
 msgstr "Options"
 
-#: src/gui/menu.rs:414
+#: src/gui/menu.rs:411
 msgid "Help"
 msgstr "Aide"
 
-#: src/gui/menu.rs:437
+#: src/gui/menu.rs:434
 msgid "New"
 msgstr "Nouveau"
 
-#: src/gui/menu.rs:439
+#: src/gui/menu.rs:436
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/gui/menu.rs:440
+#: src/gui/menu.rs:437
 msgid "Size"
 msgstr "Taille"
 
-#: src/gui/menu.rs:441
+#: src/gui/menu.rs:438
 msgid "Difficulty"
 msgstr "Difficulté"
 
-#: src/gui/menu.rs:442
+#: src/gui/menu.rs:439
 msgid "Sounds"
 msgstr "Sons"
 
-#: src/gui/menu.rs:443
+#: src/gui/menu.rs:440
 msgid "Theme"
 msgstr "Thème"
 
-#: src/gui/menu.rs:444
+#: src/gui/menu.rs:441
 msgid "Colors"
 msgstr "Couleurs"
 
