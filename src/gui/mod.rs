@@ -9,7 +9,8 @@ mod timer;
 mod user_data;
 
 use std::{cell::RefCell, path::Path, rc::Rc};
-use fltk::{app::{App, AppScheme, screen_size}, dialog::{alert, message}, enums::Color, image::PngImage, menu::MenuBar, prelude::{WidgetExt, WindowExt}, window::MenuWindow};
+use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, group::Scroll, image::{PngImage, SvgImage}, frame::Frame, menu::MenuBar, prelude::{GroupExt, ImageExt, WidgetExt, WindowExt}, window::{MenuWindow, Window}};
+use tr::tr;
 use user_data::UserPrefs;
 use changing::ChangingPart;
 
@@ -71,6 +72,19 @@ impl Game {
         (Rc::new(RefCell::new(app)), window)
     }
 }
+
+/// Creates a modal window
+///
+/// # Arguments
+///
+/// * `width` - the width of the window
+/// * `height` - the height of the window
+/// * `title` - the title of the window
+fn popup_window(width: i32, height: i32, title: &str) -> Window {
+    let window = Window::new(0, 0, width, height, title);
+    init_window(window, true)
+}
+
 /// Sets some parameters to a window
 ///
 /// # Arguments
@@ -84,14 +98,63 @@ fn init_window<T: WindowExt>(mut window: T, modal: bool) -> T {
     window.center_screen()
 }
 
+/// Creates a `ReturnButton`
+///
+/// # Arguments
+///
+/// * `window_width` - the width of the window
+/// * `y` - the vertical starting point
+fn return_button(window_width: i32, y: i32) -> ReturnButton {
+    let mut button = ReturnButton::new((window_width - RET_BUTTON_WIDTH) / 2, y, RET_BUTTON_WIDTH, BUTTON_HEIGHT, &tr!("Close"));
+    button.set_color(BG_COLOR);
+    button
+}
+
+/// Displays a modal window
+///
+/// # Arguments
+///
+/// * `width` - the width of the window
+/// * `height` - the height of the window
+/// * `title` - the title of the window
+/// * `content` - the displayed content
+/// * `right_align` - whether or not the content of the internal frame is right aligned
+/// * `frame_height` - the height of the internal frame
+/// * `icon` - the name of an icon
+fn display_window(width: i32, height: i32, title: &str, content: &str, right_align: bool, frame_height: i32, icon: Option<&str>) {
+    let mut window = popup_window(width, height, title);
+    let frame_width = if right_align {
+        20
+    } else {
+        width - 20
+    };
+    let mut frame = Frame::new(0, 0, frame_width, frame_height, content);
+    if right_align {
+        frame.set_align(Align::Right);
+    }
+    if let Some(ic) = icon {
+        if let Ok(mut img) = SvgImage::load(&Path::new("icons").join(ic.to_owned() + ".svg")) {
+            img.scale(80, 80, true, true);
+            frame.set_image(Some(img));
+        }
+    }
+    let mut scroll = Scroll::new(0, 0, width, height, "");
+    scroll.add(&frame);
+    scroll.set_color(BG_COLOR);
+    let mut button = return_button(width, frame_height);
+    show(&mut window);
+    button.set_callback(Box::new(move || {
+        window.hide();
+    }));
+}
+
 /// Displays a popup with an error message
 ///
 /// # Arguments
 ///
 /// * `msg` - the error message
 fn display_alert(msg: &str) {
-    let (width, height) = screen_size();
-    alert(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
+    display_window(500, 170, "", msg, false, 120, Some("ko"));
 }
 
 /// Displays a popup with a message
@@ -100,8 +163,7 @@ fn display_alert(msg: &str) {
 ///
 /// * `msg` - the message
 fn display_message(msg: &str) {
-    let (width, height) = screen_size();
-    message(width as i32 / 2 - 302, height as i32 / 2 - 14, msg);
+    display_window(500, 170, "", msg, false, 120, Some("ok"));
 }
 
 /// Shows a window
@@ -119,3 +181,6 @@ const FG_COLOR: Color = Color::Black;
 const SELECT_COLOR: Color = Color::Dark3;
 const RO_FG_COLOR: Color = Color::Inactive;
 const RO_SELECT_COLOR: Color = Color::Dark1;
+
+const BUTTON_HEIGHT: i32 = 40;
+const RET_BUTTON_WIDTH: i32 = 100;

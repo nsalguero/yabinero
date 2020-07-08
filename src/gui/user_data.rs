@@ -35,7 +35,7 @@ impl UserPrefs {
             let result = UserPrefs {
                 faves,
             };
-            result.save();
+            result.save(false);
             result
         }
     }
@@ -60,7 +60,7 @@ impl UserPrefs {
     /// * `size` - a size
     pub fn set_size(&mut self, size: Size) {
         self.faves.insert("size".to_owned(), format!("{}", size.as_u8()));
-        self.save();
+        self.save(true);
     }
 
     /// Returns the current difficulty
@@ -83,7 +83,7 @@ impl UserPrefs {
     /// * `difficulty` - a difficulty
     pub fn set_difficulty(&mut self, difficulty: Difficulty) {
         self.faves.insert("difficulty".to_owned(), format!("{:?}", difficulty));
-        self.save();
+        self.save(true);
     }
 
     /// Returns whether or not the sounds must be played
@@ -106,7 +106,7 @@ impl UserPrefs {
     /// * `sounds` - whether or not the sounds must be played
     pub fn set_sounds(&mut self, sounds: bool) {
         self.faves.insert("sounds".to_owned(), format!("{}", sounds));
-        self.save();
+        self.save(true);
     }
 
     /// Returns the current theme
@@ -133,7 +133,7 @@ impl UserPrefs {
     /// * `theme` - a theme
     pub fn set_theme(&mut self, theme: AppScheme) {
         self.faves.insert("theme".to_owned(), format!("{:?}", theme));
-        self.save();
+        self.save(true);
     }
 
     /// Returns the current color of writable boxes
@@ -156,7 +156,7 @@ impl UserPrefs {
     /// * `color` - a RGB value
     pub fn set_color(&mut self, color: (u8, u8, u8)) {
         self.faves.insert("color".to_owned(), format!("{:?}", color));
-        self.save();
+        self.save(true);
     }
 
     /// Returns the current color of read-only boxes
@@ -179,13 +179,17 @@ impl UserPrefs {
     /// * `color` - a RGB value
     pub fn set_ro_color(&mut self, color: (u8, u8, u8)) {
         self.faves.insert("ro_color".to_owned(), format!("{:?}", color));
-        self.save();
+        self.save(true);
     }
 
     /// Saves the user's preferences
-    fn save(&self) {
+    ///
+    /// # Arguments
+    ///
+    /// * `show_error` - Whether or not display a popup when an error has occurred
+    fn save(&self, show_error: bool) {
         let save_result = self.faves.save(&APP_INFO, UserPrefs::PREFS_KEY);
-        if !save_result.is_ok() {
+        if !save_result.is_ok() && show_error {
             display_alert(&tr!("User preferences cannot be saved!"));
         }
     }

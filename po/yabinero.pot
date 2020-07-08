@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.6.0\n"
+"Project-Id-Version: 1.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-07 13:17+0200\n"
-"PO-Revision-Date: 2020-07-07 13:19+0200\n"
+"POT-Creation-Date: 2020-07-08 15:50+0200\n"
+"PO-Revision-Date: 2020-07-08 15:54+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -69,150 +69,150 @@ msgstr ""
 msgid "Solve"
 msgstr ""
 
-#: src/gui/menu.rs:174
-msgid "Close"
-msgstr ""
-
-#: src/gui/menu.rs:191 src/gui/menu.rs:435
+#: src/gui/menu.rs:148 src/gui/menu.rs:392
 msgid "Best scores"
 msgstr ""
 
-#: src/gui/menu.rs:292
+#: src/gui/menu.rs:249
 msgid "Color of actives boxes"
 msgstr ""
 
-#: src/gui/menu.rs:296
+#: src/gui/menu.rs:253
 msgid "Color of inactives boxes"
 msgstr ""
 
-#: src/gui/menu.rs:310
+#: src/gui/menu.rs:267
 msgid "Choose"
 msgstr ""
 
-#: src/gui/menu.rs:313
+#: src/gui/menu.rs:270
 msgid "Cancel"
 msgstr ""
 
-#: src/gui/menu.rs:314
+#: src/gui/menu.rs:271
 msgid "OK"
 msgstr ""
 
-#: src/gui/menu.rs:334
-msgid "		Yet Another Binero puzzle game, version 1.6.0."
+#: src/gui/menu.rs:291
+msgid "		Yet Another Binero puzzle game, version 1.7.0."
 msgstr ""
 
-#: src/gui/menu.rs:336
+#: src/gui/menu.rs:293
 msgid "This software is a mathematical puzzle game."
 msgstr ""
 
-#: src/gui/menu.rs:338
+#: src/gui/menu.rs:295
 msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
 msgstr ""
 
-#: src/gui/menu.rs:340
+#: src/gui/menu.rs:297
 msgid "two constraints:"
 msgstr ""
 
-#: src/gui/menu.rs:342
+#: src/gui/menu.rs:299
 msgid "In each line or column, there must be the same number"
 msgstr ""
 
-#: src/gui/menu.rs:344
+#: src/gui/menu.rs:301
 msgid "of the two values."
 msgstr ""
 
-#: src/gui/menu.rs:346
+#: src/gui/menu.rs:303
 msgid "In each line or column, the same value cannot be side by"
 msgstr ""
 
-#: src/gui/menu.rs:348
+#: src/gui/menu.rs:305
 msgid "side more than twice."
 msgstr ""
 
-#: src/gui/menu.rs:350
+#: src/gui/menu.rs:307
 msgid "Developper: Nicolas Salguero."
 msgstr ""
 
-#: src/gui/menu.rs:352
+#: src/gui/menu.rs:309
 msgid "This software is released under the GNU General Public Licence"
 msgstr ""
 
-#: src/gui/menu.rs:354
+#: src/gui/menu.rs:311
 msgid "version 3.0 or any later version."
 msgstr ""
 
-#: src/gui/menu.rs:356
+#: src/gui/menu.rs:313
 msgid "For more information, please see:"
 msgstr ""
 
-#: src/gui/menu.rs:369 src/gui/menu.rs:442
+#: src/gui/menu.rs:326 src/gui/menu.rs:399
 msgid "About"
 msgstr ""
 
-#: src/gui/menu.rs:381 src/gui/menu.rs:443
+#: src/gui/menu.rs:338 src/gui/menu.rs:400
 msgid "License"
 msgstr ""
 
-#: src/gui/menu.rs:409
+#: src/gui/menu.rs:366
 msgid "Game"
 msgstr ""
 
-#: src/gui/menu.rs:410
+#: src/gui/menu.rs:367
 msgid "Options"
 msgstr ""
 
-#: src/gui/menu.rs:411
+#: src/gui/menu.rs:368
 msgid "Help"
 msgstr ""
 
-#: src/gui/menu.rs:434
+#: src/gui/menu.rs:391
 msgid "New"
 msgstr ""
 
-#: src/gui/menu.rs:436
+#: src/gui/menu.rs:393
 msgid "Quit"
 msgstr ""
 
-#: src/gui/menu.rs:437
+#: src/gui/menu.rs:394
 msgid "Size"
 msgstr ""
 
-#: src/gui/menu.rs:438
+#: src/gui/menu.rs:395
 msgid "Difficulty"
 msgstr ""
 
-#: src/gui/menu.rs:439
+#: src/gui/menu.rs:396
 msgid "Sounds"
 msgstr ""
 
-#: src/gui/menu.rs:440
+#: src/gui/menu.rs:397
 msgid "Theme"
 msgstr ""
 
-#: src/gui/menu.rs:441
+#: src/gui/menu.rs:398
 msgid "Colors"
 msgstr ""
 
-#: src/gui/user_data.rs:189
+#: src/gui/user_data.rs:193
 msgid "User preferences cannot be saved!"
 msgstr ""
 
-#: src/gui/user_data.rs:212
+#: src/gui/user_data.rs:216
 msgid "Bad size!"
 msgstr ""
 
-#: src/gui/user_data.rs:218
+#: src/gui/user_data.rs:222
 msgid "Bad difficulty!"
 msgstr ""
 
-#: src/gui/user_data.rs:224
+#: src/gui/user_data.rs:228
 msgid "Unable to know whether or not the sounds must be played!"
 msgstr ""
 
-#: src/gui/user_data.rs:230
+#: src/gui/user_data.rs:234
 msgid "Bad theme!"
 msgstr ""
 
-#: src/gui/user_data.rs:351
+#: src/gui/user_data.rs:355
 msgid "Best scores cannot be saved!"
+msgstr ""
+
+#: src/gui/mod.rs:108
+msgid "Close"
 msgstr ""

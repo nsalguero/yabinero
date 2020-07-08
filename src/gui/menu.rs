@@ -3,11 +3,11 @@
 //! `menu` contains the functions that handles the menu
 
 use std::{cell::RefCell, fmt, fs, path::Path, process::exit, rc::Rc, sync::mpsc::Sender};
-use fltk::{app::{App, AppScheme}, button::Button, enums::{Align, Shortcut}, frame::Frame, group::ColorChooser, prelude::{GroupExt, MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}, group::Scroll, window::Window};
+use fltk::{app::{App, AppScheme}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use crate::enums::{Difficulty, Size};
-use crate::gui::{BG_COLOR, SELECT_COLOR, init_window, show, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
+use crate::gui::{BG_COLOR, SELECT_COLOR, BUTTON_HEIGHT, display_window, show, popup_window, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
 /// Returns an empty menu bar
 ///
@@ -122,60 +122,17 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
     }));
 }
 
-/// Creates a modal window
-///
-/// # Arguments
-///
-/// * `width` - the width of the window
-/// * `height` - the height of the window
-/// * `title` - the title of the window
-fn popup_window(width: i32, height: i32, title: &str) -> Window {
-    let window = Window::new(0, 0, width, height, title);
-    init_window(window, true)
-}
-
 /// Creates a button
 ///
 /// # Arguments
 ///
 /// * `x` - the horizontal starting point
 /// * `y` - the vertical starting point
-/// * `title` - the title of the window
+/// * `title` - the title of the button
 fn button(x: i32, y: i32, title: &str) -> Button {
     let mut button = Button::new(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, title);
     button.set_color(BG_COLOR);
     button
-}
-
-/// Displays a modal window
-///
-/// # Arguments
-///
-/// * `width` - the width of the window
-/// * `height` - the height of the window
-/// * `title` - the title of the window
-/// * `content` - the displayed content
-/// * `right_align` - whether or not the content of the internal frame is right aligned
-/// * `frame_height` - the height of the internal frame
-fn display_window(width: i32, height: i32, title: &str, content: &str, right_align: bool, frame_height: i32) {
-    let mut window = popup_window(width, height, title);
-    let frame_width = if right_align {
-        20
-    } else {
-        width - 20
-    };
-    let mut frame = Frame::new(0, 0, frame_width, frame_height, content);
-    if right_align {
-        frame.set_align(Align::Right);
-    }
-    let mut scroll = Scroll::new(0, 0, width, height, "");
-    scroll.add(&frame);
-    scroll.set_color(BG_COLOR);
-    let mut button = button((width - BUTTON_WIDTH) / 2, frame_height, &tr!("Close"));
-    show(&mut window);
-    button.set_callback(Box::new(move || {
-        window.hide();
-    }));
 }
 
 /// Adds the "Game/Best scores" menu entry
@@ -188,7 +145,7 @@ fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     let cloned_prefs = Rc::clone(user_prefs);
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::BestScores, None), Shortcut::None, MenuFlag::Normal, Box::new(move || {
         let best_scores = BestScores::new().best_scores(cloned_prefs.borrow().size(), cloned_prefs.borrow().difficulty());
-        display_window(326, 230, &tr!("Best scores"), &best_scores, true, 184);
+        display_window(326, 230, &tr!("Best scores"), &best_scores, true, 184, None);
     }));
 }
 
@@ -331,7 +288,7 @@ fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
 
 /// Returns the help of the game
 fn about() -> String {
-    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.6.0.");
+    let mut result = tr!("\t\tYet Another Binero puzzle game, version 1.7.0.");
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
     result.push_str("\n\n\n");
@@ -366,7 +323,7 @@ fn about() -> String {
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
         let about = about();
-        display_window(490, 510, &tr!("About"), &about, true, 460);
+        display_window(490, 510, &tr!("About"), &about, true, 460, None);
     }));
 }
 
@@ -378,7 +335,7 @@ fn add_about(menu: &mut MenuBar) {
 fn add_license(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::License, None), Shortcut::None, MenuFlag::Normal, Box::new(|| {
         let license = fs::read_to_string(Path::new("LICENSE")).unwrap();
-        display_window(560, 600, &tr!("License"), &license, false, 11500);
+        display_window(560, 600, &tr!("License"), &license, false, 11500, None);
     }));
 }
 
@@ -447,5 +404,4 @@ impl fmt::Display for Submenu {
 }
 
 const MENU_HEIGHT: i32 = 40;
-const BUTTON_HEIGHT: i32 = 40;
 const BUTTON_WIDTH: i32 = 70;
