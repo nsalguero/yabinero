@@ -73,18 +73,6 @@ impl Game {
     }
 }
 
-/// Creates a modal window
-///
-/// # Arguments
-///
-/// * `width` - the width of the window
-/// * `height` - the height of the window
-/// * `title` - the title of the window
-fn popup_window(width: i32, height: i32, title: &str) -> Window {
-    let window = Window::new(0, 0, width, height, title);
-    init_window(window, true)
-}
-
 /// Sets some parameters to a window
 ///
 /// # Arguments
@@ -98,6 +86,18 @@ fn init_window<T: WindowExt>(mut window: T, modal: bool) -> T {
     window.center_screen()
 }
 
+/// Creates a modal window
+///
+/// # Arguments
+///
+/// * `width` - the width of the window
+/// * `height` - the height of the window
+/// * `title` - the title of the window
+fn popup_window(width: i32, height: i32, title: &str) -> Window {
+    let window = Window::new(0, 0, width, height, title);
+    init_window(window, true)
+}
+
 /// Creates a `ReturnButton`
 ///
 /// # Arguments
@@ -108,6 +108,19 @@ fn return_button(window_width: i32, y: i32) -> ReturnButton {
     let mut button = ReturnButton::new((window_width - RET_BUTTON_WIDTH) / 2, y, RET_BUTTON_WIDTH, BUTTON_HEIGHT, &tr!("Close"));
     button.set_color(BG_COLOR);
     button
+}
+
+/// Sets an icon to a frame
+///
+/// # Arguments
+///
+/// * `frame` - a frame
+/// * `icon` - the name of an icon
+fn set_svg(frame: &mut Frame, icon: &str) {
+    if let Ok(mut img) = SvgImage::load(&Path::new("icons").join(icon)) {
+        img.scale(80, 80, true, true);
+        frame.set_image(Some(img));
+    }
 }
 
 /// Displays a modal window
@@ -132,13 +145,14 @@ fn display_window(width: i32, height: i32, title: &str, content: &str, right_ali
     if right_align {
         frame.set_align(Align::Right);
     }
-    if let Some(ic) = icon {
-        if let Ok(mut img) = SvgImage::load(&Path::new("icons").join(ic.to_owned() + ".svg")) {
-            img.scale(80, 80, true, true);
-            frame.set_image(Some(img));
-        }
-    }
     let mut scroll = Scroll::new(0, 0, width, height, "");
+    if let Some(ic) = icon {
+        const FRAME_ICON_SIZE: i32 = 120;
+        let mut frame2 = Frame::new(0, 4, FRAME_ICON_SIZE, FRAME_ICON_SIZE, "");
+        set_svg(&mut frame2, &(ic.to_owned() + ".svg"));
+        frame.resize(FRAME_ICON_SIZE - frame_width, 0, frame_width, frame_height);
+        scroll.add(&frame2);
+    }
     scroll.add(&frame);
     scroll.set_color(BG_COLOR);
     let mut button = return_button(width, frame_height);
@@ -154,7 +168,7 @@ fn display_window(width: i32, height: i32, title: &str, content: &str, right_ali
 ///
 /// * `msg` - the error message
 fn display_alert(msg: &str) {
-    display_window(500, 170, "", msg, false, 120, Some("ko"));
+    display_window(500, 150, "", msg, true, 100, Some("ko"));
 }
 
 /// Displays a popup with a message
@@ -163,7 +177,7 @@ fn display_alert(msg: &str) {
 ///
 /// * `msg` - the message
 fn display_message(msg: &str) {
-    display_window(500, 170, "", msg, false, 120, Some("ok"));
+    display_window(500, 150, "", msg, true, 100, Some("ok"));
 }
 
 /// Shows a window

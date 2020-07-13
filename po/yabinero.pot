@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.7.0\n"
+"Project-Id-Version: 1.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 15:50+0200\n"
-"PO-Revision-Date: 2020-07-08 15:54+0200\n"
+"POT-Creation-Date: 2020-07-13 09:46+0200\n"
+"PO-Revision-Date: 2020-07-13 09:47+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -94,7 +94,7 @@ msgid "OK"
 msgstr ""
 
 #: src/gui/menu.rs:291
-msgid "		Yet Another Binero puzzle game, version 1.7.0."
+msgid "		Yet Another Binero puzzle game, version 1.8.0."
 msgstr ""
 
 #: src/gui/menu.rs:293

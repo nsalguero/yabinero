@@ -2,8 +2,9 @@
 //!
 //! `timer` handles the timer
 
-use std::{path::Path, sync::{Arc, Mutex, mpsc::{self, Sender}}, thread, time::{Duration, Instant}};
-use fltk::{prelude::{ImageExt, WidgetExt}, frame::Frame, image::SvgImage};
+use std::{sync::{Arc, Mutex, mpsc::{self, Sender}}, thread, time::{Duration, Instant}};
+use fltk::{prelude::{WidgetExt}, frame::Frame};
+use crate::gui::set_svg;
 
 pub struct Timer {
     timer: Arc<Mutex<Frame>>,
@@ -77,10 +78,7 @@ impl Timer {
     /// * `width` - the width
     fn init_timer(x: i32, y: i32, width: i32) -> Arc<Mutex<Frame>> {
         let mut timer = Frame::new(x, y, width, 120, "00:00");
-        if let Ok(mut img) = SvgImage::load(&Path::new("icons").join("chrono.svg")) {
-            img.scale(80, 80, true, true);
-            timer.set_image(Some(img));
-        }
+        set_svg(&mut timer, "chrono.svg");
         timer.hide();
         Arc::new(Mutex::new(timer))
     }
