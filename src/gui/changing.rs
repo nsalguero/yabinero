@@ -283,7 +283,7 @@ impl ChangingPart {
         let cloned_timer = Rc::clone(timer);
         input.handle(Box::new(move |ev: Event| {
             match ev {
-                Event::KeyUp => {
+                Event::KeyUp | Event::Unfocus => {
                     let old_value = cloned_binero.borrow().get(x_axis, y_axis);
                     let value = cloned_boxes.borrow()[x_axis as usize][y_axis as usize].value();
                     let val = value.trim();
