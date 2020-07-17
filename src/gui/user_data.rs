@@ -312,10 +312,12 @@ impl BestScores {
                 break;
             }
         }
-        let mut old_score = Some(BestScores::score(duration));
-        while BestScores::ranking_as_u8(&ranking) <= BestScores::MAX_BEST_SCORE && old_score.is_some() {
-            old_score = best_scores.insert(ranking.clone(), old_score.unwrap());
-            ranking = format!("{}", BestScores::ranking_as_u8(&ranking) + 1);
+        if rank <= BestScores::MAX_BEST_SCORE {
+            let mut old_score = Some(BestScores::score(duration));
+            while BestScores::ranking_as_u8(&ranking) <= BestScores::MAX_BEST_SCORE && old_score.is_some() {
+                old_score = best_scores.insert(ranking.clone(), old_score.unwrap());
+                ranking = format!("{}", BestScores::ranking_as_u8(&ranking) + 1);
+            }
         }
         BestScores::save(best_scores, key);
     }
