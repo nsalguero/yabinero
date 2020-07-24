@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.11.0
+%define version 1.12.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -125,6 +125,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Fri Jul 24 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.12.0-1.mga7
+- when a game is over, update once again the timer in the GUI
+
 * Thu Jul 23 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.11.0-1.mga7
 - when a game is over, the buttons do nothing
 

@@ -7,7 +7,7 @@ use fltk::{prelude::{WidgetExt}, frame::Frame};
 use crate::gui::set_svg;
 
 pub struct Timer {
-    timer: Arc<Mutex<Frame>>,
+    pub timer: Arc<Mutex<Frame>>,
     old_duration: Arc<Mutex<u64>>,
     curr_start: Arc<Mutex<Instant>>,
 }
@@ -48,7 +48,7 @@ impl Timer {
                 }
                 if !pause {
                     let duration = cloned_curr_start.lock().unwrap().elapsed().as_secs() + *cloned_old_duration.lock().unwrap();
-                    cloned_timer.lock().unwrap().set_label(&Timer::format(duration));
+                    Timer::display_duration(&cloned_timer, duration);
                 }
             }
         });
@@ -67,6 +67,16 @@ impl Timer {
     /// * `duration` - a duration
     pub fn format(duration: u64) -> String {
         format!("{:02}:{:02}", duration / 60, duration % 60)
+    }
+
+    /// Displays a duration in the GUI
+    ///
+    /// # Arguments
+    ///
+    /// * `timer` - the timer in the GUI
+    /// * `duration` - a duration
+    pub fn display_duration(timer: &Arc<Mutex<Frame>>, duration: u64) {
+        timer.lock().unwrap().set_label(&Timer::format(duration));
     }
 
     /// Returns the `Frame` displaying the timer
