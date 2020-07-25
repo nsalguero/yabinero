@@ -354,7 +354,7 @@ impl ChangingPart {
         }
         let mut best_scores = BestScores::new();
         best_scores.add_best_score(size, difficulty, timer);
-        Timer::display_duration(&timer.borrow().timer, timer.borrow().duration());
+        timer.borrow().refresh_duration();
         display_message(&tr!("Congratulations, you won!"));
     }
 
