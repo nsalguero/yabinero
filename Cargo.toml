@@ -1,15 +1,16 @@
 [package]
 name = "yabinero"
-version = "1.13.0"
+version = "1.14.0"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 edition = "2018"
 license = "GPL-3.0+"
 
 [dependencies]
-fltk = "^0.7"
+fltk = "^0.8"
 rand = "^0.7"
 rodio = "^0.11"
 preferences = "^1.1"
 tr = "^0.1"
 enum-iterator = "^0.6"
 chrono = "^0.4"
+lazy_static = "^1.4"

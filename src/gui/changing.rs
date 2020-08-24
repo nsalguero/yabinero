@@ -45,9 +45,9 @@ impl ChangingPart {
         let but_pause = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Pause);
         let but_resume = ChangingPart::init_button(starting_x, ending_y - ChangingPart::HEIGHT - ChangingPart::MARGIN_Y, width, PlayButton::Resume);
         let mut but_undo = ChangingPart::init_button(starting_x, ending_y - 5 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Undo);
-        but_undo.set_shortcut(Shortcut::Ctrl + 'z');
+        but_undo.set_shortcut(Shortcut::Ctrl | 'z');
         let mut but_redo = ChangingPart::init_button(starting_x, ending_y - 4 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Redo);
-        but_redo.set_shortcut(Shortcut::Ctrl + 'Z');
+        but_redo.set_shortcut(Shortcut::Ctrl | 'Z');
         let but_retry = ChangingPart::init_button(starting_x, ending_y - 3 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Retry);
         let but_solve = ChangingPart::init_button(starting_x, ending_y - 2 * (ChangingPart::HEIGHT + ChangingPart::MARGIN_Y), width, PlayButton::Solve);
         let pause = ChangingPart::init_pause(starting_x, ending_y);

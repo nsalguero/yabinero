@@ -30,8 +30,8 @@ impl UserPrefs {
             faves.insert("difficulty".to_owned(), "Beginner".to_owned());
             faves.insert("sounds".to_owned(), "true".to_owned());
             faves.insert("theme".to_owned(), "Gtk".to_owned());
-            faves.insert("color".to_owned(), "(0, 0, 0)".to_owned());
-            faves.insert("ro_color".to_owned(), "(88, 88, 88)".to_owned());
+            faves.insert("color".to_owned(), UserPrefs::color_as_string(&FG_COLOR));
+            faves.insert("ro_color".to_owned(), UserPrefs::color_as_string(&RO_FG_COLOR));
             let result = UserPrefs {
                 faves,
             };
@@ -142,10 +142,10 @@ impl UserPrefs {
             if let Some(color) = UserPrefs::color_from_str(color_str) {
                 color
             } else {
-                FG_COLOR
+                *FG_COLOR
             }
         } else {
-            FG_COLOR
+            *FG_COLOR
         }
     }
 
@@ -155,7 +155,7 @@ impl UserPrefs {
     ///
     /// * `color` - a RGB value
     pub fn set_color(&mut self, color: (u8, u8, u8)) {
-        self.faves.insert("color".to_owned(), format!("{:?}", color));
+        self.faves.insert("color".to_owned(), UserPrefs::rgb_as_string(color));
         self.save(true);
     }
 
@@ -165,10 +165,10 @@ impl UserPrefs {
             if let Some(color) = UserPrefs::color_from_str(color_str) {
                 color
             } else {
-                RO_FG_COLOR
+                *RO_FG_COLOR
             }
         } else {
-            RO_FG_COLOR
+            *RO_FG_COLOR
         }
     }
 
@@ -178,8 +178,26 @@ impl UserPrefs {
     ///
     /// * `color` - a RGB value
     pub fn set_ro_color(&mut self, color: (u8, u8, u8)) {
-        self.faves.insert("ro_color".to_owned(), format!("{:?}", color));
+        self.faves.insert("ro_color".to_owned(), UserPrefs::rgb_as_string(color));
         self.save(true);
+    }
+
+    /// Returns a RGB value as a string
+    ///
+    /// # Arguments
+    ///
+    /// * `color` - a RGB value
+    fn rgb_as_string(color: (u8, u8, u8)) -> String {
+        format!("{:?}", color)
+    }
+
+    /// Returns a color as a string
+    ///
+    /// # Arguments
+    ///
+    /// * `color` - a color
+    fn color_as_string(color: &Color) -> String {
+        UserPrefs::rgb_as_string(color.to_rgb())
     }
 
     /// Saves the user's preferences

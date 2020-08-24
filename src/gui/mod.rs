@@ -13,6 +13,7 @@ use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, g
 use tr::tr;
 use user_data::UserPrefs;
 use changing::ChangingPart;
+use lazy_static::lazy_static;
 
 /// The GUI is represented here
 pub struct Game {
@@ -191,10 +192,13 @@ fn show(window: &mut impl WindowExt) {
 }
 
 const BG_COLOR: Color = Color::Light2;
-const FG_COLOR: Color = Color::Black;
 const SELECT_COLOR: Color = Color::Dark3;
-const RO_FG_COLOR: Color = Color::Inactive;
 const RO_SELECT_COLOR: Color = Color::Dark1;
+
+lazy_static! {
+    static ref FG_COLOR: Color = Color::from_rgb(16, 16, 16);
+    static ref RO_FG_COLOR: Color = Color::from_rgb(88, 88, 88);
+}
 
 const BUTTON_HEIGHT: i32 = 40;
 const RET_BUTTON_WIDTH: i32 = 100;

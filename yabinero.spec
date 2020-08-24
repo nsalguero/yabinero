@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.13.0
+%define version 1.14.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -125,6 +125,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Mon Aug 24 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.14.0-1.mga7
+- improve GUI code
+
 * Sat Jul 25 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.13.0-1.mga7
 - improve timer code
 

@@ -113,7 +113,7 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
     let cloned_prefs = Rc::clone(user_prefs);
     let cloned_changing = Rc::clone(changing);
     let mut tx: Option<Sender<bool>> = None;
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl + 'n', MenuFlag::Normal, Box::new(move || {
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::New, None), Shortcut::Ctrl | 'n', MenuFlag::Normal, Box::new(move || {
         if let Some(t) = &tx {
             t.send(true).unwrap();
             ChangingPart::pause_game(&cloned_changing);
@@ -155,7 +155,7 @@ fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 ///
 /// * `menu` - a menu bar
 fn add_quit(menu: &mut MenuBar) {
-    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl + 'q', MenuFlag::Normal, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl | 'q', MenuFlag::Normal, Box::new(|| {
         exit(0);
     }));
 }
@@ -321,7 +321,7 @@ fn about() -> String {
 ///
 /// * `menu` - a menu bar
 fn add_about(menu: &mut MenuBar) {
-    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl + 'h', MenuFlag::Normal, Box::new(|| {
+    menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl | 'h', MenuFlag::Normal, Box::new(|| {
         let about = about();
         display_window(490, 510, &tr!("About"), &about, true, 460, None);
     }));
