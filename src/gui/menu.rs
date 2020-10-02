@@ -2,8 +2,8 @@
 //!
 //! `menu` contains the functions that handles the menu
 
-use std::{cell::RefCell, fmt, fs, path::Path, process::exit, rc::Rc, sync::mpsc::Sender};
-use fltk::{app::{App, AppScheme}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
+use std::{cell::RefCell, fmt, fs, path::Path, rc::Rc, sync::mpsc::Sender};
+use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use crate::enums::{Difficulty, Size};
@@ -156,7 +156,7 @@ fn add_best_scores(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `menu` - a menu bar
 fn add_quit(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Quit, None), Shortcut::Ctrl | 'q', MenuFlag::Normal, Box::new(|| {
-        exit(0);
+        quit();
     }));
 }
 

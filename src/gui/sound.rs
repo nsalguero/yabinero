@@ -2,7 +2,7 @@
 //!
 //! `sound` contains the functions to play the sounds of the game
 
-use std::{fmt, fs::File, path::Path, io::BufReader};
+use std::{fmt, fs::File, path::Path, io::BufReader, thread};
 use rodio::Source;
 
 /// The two possible types of sound
@@ -23,9 +23,12 @@ impl fmt::Display for Sound {
 impl Sound {
     /// Plays a sound
     pub fn play(&self) {
-        let device = rodio::default_output_device().unwrap();
-        let file = File::open(Path::new("sounds").join(format!("{}", *self))).unwrap();
-        let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-        rodio::play_raw(&device, source.convert_samples());
+        let snd_file = format!("{}", *self);
+        thread::spawn(move || {
+            let device = rodio::default_output_device().unwrap();
+            let file = File::open(Path::new("sounds").join(snd_file)).unwrap();
+            let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+            rodio::play_raw(&device, source.convert_samples());
+        });
     }
 }

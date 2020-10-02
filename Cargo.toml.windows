@@ -6,6 +6,7 @@ edition = "2018"
 license = "GPL-3.0+"
 
 [dependencies]
+gettext-sys = { version = "^0.19", features = ["gettext-system"] }
 fltk = "^0.9"
 rand = "^0.7"
 rodio = "^0.11"
