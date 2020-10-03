@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 //! # Yet Another Binero puzzle game
 
 mod engine;
