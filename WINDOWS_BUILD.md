@@ -15,5 +15,5 @@
    cargo build --release
    ```
 7. Create a folder containg the folders ```icons```, ```locale``` and ```sounds```,
-   the files ```LICENSE``` and ```yabinero.exe``` and the files ```libiconv-2.dll```
-   and ```libintl-8.dll``` from ```/mingw46/bin```.
+   the files ```LICENSE```, ```yabinero.bat``` and ```yabinero.exe``` and the files
+   ```libiconv-2.dll``` and ```libintl-8.dll``` from ```/mingw46/bin```.
