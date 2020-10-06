@@ -30,6 +30,17 @@ BuildRequires: pkgconfig(xcursor)
 BuildRequires: pkgconfig(xrender)
 BuildRequires: pkgconfig(xft)
 BuildRequires: pkgconfig(fontconfig)
+BuildRequires: pkgconfig(libbsd)
+BuildRequires: pkgconfig(liblzma)
+BuildRequires: pkgconfig(zlib)
+BuildRequires: pkgconfig(libpng)
+BuildRequires: pkgconfig(bzip2)
+
+Requires: %{_lib}bsd0
+Requires: %{_lib}lzma5
+Requires: zlib
+Requires: libpng
+Requires: %{_lib}bz2_1
 
 %description
 This software can generate and solve binero puzzles.
