@@ -16,6 +16,3 @@ tr = { version = "^0.1", features = ["gettext"], default-features = false }
 enum-iterator = "^0.6"
 chrono = "^0.4"
 lazy_static = "^1.4"
-
-[target.'cfg(windows)'.dependencies]
-gettext-sys = { version = "^0.19", features = ["gettext-system"] }

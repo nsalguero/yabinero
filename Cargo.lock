@@ -319,15 +319,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gettext-sys"
-version = "0.19.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e034c4ba5bb796730a6cc5eb0d654c16885006a7c3d6c6603581ed809434f153"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "glob"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -842,7 +833,6 @@ dependencies = [
  "enum-iterator",
  "fltk",
  "gettext",
- "gettext-sys",
  "lazy_static",
  "locale_config",
  "preferences",

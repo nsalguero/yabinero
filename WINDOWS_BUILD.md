@@ -6,7 +6,6 @@
 3. Clone the repository.
 4. Set some variables:
    ```
-   export MSYSTEM_PREFIX=/mingw64
    export PATH=/mingw64/bin:$PATH
    ```
 5. Build:
@@ -14,5 +13,4 @@
    cargo build --release
    ```
 6. Create a folder containg the folders ```icons```, ```locale``` and ```sounds```,
-   the files ```LICENSE``` and ```yabinero.exe``` and the files ```libiconv-2.dll```
-   and ```libintl-8.dll``` from ```/mingw46/bin```.
+   the files ```LICENSE``` and ```yabinero.exe```.
