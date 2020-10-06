@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.15.0
+%define version 1.16.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -125,6 +125,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Tue Oct 06 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.16.0-1.mga7
+- change the initialisation of L10N
+
 * Fri Oct 02 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.15.0-1.mga7
 - improve GUI code for windows port
 
