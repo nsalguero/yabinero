@@ -1,7 +1,7 @@
 1. Install msys2 (see: https://www.msys2.org/).
 2. Inside msys2, install rust:
    ```
-   pacman -S mingw-w64-x86_64-toolchain base-devel git vim cmake mingw-w64-x86_64-rust
+   pacman -S --needed mingw-w64-x86_64-toolchain base-devel git vim mingw-w64-x86_64-cmake mingw-w64-x86_64-rust
    ```
 3. Clone the repository.
 4. Set some variables:
