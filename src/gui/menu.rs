@@ -322,7 +322,7 @@ fn about() -> String {
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl | 'h', MenuFlag::Normal, Box::new(|| {
         let about = about();
-        display_window(540, 510, &tr!("About"), &about, true, 460, None);
+        display_window(490, 510, &tr!("About"), &about, true, 460, None);
     }));
 }
 
