@@ -58,7 +58,7 @@ cp %{S:2} .cargo/config
 tar xf %{S:1}
 
 %build
-cargo build --release
+CARGO_PKG_LICENSE="GPL-3.0+" cargo build --release
 
 cat > %{name}-wrapper << "EOF"
 #!/bin/sh
