@@ -8,7 +8,7 @@
    ```
    export PATH=/mingw64/bin:$PATH
    ```
-5. Build:
+5. Build (with rust < 1.46, add ```CARGO_PKG_LICENSE="GPL-3.0+") ``` before the following command:
    ```
    cargo build --release
    ```

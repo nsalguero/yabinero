@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.9.0\n"
+"Project-Id-Version: 1.17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-16 10:31+0200\n"
-"PO-Revision-Date: 2020-07-16 10:33+0200\n"
+"POT-Creation-Date: 2020-10-12 14:10+0200\n"
+"PO-Revision-Date: 2020-10-12 14:13+0200\n"
 "Last-Translator: Nicolas Salguero <nicolas.salguero@laposte.net>\n"
 "Language-Team: French <fr@li.org>\n"
 "Language: \n"
@@ -33,186 +33,182 @@ msgstr "Moyen"
 msgid "Hard"
 msgstr "Difficile"
 
-#: src/gui/changing.rs:301 src/gui/changing.rs:311
+#: src/gui/changing.rs:307 src/gui/changing.rs:317
 msgid "Bad value!"
 msgstr "Mauvaise valeur !"
 
-#: src/gui/changing.rs:349
+#: src/gui/changing.rs:358
 msgid "Congratulations, you won!"
 msgstr "Félicitations, vous avez gagné !"
 
-#: src/gui/changing.rs:492
+#: src/gui/changing.rs:510
 msgid "No solution!"
 msgstr "Pas de solution !"
 
-#: src/gui/changing.rs:515
+#: src/gui/changing.rs:534
 msgid "Pause"
 msgstr "Pause"
 
-#: src/gui/changing.rs:516
+#: src/gui/changing.rs:535
 msgid "Resume"
 msgstr "Reprendre"
 
-#: src/gui/changing.rs:517
+#: src/gui/changing.rs:536
 msgid "Undo"
 msgstr "Annuler"
 
-#: src/gui/changing.rs:518
+#: src/gui/changing.rs:537
 msgid "Redo"
 msgstr "Refaire"
 
-#: src/gui/changing.rs:519
+#: src/gui/changing.rs:538
 msgid "Retry"
 msgstr "Recommencer"
 
-#: src/gui/changing.rs:520
+#: src/gui/changing.rs:539
 msgid "Solve"
 msgstr "Résoudre"
 
-#: src/gui/menu.rs:148 src/gui/menu.rs:392
+#: src/gui/menu.rs:149 src/gui/menu.rs:391
 msgid "Best scores"
 msgstr "Meilleurs scores"
 
-#: src/gui/menu.rs:249
+#: src/gui/menu.rs:250
 msgid "Color of actives boxes"
 msgstr "Couleur des cellules actives"
 
-#: src/gui/menu.rs:253
+#: src/gui/menu.rs:254
 msgid "Color of inactives boxes"
 msgstr "Couleur des cellules inactives"
 
-#: src/gui/menu.rs:267
+#: src/gui/menu.rs:268
 msgid "Choose"
 msgstr "Choisir"
 
-#: src/gui/menu.rs:270
+#: src/gui/menu.rs:271
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/gui/menu.rs:271
+#: src/gui/menu.rs:272
 msgid "OK"
 msgstr "Valider"
 
-#: src/gui/menu.rs:291
+#: src/gui/menu.rs:292
 msgid "		Yet Another Binero puzzle game, version {}."
 msgstr "			Encore un Binero, version {}."
 
-#: src/gui/menu.rs:293
+#: src/gui/menu.rs:294
 msgid "This software is a mathematical puzzle game."
 msgstr "Ce logiciel est un jeu mathématique."
 
-#: src/gui/menu.rs:295
+#: src/gui/menu.rs:296
 msgid "The aim of the game is to fill in a grid with 0 and 1 respecting"
 msgstr "Le but du jeu est de remplir une grille avec des 0 et des 1"
 
-#: src/gui/menu.rs:297
+#: src/gui/menu.rs:298
 msgid "two constraints:"
 msgstr "en respectant deux contraintes :"
 
-#: src/gui/menu.rs:299
+#: src/gui/menu.rs:300
 msgid "In each line or column, there must be the same number"
 msgstr "Dans chaque ligne ou colonne, il doit y avoir autant"
 
-#: src/gui/menu.rs:301
+#: src/gui/menu.rs:302
 msgid "of the two values."
 msgstr "de 0 que de 1."
 
-#: src/gui/menu.rs:303
+#: src/gui/menu.rs:304
 msgid "In each line or column, the same value cannot be side by"
 msgstr "Dans chaque ligne ou colonne, la même valeur ne peut"
 
-#: src/gui/menu.rs:305
+#: src/gui/menu.rs:306
 msgid "side more than twice."
 msgstr "être côte à côte plus de deux fois."
 
-#: src/gui/menu.rs:307
-msgid "Developper: Nicolas Salguero."
-msgstr "Développeur : Nicolas Salguero."
+#: src/gui/menu.rs:308
+msgid "Developper: {}."
+msgstr "Développeur : {}."
 
-#: src/gui/menu.rs:309
-msgid "This software is released under the GNU General Public Licence"
-msgstr "Ce logiciel est fourni sous la License Publique Générale GNU"
+#: src/gui/menu.rs:310
+msgid "This software is released under the following licence: {}."
+msgstr "Ce logiciel est fourni sous la licence suivante : {}."
 
-#: src/gui/menu.rs:311
-msgid "version 3.0 or any later version."
-msgstr "version 3.0 ou toute version plus récente."
-
-#: src/gui/menu.rs:313
+#: src/gui/menu.rs:312
 msgid "For more information, please see:"
 msgstr "Pour plus d'informations, vous pouvez consulter :"
 
-#: src/gui/menu.rs:326 src/gui/menu.rs:399
+#: src/gui/menu.rs:325 src/gui/menu.rs:398
 msgid "About"
 msgstr "À propos"
 
-#: src/gui/menu.rs:338 src/gui/menu.rs:400
+#: src/gui/menu.rs:337 src/gui/menu.rs:399
 msgid "License"
 msgstr "Licence"
 
-#: src/gui/menu.rs:366
+#: src/gui/menu.rs:365
 msgid "Game"
 msgstr "Jeu"
 
-#: src/gui/menu.rs:367
+#: src/gui/menu.rs:366
 msgid "Options"
 msgstr "Options"
 
-#: src/gui/menu.rs:368
+#: src/gui/menu.rs:367
 msgid "Help"
 msgstr "Aide"
 
-#: src/gui/menu.rs:391
+#: src/gui/menu.rs:390
 msgid "New"
 msgstr "Nouveau"
 
-#: src/gui/menu.rs:393
+#: src/gui/menu.rs:392
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/gui/menu.rs:394
+#: src/gui/menu.rs:393
 msgid "Size"
 msgstr "Taille"
 
-#: src/gui/menu.rs:395
+#: src/gui/menu.rs:394
 msgid "Difficulty"
 msgstr "Difficulté"
 
-#: src/gui/menu.rs:396
+#: src/gui/menu.rs:395
 msgid "Sounds"
 msgstr "Sons"
 
-#: src/gui/menu.rs:397
+#: src/gui/menu.rs:396
 msgid "Theme"
 msgstr "Thème"
 
-#: src/gui/menu.rs:398
+#: src/gui/menu.rs:397
 msgid "Colors"
 msgstr "Couleurs"
 
-#: src/gui/user_data.rs:193
+#: src/gui/user_data.rs:211
 msgid "User preferences cannot be saved!"
 msgstr "Les préférences ne peuvent être sauvegardées !"
 
-#: src/gui/user_data.rs:216
+#: src/gui/user_data.rs:234
 msgid "Bad size!"
 msgstr "Mauvaise taille !"
 
-#: src/gui/user_data.rs:222
+#: src/gui/user_data.rs:240
 msgid "Bad difficulty!"
 msgstr "Mauvaise difficulté !"
 
-#: src/gui/user_data.rs:228
+#: src/gui/user_data.rs:246
 msgid "Unable to know whether or not the sounds must be played!"
 msgstr "Impossible de savoir si les sons doivent être joués !"
 
-#: src/gui/user_data.rs:234
+#: src/gui/user_data.rs:252
 msgid "Bad theme!"
 msgstr "Mauvais thème !"
 
-#: src/gui/user_data.rs:355
+#: src/gui/user_data.rs:375
 msgid "Best scores cannot be saved!"
 msgstr "Les meilleurs scores ne peuvent être sauvegardés !"
 
-#: src/gui/mod.rs:108
+#: src/gui/mod.rs:109
 msgid "Close"
 msgstr "Fermer"

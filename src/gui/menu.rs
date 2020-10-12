@@ -6,6 +6,7 @@ use std::{cell::RefCell, fmt, fs, path::Path, rc::Rc, sync::mpsc::Sender};
 use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
+use lazy_static::lazy_static;
 use crate::enums::{Difficulty, Size};
 use crate::gui::{BG_COLOR, SELECT_COLOR, BUTTON_HEIGHT, display_window, show, popup_window, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
@@ -304,14 +305,12 @@ fn about() -> String {
     result.push_str("\n\t  ");
     result.push_str(&tr!("side more than twice."));
     result.push_str("\n\n\n");
-    result.push_str(&tr!("Developper: Nicolas Salguero."));
+    result.push_str(&tr!("Developper: {}.", *AUTHOR));
     result.push_str("\n\n\n");
-    result.push_str(&tr!("This software is released under the GNU General Public Licence"));
-    result.push_str("\n");
-    result.push_str(&tr!("version 3.0 or any later version."));
+    result.push_str(&tr!("This software is released under the following licence: {}.", LICENSE));
     result.push_str("\n\n\n");
     result.push_str(&tr!("For more information, please see:"));
-    result.push_str("\nhttps://github.com/nsalguero/yabinero");
+    result.push_str(&format!("\n{}.", HOMEPAGE));
     result
 }
 
@@ -323,7 +322,7 @@ fn about() -> String {
 fn add_about(menu: &mut MenuBar) {
     menu.add(&entry_label(&TopLevelMenu::Help, &Submenu::About, None), Shortcut::Ctrl | 'h', MenuFlag::Normal, Box::new(|| {
         let about = about();
-        display_window(490, 510, &tr!("About"), &about, true, 460, None);
+        display_window(540, 510, &tr!("About"), &about, true, 460, None);
     }));
 }
 
@@ -407,3 +406,9 @@ const MENU_HEIGHT: i32 = 40;
 const BUTTON_WIDTH: i32 = 70;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const HOMEPAGE: &'static str = env!("CARGO_PKG_HOMEPAGE");
+const LICENSE: &'static str = env!("CARGO_PKG_LICENSE");
+
+lazy_static! {
+    static ref AUTHOR: String = env!("CARGO_PKG_AUTHORS")[..16].to_string();
+}
