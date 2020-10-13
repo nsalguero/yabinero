@@ -20,6 +20,7 @@ fn main() {
     game.run_app();
 }
 
+/// Initialises the translation
 fn tr_init() {
     let locale = format!("{}", Locale::current());
     if let Ok(file) = open_file(&locale) {
@@ -32,6 +33,11 @@ fn tr_init() {
     }
 }
 
+/// Opens a file and returns it
+///
+/// # Arguments
+///
+/// * `locale` - the name of a locale
 fn open_file(locale: &str) -> Result<File> {
     let mut loc_path = PathBuf::new();
     loc_path.push("locale");
@@ -41,6 +47,11 @@ fn open_file(locale: &str) -> Result<File> {
     File::open(loc_path)
 }
 
+/// Initialises the catalog from a MO file
+///
+/// # Arguments
+///
+/// * `file` - a MO file
 fn init_catalog(file: File) {
     let catalog = Catalog::parse(file).unwrap();
     set_translator!(catalog);

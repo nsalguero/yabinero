@@ -6,7 +6,7 @@ use std::{cell::RefCell, fmt, fs, path::Path, rc::Rc, sync::mpsc::Sender};
 use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
-use lazy_static::lazy_static;
+use regex::Regex;
 use crate::enums::{Difficulty, Size};
 use crate::gui::{BG_COLOR, SELECT_COLOR, BUTTON_HEIGHT, display_window, show, popup_window, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
 
@@ -289,10 +289,12 @@ fn display_color_chooser(user_prefs: &Rc<RefCell<UserPrefs>>, read_only: bool) {
 
 /// Returns the help of the game
 fn about() -> String {
+    let authors = authors();
+    let authors_number = authors.len();
     let mut result = tr!("\t\tYet Another Binero puzzle game, version {}.", VERSION);
     result.push_str("\n\n\n");
     result.push_str(&tr!("This software is a mathematical puzzle game."));
-    result.push_str("\n\n\n");
+    result.push_str(&new_line(authors_number));
     result.push_str(&tr!("The aim of the game is to fill in a grid with 0 and 1 respecting"));
     result.push_str("\n");
     result.push_str(&tr!("two constraints:"));
@@ -304,14 +306,40 @@ fn about() -> String {
     result.push_str(&tr!("In each line or column, the same value cannot be side by"));
     result.push_str("\n\t  ");
     result.push_str(&tr!("side more than twice."));
-    result.push_str("\n\n\n");
-    result.push_str(&tr!("Developper: {}.", *AUTHOR));
-    result.push_str("\n\n\n");
+    result.push_str(&new_line(authors_number));
+    result.push_str(&tr!("This software is developped by:"));
+    for author in authors {
+        result.push_str(&format!("\n\t- {}.", author));
+    }
+    result.push_str(&new_line(authors_number));
     result.push_str(&tr!("This software is released under the following licence: {}.", LICENSE));
-    result.push_str("\n\n\n");
+    result.push_str(&new_line(authors_number));
     result.push_str(&tr!("For more information, please see:"));
     result.push_str(&format!("\n{}.", HOMEPAGE));
     result
+}
+
+/// Returns the authors
+fn authors() -> Vec<String> {
+    let authors = env!("CARGO_PKG_AUTHORS");
+    let re = Regex::new(r" <[^@]+@[^@]+>").unwrap();
+    let authors = re.replace_all(authors, "").replace(":", "\n");
+    authors.lines().map(String::from).collect()
+}
+
+/// Returns some new lines depending on the number of authors
+///
+/// # Arguments
+///
+/// * `authors_number` - the number of authors
+fn new_line(authors_number: usize) -> String {
+    if authors_number < 3 {
+        String::from("\n\n\n")
+    } else if authors_number < 6 {
+        String::from("\n\n")
+    } else {
+        String::from("\n")
+    }
 }
 
 /// Adds the "Help/About" menu entry
@@ -408,7 +436,3 @@ const BUTTON_WIDTH: i32 = 70;
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const HOMEPAGE: &'static str = env!("CARGO_PKG_HOMEPAGE");
 const LICENSE: &'static str = env!("CARGO_PKG_LICENSE");
-
-lazy_static! {
-    static ref AUTHOR: String = env!("CARGO_PKG_AUTHORS")[..16].to_string();
-}
