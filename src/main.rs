@@ -23,22 +23,22 @@ fn main() {
 /// Initialises the translation
 fn tr_init() {
     let locale = format!("{}", Locale::current());
-    if let Ok(file) = open_file(&locale) {
+    if let Ok(file) = open_mo_file(&locale) {
         init_catalog(file);
     } else {
         let loc: Vec<&str> = locale.split("-").collect();
-        if let Ok(file) = open_file(loc[0]) {
+        if let Ok(file) = open_mo_file(loc[0]) {
             init_catalog(file);
         }
     }
 }
 
-/// Opens a file and returns it
+/// Opens a MO file and returns it
 ///
 /// # Arguments
 ///
 /// * `locale` - the name of a locale
-fn open_file(locale: &str) -> Result<File> {
+fn open_mo_file(locale: &str) -> Result<File> {
     let mut loc_path = PathBuf::new();
     loc_path.push("locale");
     loc_path.push(locale);
