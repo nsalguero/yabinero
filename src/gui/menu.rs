@@ -3,7 +3,7 @@
 //! `menu` contains the functions that handles the menu
 
 use std::{cell::RefCell, fmt, fs, path::Path, rc::Rc, sync::mpsc::Sender};
-use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetExt}, menu::{MenuBar, MenuFlag}};
+use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetBase, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use regex::Regex;

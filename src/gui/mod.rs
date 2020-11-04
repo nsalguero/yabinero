@@ -9,7 +9,7 @@ mod timer;
 mod user_data;
 
 use std::{cell::RefCell, path::Path, rc::Rc};
-use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, group::Scroll, image::{PngImage, SvgImage}, frame::Frame, menu::MenuBar, prelude::{GroupExt, ImageExt, WidgetExt, WindowExt}, window::{MenuWindow, Window}};
+use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, group::Scroll, image::{PngImage, SvgImage}, frame::Frame, menu::MenuBar, prelude::{GroupExt, ImageExt, WidgetBase, WidgetExt, WindowExt}, window::{MenuWindow, Window}};
 use tr::tr;
 use user_data::UserPrefs;
 use changing::ChangingPart;

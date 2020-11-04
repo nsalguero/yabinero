@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.19.0
+%define version 1.20.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -35,6 +35,7 @@ BuildRequires: pkgconfig(liblzma)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: pkgconfig(libpng)
 BuildRequires: pkgconfig(bzip2)
+BuildRequires: pkgconfig(pango)
 
 Requires: %{_lib}bsd0
 Requires: %{_lib}lzma5
@@ -136,6 +137,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Wed Nov 04 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.20.0-1.mga7
+- update to rodio 0.13 and fltk to 0.10.3
+
 * Thu Oct 15 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.19.0-1.mga7
 - update to rodio 0.12
 

@@ -3,7 +3,7 @@
 //! `timer` handles the timer
 
 use std::{sync::{Arc, Mutex, mpsc::{self, Sender}}, thread, time::{Duration, Instant}};
-use fltk::{prelude::{WidgetExt}, frame::Frame};
+use fltk::{prelude::{WidgetBase, WidgetExt}, frame::Frame};
 use crate::gui::set_svg;
 
 pub struct Timer {

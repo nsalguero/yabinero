@@ -4,7 +4,7 @@
 
 use std::{cell::RefCell, collections::HashMap, fmt, path::Path, rc::Rc, sync::mpsc::Sender, thread, time::Duration};
 use tr::tr;
-use fltk::{button::Button, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
+use fltk::{button::Button, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetBase, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
 use enum_iterator::IntoEnumIterator;
 use crate::engine::{Binero, history::Item};
 use crate::enums::{Difficulty, Size, Value};
