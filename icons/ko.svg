@@ -45,7 +45,7 @@
       id="circle8"
       sodipodi:rx="19"
       sodipodi:ry="19"
-      style="stroke:#000000;stroke-width:2;fill:#efff00"
+      style="stroke:#000000;stroke-width:2;fill:#ef0000"
       cy="0"
       transform="translate(.85455 -6.4091)"
       sodipodi:cy="0"
@@ -89,7 +89,7 @@
     >
     <path
         id="path18"
-        style="fill:#efff00"
+        style="fill:#ef0000"
         d="m4.4-12a3 3 0 0 1 0 6h0.6a2.9 2.9 0 0 1 0 5.8l-0.9 0.2a2.7 2.7 0 0 1 0 5.4l-1.7 0.1a2.3 2.3 0 0 1 0 4.6l-8.4 0.9a3.4 3.4 0 0 1 -2.5 -5 4 4 0 0 1 -0.5 -6 4 4 0 0 1 0.4 -6 4 4 0 0 1 2 -6zm-9.4 0 3-4 0.5-3a3.5 7 0 1 1 5.5 1l0.5 6z"
     />
     <path

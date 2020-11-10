@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.20.0
+%define version 1.21.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -137,6 +137,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Tue Nov 10 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.21.0-1.mga7
+- update fltk to 0.10.6 and change the color of status icons
+
 * Wed Nov 04 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.20.0-1.mga7
 - update to rodio 0.13 and fltk to 0.10.3
 
