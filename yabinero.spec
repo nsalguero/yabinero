@@ -58,7 +58,9 @@ The two ogg files come from the conversion of WAVE files that come from K3B.
 %__mkdir_p .cargo
 cp %{S:2} .cargo/config
 tar xf %{S:1}
+ls
 %patch0 -p0
+%__sed -i "s/d4cc0d9bb8ee326eb837c353c46e57edbbf065f7cbe94f1e9297ea4959406ce4/842d6fb481aab0b0edf3aa76b4883f9c9b42ab1b75949693f915e370b2cc48c7/" vendor/fltk-sys/.cargo-checksum.json
 
 %build
 CARGO_PKG_LICENSE="GPL-3.0+" cargo build --release
