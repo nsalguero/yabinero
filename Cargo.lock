@@ -512,9 +512,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "0.10.6"
+version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0a4d720e2a78d95cc3d5a9c59fb964439905c6070585529c4ffa755e0caf74a"
+checksum = "d8946253e3ee2965d1222094daf065f41fcd251bdad2bae320c50cf35600e08e"
 dependencies = [
  "fltk-derive",
  "fltk-sys",
@@ -522,9 +522,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "0.10.6"
+version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77c223d52bcd2f4e8d4248ff716f9cf62a8e7f6bdfe82847d19ad62db10ca8b3"
+checksum = "97941623442c1b43ecaf8562ba3b3114e4eae6032b4bb364e9dc9a0d1273bad1"
 dependencies = [
  "quote",
  "syn",
@@ -532,9 +532,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "0.10.6"
+version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ef2302c0e24fbc42b6d2dcd87797654ca39d7e0c9326c6ed472941e285dc625"
+checksum = "719aa2b87c1f554cfec442065b8bab42d178b832019f05b8c7dc4d6c78b3d25b"
 dependencies = [
  "cmake",
  "libc",
@@ -701,7 +701,7 @@ checksum = "be42bea7971f4ba0ea1e215730c29bc1ff9bd2a9c10013912f42a8dcf8d77c0d"
 dependencies = [
  "byteorder",
  "ogg",
- "tinyvec",
+ "tinyvec 0.3.4",
 ]
 
 [[package]]
@@ -1030,9 +1030,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.4.1"
+version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "260e51e7efe62b592207e9e13a68e43692a7a279171d6ba57abd208bf23645ad"
+checksum = "13bd41f508810a131401606d54ac32a467c97172d74ba7662562ebba5ad07fa0"
 
 [[package]]
 name = "parking_lot"
@@ -1443,6 +1443,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "238ce071d267c5710f9d31451efec16c5ee22de34df17cc05e56cbc92e967117"
 
 [[package]]
+name = "tinyvec"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b78a366903f506d2ad52ca8dc552102ffdd3e937ba8a227f024dc1d1eae28575"
+dependencies = [
+ "tinyvec_macros",
+]
+
+[[package]]
+name = "tinyvec_macros"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
+
+[[package]]
 name = "toml"
 version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1472,11 +1487,11 @@ dependencies = [
 
 [[package]]
 name = "unicode-normalization"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fb19cf769fa8c6a80a162df694621ebeb4dafb606470b2b2fce0be40a98a977"
+checksum = "b7f98e67a4d84f730d343392f9bfff7d21e3fca562b9cb7a43b768350beeddc6"
 dependencies = [
- "tinyvec",
+ "tinyvec 1.0.1",
 ]
 
 [[package]]
@@ -1718,7 +1733,7 @@ checksum = "d089681aa106a86fade1b0128fb5daf07d5867a509ab036d99988dec80429a57"
 
 [[package]]
 name = "yabinero"
-version = "1.21.0"
+version = "1.22.0"
 dependencies = [
  "chrono",
  "enum-iterator",

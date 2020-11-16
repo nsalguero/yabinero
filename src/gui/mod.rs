@@ -9,7 +9,7 @@ mod timer;
 mod user_data;
 
 use std::{cell::RefCell, path::Path, rc::Rc};
-use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, group::Scroll, image::{PngImage, SvgImage}, frame::Frame, menu::MenuBar, prelude::{GroupExt, ImageExt, WidgetBase, WidgetExt, WindowExt}, window::{MenuWindow, Window}};
+use fltk::{app::{App, AppScheme}, button::ReturnButton, enums::{Align, Color}, group::Scroll, image::{PngImage, SvgImage}, frame::Frame, menu::MenuBar, prelude::{GroupExt, ImageExt, WidgetBase, WidgetExt, WindowExt}, window::{DoubleWindow, MenuWindow}};
 use tr::tr;
 use user_data::UserPrefs;
 use changing::ChangingPart;
@@ -94,8 +94,8 @@ fn init_window<T: WindowExt>(mut window: T, modal: bool) -> T {
 /// * `width` - the width of the window
 /// * `height` - the height of the window
 /// * `title` - the title of the window
-fn popup_window(width: i32, height: i32, title: &str) -> Window {
-    let window = Window::new(0, 0, width, height, title);
+fn popup_window(width: i32, height: i32, title: &str) -> DoubleWindow {
+    let window = DoubleWindow::new(0, 0, width, height, title);
     init_window(window, true)
 }
 

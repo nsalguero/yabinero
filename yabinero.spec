@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.21.0
+%define version 1.22.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -13,6 +13,7 @@ Source0: https://github.com/nsalguero/%{name}/archive/v%{version}.tar.gz
 # ex: tar xzf v1.0.0.tar.gz; cd yabinero-1.0.0; cargo vendor; tar cvJf ../yabinero-cargo-vendor-1.0.0.tar.xz vendor/
 Source1: %{name}-cargo-vendor-%{version}.tar.xz
 Source2: cargo.config
+Patch0:  fltk-fix-name-of-lib-dir.patch
 
 License: GPLv3+
 Group: Games/Puzzles
@@ -52,11 +53,12 @@ come from Openclipart.
 The two ogg files come from the conversion of WAVE files that come from K3B.
 
 %prep
-%autosetup
+%setup -q
 
 %__mkdir_p .cargo
 cp %{S:2} .cargo/config
 tar xf %{S:1}
+%patch0 -p0
 
 %build
 CARGO_PKG_LICENSE="GPL-3.0+" cargo build --release
@@ -137,6 +139,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Mon Nov 16 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.22.0-1.mga7
+- update fltk to 0.10.9 and try to fix flickering popup window
+
 * Tue Nov 10 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.21.0-1.mga7
 - update fltk to 0.10.6 and change the color of status icons
 
