@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.22.0
+%define version 1.23.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -12,8 +12,6 @@ Release: %{release}
 Source0: https://github.com/nsalguero/%{name}/archive/v%{version}.tar.gz
 # ex: tar xzf v1.0.0.tar.gz; cd yabinero-1.0.0; cargo vendor; tar cvJf ../yabinero-cargo-vendor-1.0.0.tar.xz vendor/
 Source1: %{name}-cargo-vendor-%{version}.tar.xz
-Source2: cargo.config
-Patch0:  fltk-fix-name-of-lib-dir.patch
 
 License: GPLv3+
 Group: Games/Puzzles
@@ -38,12 +36,6 @@ BuildRequires: pkgconfig(libpng)
 BuildRequires: pkgconfig(bzip2)
 BuildRequires: pkgconfig(pango)
 
-Requires: %{_lib}bsd0
-Requires: %{_lib}lzma5
-Requires: zlib
-Requires: libpng
-Requires: %{_lib}bz2_1
-
 %description
 This software can generate and solve binero puzzles.
 
@@ -53,14 +45,17 @@ come from Openclipart.
 The two ogg files come from the conversion of WAVE files that come from K3B.
 
 %prep
-%setup -q
+%autosetup
 
 %__mkdir_p .cargo
-cp %{S:2} .cargo/config
+cat > .cargo/config << "EOF"
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+EOF
 tar xf %{S:1}
-ls
-%patch0 -p0
-%__sed -i "s/d4cc0d9bb8ee326eb837c353c46e57edbbf065f7cbe94f1e9297ea4959406ce4/842d6fb481aab0b0edf3aa76b4883f9c9b42ab1b75949693f915e370b2cc48c7/" vendor/fltk-sys/.cargo-checksum.json
 
 %build
 CARGO_PKG_LICENSE="GPL-3.0+" cargo build --release
@@ -141,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Tue Nov 17 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.23.0-1.mga7
+- update fltk to 0.10.10
+
 * Mon Nov 16 2020 Nicolas Salguero <nicolas.salguero@laposte.net> 1.22.0-1.mga7
 - update fltk to 0.10.9 and try to fix flickering popup window
 
