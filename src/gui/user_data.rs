@@ -4,7 +4,7 @@
 
 use std::{cell::RefCell, collections::HashMap, rc::Rc, str::FromStr};
 use preferences::{AppInfo, PreferencesMap, Preferences};
-use fltk::{app::AppScheme, enums::Color};
+use fltk::{app::AppScheme, enums::Color, utils::hex2rgb};
 use tr::tr;
 use enum_iterator::IntoEnumIterator;
 use chrono::Local;
@@ -197,7 +197,8 @@ impl UserPrefs {
     ///
     /// * `color` - a color
     fn color_as_string(color: &Color) -> String {
-        UserPrefs::rgb_as_string(color.to_rgb())
+        let hexa_val = u32::from_str_radix(&format!("{:?}", color)[0..6], 16).unwrap();
+        UserPrefs::rgb_as_string(hex2rgb(hexa_val))
     }
 
     /// Saves the user's preferences
