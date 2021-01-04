@@ -249,7 +249,7 @@ impl Binero {
 
     /// Returns a random `Value`
     fn rand_value(&self) -> Value {
-        let value = rand::thread_rng().gen_range(0, 2);
+        let value = rand::thread_rng().gen_range(0..2);
         Value::from_u8(value).unwrap()
     }
 
