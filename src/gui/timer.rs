@@ -48,7 +48,7 @@ impl Timer {
                 }
                 if !pause {
                     let duration = cloned_curr_start.lock().unwrap().elapsed().as_secs() + *cloned_old_duration.lock().unwrap();
-                    Timer::display_duration(&cloned_timer, duration);
+                    Timer::display_duration(&cloned_timer, duration, false);
                 }
             }
         });
@@ -71,7 +71,7 @@ impl Timer {
 
     /// Refreshes the duration in the GUI
     pub fn refresh_duration(&self) {
-        Timer::display_duration(&self.timer, self.duration());
+        Timer::display_duration(&self.timer, self.duration(), true);
     }
 
     /// Displays a duration in the GUI
@@ -80,8 +80,15 @@ impl Timer {
     ///
     /// * `timer` - the timer in the GUI
     /// * `duration` - a duration
-    fn display_duration(timer: &Arc<Mutex<Frame>>, duration: u64) {
-        timer.lock().unwrap().set_label(&Timer::format(duration));
+    /// * `try_only` - whether or not only try to lock the mutex
+    fn display_duration(timer: &Arc<Mutex<Frame>>, duration: u64, try_only: bool) {
+        if try_only {
+            if let Ok(mut t) = timer.try_lock() {
+                t.set_label(&Timer::format(duration));
+            }
+        } else {
+            timer.lock().unwrap().set_label(&Timer::format(duration));
+        }
     }
 
     /// Returns the `Frame` displaying the timer
