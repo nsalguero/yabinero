@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.28.0
+%define version 1.29.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Fri Jan 08 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.29.0-1.mga7
+- really fix a possible lock when a game finishes
+
 * Thu Jan 07 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.28.0-1.mga7
 - fix a possible lock when a game finishes
 - update fltk to 0.13.1 and rand to 0.8.1
