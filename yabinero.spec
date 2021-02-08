@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.32.0
+%define version 1.33.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Mon Feb 08 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.33.0-1.mga7
+- update fltk to 0.14.3 and rand to 0.8.3
+
 * Fri Jan 22 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.32.0-1.mga7
 - update fltk to 0.13.8 and rand to 0.8.2
 
