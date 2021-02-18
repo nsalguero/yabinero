@@ -22,6 +22,7 @@ pub struct ChangingPart {
     but_retry: Button,
     but_solve: Button,
     success: bool,
+    paused: bool,
 }
 
 impl ChangingPart {
@@ -62,6 +63,7 @@ impl ChangingPart {
             but_retry,
             but_solve,
             success: false,
+            paused: false,
         }
     }
 
@@ -82,6 +84,7 @@ impl ChangingPart {
         ChangingPart::add_retry_handler(changing, Rc::clone(&binero));
         ChangingPart::add_solve_handler(changing, Rc::clone(&binero), user_prefs);
         changing.borrow_mut().pause.hide();
+        changing.borrow_mut().paused = false;
         changing.borrow_mut().success = false;
         tx_result
     }
@@ -92,6 +95,7 @@ impl ChangingPart {
     ///
     /// * `changing` - the changing part of the GUI
     pub fn pause_game(changing: &Rc<RefCell<ChangingPart>>) {
+        changing.borrow_mut().paused = true;
         changing.borrow_mut().but_resume.show();
         changing.borrow_mut().but_pause.hide();
         for (_, boxes) in &changing.borrow().grids {
@@ -371,6 +375,7 @@ impl ChangingPart {
         changing.borrow_mut().but_pause.set_callback(Box::new(move || {
             if !cloned_changing.borrow().success {
                 tx.send(true).unwrap();
+                cloned_changing.borrow_mut().paused = true;
                 cloned_changing.borrow_mut().but_resume.show();
                 cloned_changing.borrow_mut().but_pause.hide();
                 if let Some(boxes) = cloned_changing.borrow().grids.get(&size) {
@@ -393,6 +398,7 @@ impl ChangingPart {
         cloned_changing.borrow_mut().but_resume.hide();
         changing.borrow_mut().but_resume.set_callback(Box::new(move || {
             tx.send(false).unwrap();
+            cloned_changing.borrow_mut().paused = false;
             cloned_changing.borrow_mut().but_pause.show();
             cloned_changing.borrow_mut().but_resume.hide();
             if let Some(boxes) = cloned_changing.borrow().grids.get(&size) {
@@ -437,7 +443,7 @@ impl ChangingPart {
         changing.borrow_mut().but_undo.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_undo.set_callback(Box::new(move || {
-            if !cloned_changing.borrow().success {
+            if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 if let Some(item) = binero.borrow_mut().try_to_undo() {
                     ChangingPart::set_value(&cloned_changing, size, item, true);
@@ -456,7 +462,7 @@ impl ChangingPart {
         changing.borrow_mut().but_redo.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_redo.set_callback(Box::new(move || {
-            if !cloned_changing.borrow().success {
+            if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 if let Some(item) = binero.borrow_mut().try_to_redo() {
                     ChangingPart::set_value(&cloned_changing, size, item, false);
@@ -475,7 +481,7 @@ impl ChangingPart {
         changing.borrow_mut().but_retry.show();
         let cloned_changing = Rc::clone(changing);
         changing.borrow_mut().but_retry.set_callback(Box::new(move || {
-            if !cloned_changing.borrow().success {
+            if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 while let Some(item) = binero.borrow_mut().try_to_undo() {
                     ChangingPart::set_value(&cloned_changing, size, item, true);
@@ -497,7 +503,7 @@ impl ChangingPart {
         let cloned_changing = Rc::clone(changing);
         let cloned_prefs = Rc::clone(user_prefs);
         changing.borrow_mut().but_solve.set_callback(Box::new(move || {
-            if !cloned_changing.borrow().success {
+            if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 let result = binero.borrow_mut().try_to_solve();
                 while let Some(item) = binero.borrow_mut().try_to_undo() {

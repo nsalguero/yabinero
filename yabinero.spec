@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.35.0
+%define version 1.36.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Thu Feb 18 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.36.0-1.mga7
+- when a game is paused, the button "resume" is the only one that works
+
 * Thu Feb 18 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.35.0-1.mga7
 - update fltk to 0.14.12 and tr to 0.1.6
 
