@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.36.0
+%define version 1.37.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -58,7 +58,7 @@ EOF
 tar xf %{S:1}
 
 %build
-CARGO_PKG_LICENSE="GPL-3.0+" cargo build --release
+cargo build --release
 
 cat > %{name}-wrapper << "EOF"
 #!/bin/sh
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Wed Mar 03 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.37.0-1.mga8
+- update fltk to 0.15.6
+
 * Thu Feb 18 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.36.0-1.mga7
 - when a game is paused, the button "resume" is the only one that works
 
