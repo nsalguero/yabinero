@@ -1,6 +1,6 @@
 [package]
 name = "yabinero"
-version = "1.38.0"
+version = "1.39.0"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 homepage = "https://github.com/nsalguero/yabinero"
 repository = "https://github.com/nsalguero/yabinero"
@@ -9,7 +9,7 @@ license = "GPL-3.0+"
 
 [dependencies]
 locale_config = "^0.3"
-fltk = "^0.15"
+fltk = "^0.16"
 rand = "^0.8"
 rodio = "^0.13"
 preferences = "^1.1"
