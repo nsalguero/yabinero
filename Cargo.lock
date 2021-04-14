@@ -143,9 +143,9 @@ dependencies = [
 
 [[package]]
 name = "clang-sys"
-version = "1.1.1"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f54d78e30b388d4815220c8dd03fea5656b6c6d32adb59e89061552a102f8da1"
+checksum = "853eda514c284c2287f4bf20ae614f8781f40a81d32ecda6e91449304dfe077c"
 dependencies = [
  "glob",
  "libc",
@@ -365,9 +365,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "0.16.4"
+version = "0.16.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "883b9420ac7a803357a762ce532394a2f76f6fa6eef5b22209b614bf301c42b1"
+checksum = "68960d8666972f7a5334620405c80feae9da915f572754ef9236ae3ecf4ed48b"
 dependencies = [
  "bitflags",
  "fltk-derive",
@@ -379,9 +379,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "0.16.4"
+version = "0.16.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "428b021d5c90f23fbd5ad6e95a5bdefda12ce9ff9ba10d9a9c18104dadfbd156"
+checksum = "a6a89f84b5d78cd3c5c05881e9fd7545e52f029242723ea9b62062b2aadfa047"
 dependencies = [
  "quote",
  "syn",
@@ -389,9 +389,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "0.16.4"
+version = "0.16.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aefc17808df8f75a533c6d4f34ae39cfc09b33d76a95cd1e82052fce17b8bd27"
+checksum = "6fb7f14cd3f5529455d5feb8cbbba2119e1658628d48a70c8697aa44d0f2e558"
 dependencies = [
  "cmake",
  "libc",
@@ -520,9 +520,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.92"
+version = "0.2.93"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56d855069fafbb9b344c0f962150cd2c1187975cb1c22c1522c240d8c4986714"
+checksum = "9385f66bf6105b241aa65a61cb923ef20efc665cb9f9bb50ac2f0c4b7f378d41"
 
 [[package]]
 name = "libloading"
@@ -549,9 +549,9 @@ dependencies = [
 
 [[package]]
 name = "lock_api"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd96ffd135b2fd7b973ac026d28085defbe8983df057ced3eb4f2130b0831312"
+checksum = "5a3c91c24eae6777794bb1997ad98bbb87daf92890acab859f7eaa4320333176"
 dependencies = [
  "scopeguard",
 ]
@@ -940,9 +940,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94341e4e44e24f6b591b59e47a8a027df12e008d73fd5672dbea9cc22f4507d9"
+checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
 dependencies = [
  "bitflags",
 ]
@@ -1069,9 +1069,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.68"
+version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ce15dd3ed8aa2f8eeac4716d6ef5ab58b6b9256db41d7e1a0224c2788e8fd87"
+checksum = "48fe99c6bd8b1cc636890bcc071842de909d902c81ac7dab53ba33c421ab8ffb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1110,9 +1110,9 @@ dependencies = [
 
 [[package]]
 name = "tinyvec"
-version = "1.1.1"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "317cca572a0e89c3ce0ca1f1bdc9369547fe318a683418e42ac8f59d14701023"
+checksum = "5b5220f05bb7de7f3f53c7c065e1199b3172696fe2db9f9c4d8ad9b4ee74c342"
 dependencies = [
  "tinyvec_macros",
 ]
@@ -1286,7 +1286,7 @@ checksum = "d089681aa106a86fade1b0128fb5daf07d5867a509ab036d99988dec80429a57"
 
 [[package]]
 name = "yabinero"
-version = "1.40.0"
+version = "1.41.0"
 dependencies = [
  "chrono",
  "enum-iterator",
