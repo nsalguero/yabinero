@@ -172,7 +172,8 @@ impl ChangingPart {
     /// * `width` - the width
     /// * `play_button` - a `PlayButton`
     fn init_button(x: i32, y: i32, width: i32, play_button: PlayButton) -> Button {
-        let mut button = Button::new(x, y, width, ChangingPart::HEIGHT, &format!("{}", play_button));
+        let mut button = Button::new(x, y, width, ChangingPart::HEIGHT, "");
+        button.set_label(&format!("{}", play_button));
         button.set_color(BG_COLOR);
         button.hide();
         button
@@ -291,7 +292,7 @@ impl ChangingPart {
         let cloned_tx = Sender::clone(tx);
         let cloned_timer = Rc::clone(timer);
         let cloned_changing = Rc::clone(changing);
-        input.handle(Box::new(move |ev: Event| {
+        input.handle(Box::new(move |_: &mut Input, ev: Event| {
             match ev {
                 Event::KeyUp | Event::Unfocus => {
                     let old_value = cloned_binero.borrow().get(x_axis, y_axis);
@@ -372,7 +373,7 @@ impl ChangingPart {
     fn add_pause_handler(changing: &Rc<RefCell<ChangingPart>>, size: Size, tx: Sender<bool>) {
         let cloned_changing = Rc::clone(changing);
         cloned_changing.borrow_mut().but_pause.show();
-        changing.borrow_mut().but_pause.set_callback(Box::new(move || {
+        changing.borrow_mut().but_pause.set_callback(Box::new(move |_: &mut Button| {
             if !cloned_changing.borrow().success {
                 tx.send(true).unwrap();
                 cloned_changing.borrow_mut().paused = true;
@@ -396,7 +397,7 @@ impl ChangingPart {
     fn add_resume_handler(changing: &Rc<RefCell<ChangingPart>>, size: Size, tx: Sender<bool>) {
         let cloned_changing = Rc::clone(changing);
         cloned_changing.borrow_mut().but_resume.hide();
-        changing.borrow_mut().but_resume.set_callback(Box::new(move || {
+        changing.borrow_mut().but_resume.set_callback(Box::new(move |_: &mut Button| {
             tx.send(false).unwrap();
             cloned_changing.borrow_mut().paused = false;
             cloned_changing.borrow_mut().but_pause.show();
@@ -442,7 +443,7 @@ impl ChangingPart {
     fn add_undo_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
         changing.borrow_mut().but_undo.show();
         let cloned_changing = Rc::clone(changing);
-        changing.borrow_mut().but_undo.set_callback(Box::new(move || {
+        changing.borrow_mut().but_undo.set_callback(Box::new(move |_: &mut Button| {
             if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 if let Some(item) = binero.borrow_mut().try_to_undo() {
@@ -461,7 +462,7 @@ impl ChangingPart {
     fn add_redo_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
         changing.borrow_mut().but_redo.show();
         let cloned_changing = Rc::clone(changing);
-        changing.borrow_mut().but_redo.set_callback(Box::new(move || {
+        changing.borrow_mut().but_redo.set_callback(Box::new(move |_: &mut Button| {
             if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 if let Some(item) = binero.borrow_mut().try_to_redo() {
@@ -480,7 +481,7 @@ impl ChangingPart {
     fn add_retry_handler(changing: &Rc<RefCell<ChangingPart>>, binero: Rc<RefCell<Binero>>) {
         changing.borrow_mut().but_retry.show();
         let cloned_changing = Rc::clone(changing);
-        changing.borrow_mut().but_retry.set_callback(Box::new(move || {
+        changing.borrow_mut().but_retry.set_callback(Box::new(move |_: &mut Button| {
             if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 while let Some(item) = binero.borrow_mut().try_to_undo() {
@@ -502,7 +503,7 @@ impl ChangingPart {
         changing.borrow_mut().but_solve.show();
         let cloned_changing = Rc::clone(changing);
         let cloned_prefs = Rc::clone(user_prefs);
-        changing.borrow_mut().but_solve.set_callback(Box::new(move || {
+        changing.borrow_mut().but_solve.set_callback(Box::new(move |_: &mut Button| {
             if !cloned_changing.borrow().success && !cloned_changing.borrow().paused {
                 let size = binero.borrow().size();
                 let result = binero.borrow_mut().try_to_solve();

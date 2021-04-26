@@ -94,8 +94,9 @@ fn init_window<T: WindowExt>(mut window: T, modal: bool) -> T {
 /// * `width` - the width of the window
 /// * `height` - the height of the window
 /// * `title` - the title of the window
-fn popup_window(width: i32, height: i32, title: &str) -> DoubleWindow {
-    let window = DoubleWindow::new(0, 0, width, height, title);
+fn popup_window(width: i32, height: i32, title: & str) -> DoubleWindow {
+    let mut window = DoubleWindow::new(0, 0, width, height, "");
+    window.set_label(title);
     init_window(window, true)
 }
 
@@ -106,7 +107,8 @@ fn popup_window(width: i32, height: i32, title: &str) -> DoubleWindow {
 /// * `window_width` - the width of the window
 /// * `y` - the vertical starting point
 fn return_button(window_width: i32, y: i32) -> ReturnButton {
-    let mut button = ReturnButton::new((window_width - RET_BUTTON_WIDTH) / 2, y, RET_BUTTON_WIDTH, BUTTON_HEIGHT, &tr!("Close"));
+    let mut button = ReturnButton::new((window_width - RET_BUTTON_WIDTH) / 2, y, RET_BUTTON_WIDTH, BUTTON_HEIGHT, "");
+    button.set_label(&tr!("Close"));
     button.set_color(BG_COLOR);
     button
 }
@@ -142,7 +144,8 @@ fn display_window(width: i32, height: i32, title: &str, content: &str, right_ali
     } else {
         width - 20
     };
-    let mut frame = Frame::new(0, 0, frame_width, frame_height, content);
+    let mut frame = Frame::new(0, 0, frame_width, frame_height, "");
+    frame.set_label(content);
     if right_align {
         frame.set_align(Align::Right);
     }
@@ -158,7 +161,7 @@ fn display_window(width: i32, height: i32, title: &str, content: &str, right_ali
     scroll.set_color(BG_COLOR);
     let mut button = return_button(width, frame_height);
     show(&mut window);
-    button.set_callback(Box::new(move || {
+    button.set_callback(Box::new(move |_: &mut ReturnButton| {
         window.hide();
     }));
 }

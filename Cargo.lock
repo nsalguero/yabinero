@@ -365,9 +365,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "0.16.5"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68960d8666972f7a5334620405c80feae9da915f572754ef9236ae3ecf4ed48b"
+checksum = "e859cc82063a99590c1570ec6efa337d0220dda2c94bbc6719b2cb9b55ff7416"
 dependencies = [
  "bitflags",
  "fltk-derive",
@@ -379,9 +379,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "0.16.5"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6a89f84b5d78cd3c5c05881e9fd7545e52f029242723ea9b62062b2aadfa047"
+checksum = "c5f73f5e3b630306f452b5ab8530bf13fc7c72d5e7873af147073f0298c7ad2a"
 dependencies = [
  "quote",
  "syn",
@@ -389,9 +389,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "0.16.5"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fb7f14cd3f5529455d5feb8cbbba2119e1658628d48a70c8697aa44d0f2e558"
+checksum = "b4758f61d2fb272760a832030086595c6b68e028e3c217e7aac764689583d43b"
 dependencies = [
  "cmake",
  "libc",
@@ -479,9 +479,9 @@ checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
 
 [[package]]
 name = "jobserver"
-version = "0.1.21"
+version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c71313ebb9439f74b00d9d2dcec36440beaf57a6aa0623068441dd7cd81a7f2"
+checksum = "972f5ae5d1cb9c6ae417789196c803205313edde988685da5e3aae0827b9e7fd"
 dependencies = [
  "libc",
 ]
@@ -949,9 +949,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.4.5"
+version = "1.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "957056ecddbeba1b26965114e191d2e8589ce74db242b6ea25fc4062427a5c19"
+checksum = "2a26af418b574bd56588335b3a3659a65725d4e636eb1016c2f9e3b38c7cc759"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -1069,9 +1069,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.69"
+version = "1.0.70"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48fe99c6bd8b1cc636890bcc071842de909d902c81ac7dab53ba33c421ab8ffb"
+checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1286,7 +1286,7 @@ checksum = "d089681aa106a86fade1b0128fb5daf07d5867a509ab036d99988dec80429a57"
 
 [[package]]
 name = "yabinero"
-version = "1.41.0"
+version = "1.42.0"
 dependencies = [
  "chrono",
  "enum-iterator",
