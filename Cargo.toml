@@ -1,6 +1,6 @@
 [package]
 name = "yabinero"
-version = "1.42.0"
+version = "1.43.0"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 homepage = "https://github.com/nsalguero/yabinero"
 repository = "https://github.com/nsalguero/yabinero"
@@ -18,4 +18,4 @@ tr = { version = "^0.1", features = ["gettext"], default-features = false }
 enum-iterator = "^0.6"
 chrono = "^0.4"
 lazy_static = "^1.4"
-regex = "^1.4"
+regex = "^1"

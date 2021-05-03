@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.42.0
+%define version 1.43.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Mon May 03 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.43.0-1.mga8
+- update fltk to 1.0.7 and regex to 1.5.3
+
 * Mon Apr 26 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.42.0-1.mga8
 - update fltk to 1.0.2 and regex to 1.4.6
 
