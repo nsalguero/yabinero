@@ -365,9 +365,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.0.19"
+version = "1.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c65a2f933e5e7eb0d7d45eeeeba20636b26321ef54548125b28b22c601f4b7db"
+checksum = "8f77af0696d0f7f3b2cd18895a3e54c077f230d28aede0b6c67335e6a25abced"
 dependencies = [
  "bitflags",
  "fltk-derive",
@@ -379,9 +379,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "1.0.19"
+version = "1.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70dd0e88926d3756e3077832bdb3c01ce0185167c80de9498b25620079136102"
+checksum = "c4dd3db11d41e944817e86d69aef34839d9a8fff5c12bf51184381c0799d43e7"
 dependencies = [
  "quote",
  "syn",
@@ -389,9 +389,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.0.19"
+version = "1.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d4741c0fa159ff01ae599e78c9c4478f6134f6601d215230bfa5f90f92e1830"
+checksum = "07412a8e60102a03ba690d31f60e403cfeaafe66079437ee57e16bcae96a997b"
 dependencies = [
  "cmake",
  "libc",
@@ -1286,7 +1286,7 @@ checksum = "d089681aa106a86fade1b0128fb5daf07d5867a509ab036d99988dec80429a57"
 
 [[package]]
 name = "yabinero"
-version = "1.46.0"
+version = "1.47.0"
 dependencies = [
  "chrono",
  "enum-iterator",
