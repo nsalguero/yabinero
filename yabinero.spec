@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.48.0
+%define version 1.49.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Thu Sep 02 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.49.0-1.mga8
+- update fltk to 1.1.11
+
 * Fri Jul 23 2021 Nicolas Salguero <nicolas.salguero@laposte.net> 1.48.0-1.mga8
 - update fltk to 1.1.4
 
