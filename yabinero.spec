@@ -136,7 +136,7 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
-* Thu Mar 10 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.51.0-1.mga8
+* Thu Mar 24 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.51.0-1.mga8
 - update fltk to 1.3.1, rand to 0.8.5 and regex to 1.5.5
 
 * Thu Feb 10 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.50.0-1.mga8
