@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.52.0
+%define version 1.53.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -136,6 +136,9 @@ EOF
 %{_menudir}/%{name}
 
 %changelog
+* Fri May 20 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.53.0-1.mga8
+- update fltk to 1.3.7 and enum-iterator to 0.8.1
+
 * Tue May 10 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.0-1.mga8
 - update fltk to 1.3.6
 
