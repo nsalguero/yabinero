@@ -21,6 +21,7 @@ BuildRequires: desktop-file-utils
 BuildRequires: cargo
 BuildRequires: cmake
 BuildRequires: gettext
+BuildRequires: git
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(x11)
 BuildRequires: pkgconfig(glu)
