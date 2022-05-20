@@ -105,18 +105,6 @@ desktop-file-install --vendor="" \
                      --dir=%{buildroot}/%{_datadir}/applications/ \
                      %{name}.desktop
 
-mkdir -p %{buildroot}/%{_menudir}
-cat > %{buildroot}/%{_menudir}/%{name} << "EOF"
-?package(%name):\
-command="%{_prefix}/games/%{name}"\
-icon="%{name}"\
-title="Binero Game"\
-longtitle="Yet Another Binero Game"\
-needs="x11"\
-section="Game" \
-xdg="true"
-EOF
-
 %files
 %doc README.md
 %license LICENSE
@@ -133,7 +121,6 @@ EOF
 %{_prefix}/games/%{name}
 
 %{_datadir}/applications/%{name}.desktop
-%{_menudir}/%{name}
 
 %changelog
 * Fri May 20 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.53.0-1.mga8
