@@ -84,9 +84,9 @@ checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
 
 [[package]]
 name = "bumpalo"
-version = "3.9.1"
+version = "3.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a45a46ab1f2412e53d3a0ade76ffad2025804294569aae387231a0cd6e0899"
+checksum = "37ccbd214614c6783386c1af30caf03192f17891059cecc394b4fb119e363de3"
 
 [[package]]
 name = "byteorder"
@@ -145,9 +145,9 @@ dependencies = [
 
 [[package]]
 name = "clang-sys"
-version = "1.3.2"
+version = "1.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf6b561dcf059c85bbe388e0a7b0a1469acb3934cc0cfa148613a830629e3049"
+checksum = "5a050e2153c5be08febd6734e29298e844fdb0fa21aeddd63b4eb7baa106c69b"
 dependencies = [
  "glob",
  "libc",
@@ -376,18 +376,18 @@ checksum = "a246d82be1c9d791c5dfde9a2bd045fc3cbba3fa2b11ad558f27d01712f00569"
 
 [[package]]
 name = "enum-iterator"
-version = "0.8.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2953d1df47ac0eb70086ccabf0275aa8da8591a28bd358ee2b52bd9f9e3ff9e9"
+checksum = "4eeac5c5edb79e4e39fe8439ef35207780a11f69c52cbe424ce3dfad4cb78de6"
 dependencies = [
  "enum-iterator-derive",
 ]
 
 [[package]]
 name = "enum-iterator-derive"
-version = "0.8.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8958699f9359f0b04e691a13850d48b7de329138023876d07cbd024c2c820598"
+checksum = "c134c37760b27a871ba422106eedbb8247da973a09e82558bf26d619c882b159"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -396,9 +396,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.3.7"
+version = "1.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "964bfeeece6b86e08b70a28eb107a2258617f9d6fcc0204dd204472319a40e7a"
+checksum = "3959255cbb894b3ce8bb678e1ec8df4cab37478bf26f1244889dc816505fafe0"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
@@ -410,9 +410,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.3.7"
+version = "1.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c2eee5fd78568126114dea22a5427dd74d5c789aeccad8ee8fe20522bcc9647"
+checksum = "cc85e5288ed59c520481d6598a174b2b7fc612d8b03c5c690ef633fa8f1b3038"
 dependencies = [
  "cmake",
 ]
@@ -1115,9 +1115,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
-version = "1.0.95"
+version = "1.0.96"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbaf6116ab8924f39d52792136fb74fd60a80194cf1b1c6ffa6453eef1c3f942"
+checksum = "0748dd251e24453cb8717f0354206b91557e4ec8703673a4b30208f2abaf1ebf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1190,9 +1190,9 @@ dependencies = [
 
 [[package]]
 name = "ttf-parser"
-version = "0.15.0"
+version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c74c96594835e10fa545e2a51e8709f30b173a092bfd6036ef2cec53376244f3"
+checksum = "42d4b50cba812f0f04f0707bb6a0eaa5fae4ae05d90fc2a377998d2f21e77a1c"
 
 [[package]]
 name = "unicode-ident"
@@ -1335,7 +1335,7 @@ dependencies = [
 
 [[package]]
 name = "yabinero"
-version = "1.54.0"
+version = "1.52.1"
 dependencies = [
  "chrono",
  "enum-iterator",
