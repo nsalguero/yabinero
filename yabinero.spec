@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.54.0
+%define version 1.55.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Fri Jun 10 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.55.0-1.mga8
+- update fltk to 1.3.8
+
 * Mon May 23 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.54.0-1.mga8
 - fix a crash when launched for the first time
 - update regex to 1.5.6
