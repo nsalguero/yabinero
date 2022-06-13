@@ -4,10 +4,10 @@
 
 use std::fmt;
 use tr::tr;
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::{all, Sequence};
 
 /// The four possible levels of difficulty
-#[derive(Debug, Clone, Copy, IntoEnumIterator)]
+#[derive(Debug, Clone, Copy, Sequence)]
 pub enum Difficulty {
     Beginner,
     Easy,
@@ -22,7 +22,7 @@ impl Difficulty {
     ///
     /// * `difficulty` - a string slice representing a difficulty
     pub fn from_str(difficulty: &str) -> Option<Difficulty> {
-        for a_difficulty in Difficulty::into_enum_iter() {
+        for a_difficulty in all::<Difficulty>() {
             if format!("{:?}", a_difficulty) == difficulty {
                 return Some(a_difficulty);
             }
@@ -44,7 +44,7 @@ impl fmt::Display for Difficulty {
 }
 
 /// The possible sizes of a binero
-#[derive(Copy, Clone, Debug, IntoEnumIterator, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, Sequence, PartialEq, Eq, Hash)]
 pub enum Size {
     Side6,
     Side8,
@@ -68,7 +68,7 @@ impl Size {
     /// * `size` - a string slice representing a size
     pub fn from_str(size: &str) -> Option<Size> {
         let side = format!("{}x{}", size, size);
-        for a_size in Size::into_enum_iter() {
+        for a_size in all::<Size>() {
             if format!("{}", a_size) == side {
                 return Some(a_size);
             }

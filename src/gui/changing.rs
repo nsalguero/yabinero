@@ -5,7 +5,7 @@
 use std::{cell::RefCell, collections::HashMap, fmt, path::Path, rc::Rc, sync::mpsc::Sender, thread, time::Duration};
 use tr::tr;
 use fltk::{button::Button, enums::{Color, Event, Shortcut}, prelude::{ButtonExt, ImageExt, InputExt, WidgetBase, WidgetExt}, frame::Frame, image::SvgImage, input::Input};
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::{all, last};
 use crate::engine::{Binero, history::Item};
 use crate::enums::{Difficulty, Size, Value};
 use crate::gui::{BG_COLOR, SELECT_COLOR, RO_SELECT_COLOR, display_alert, display_message, sound::Sound, timer::Timer, user_data::{UserPrefs, BestScores}};
@@ -35,8 +35,8 @@ impl ChangingPart {
     /// * `ending_y` - the ending point for the height of the part of the GUI used during a game
     pub fn new(starting_y: i32, ending_x: i32, ending_y: i32) -> ChangingPart {
         let mut grids = HashMap::new();
-        let max_size = Size::into_enum_iter().last().unwrap().as_u8() as i32;
-        for size in Size::into_enum_iter() {
+        let max_size = last::<Size>().unwrap().as_u8() as i32;
+        for size in all::<Size>() {
             let delta_to_center = (max_size - size.as_u8() as i32) / 2 * ChangingPart::INPUT_SIZE;
             grids.insert(size, ChangingPart::init_grid(size.as_u8(), starting_y, delta_to_center));
         }

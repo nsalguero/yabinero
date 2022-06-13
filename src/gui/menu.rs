@@ -5,7 +5,7 @@
 use std::{cell::RefCell, fmt, fs, path::Path, rc::Rc, sync::mpsc::Sender};
 use fltk::{app::{App, AppScheme, quit}, button::Button, enums::Shortcut, group::ColorChooser, prelude::{MenuExt, WidgetBase, WidgetExt}, menu::{MenuBar, MenuFlag}};
 use tr::tr;
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::all;
 use regex::Regex;
 use crate::enums::{Difficulty, Size};
 use crate::gui::{BG_COLOR, SELECT_COLOR, BUTTON_HEIGHT, display_window, show, popup_window, user_data::{UserPrefs, BestScores}, changing::ChangingPart};
@@ -169,7 +169,7 @@ fn add_quit(menu: &mut MenuBar) {
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 fn add_sizes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
-    for size in Size::into_enum_iter() {
+    for size in all::<Size>() {
         let cloned_prefs = Rc::clone(user_prefs);
         menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Size, Some(&format!("{}", size))), Shortcut::None, MenuFlag::Radio, Box::new(move |_: &mut MenuBar| {
             cloned_prefs.borrow_mut().set_size(size);
@@ -184,7 +184,7 @@ fn add_sizes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `menu` - a menu bar
 /// * `user_prefs` - the user's preferences
 fn add_difficulties(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
-    for difficulty in Difficulty::into_enum_iter() {
+    for difficulty in all::<Difficulty>() {
         let cloned_prefs = Rc::clone(user_prefs);
         menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Difficulty, Some(&format!("{}", difficulty))), Shortcut::None, MenuFlag::Radio, Box::new(move |_: &mut MenuBar| {
             cloned_prefs.borrow_mut().set_difficulty(difficulty);

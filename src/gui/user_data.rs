@@ -6,7 +6,7 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc, str::FromStr};
 use preferences::{AppInfo, PreferencesMap, Preferences};
 use fltk::{app::AppScheme, enums::Color, utils::hex2rgb};
 use tr::tr;
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::all;
 use chrono::Local;
 use crate::gui::{FG_COLOR, RO_FG_COLOR, display_alert, timer::Timer};
 use crate::enums::{Difficulty, Size};
@@ -266,8 +266,8 @@ impl BestScores {
     /// Returns the best scores
     pub fn new() -> BestScores {
         let mut scores = HashMap::new();
-        for size in Size::into_enum_iter() {
-            for difficulty in Difficulty::into_enum_iter() {
+        for size in all::<Size>() {
+            for difficulty in all::<Difficulty>() {
                 let key = BestScores::key(size, difficulty);
                 let load_result = PreferencesMap::<String>::load(&APP_INFO, &key);
                 let score = if load_result.is_ok() {
