@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.57.0
+%define version 1.58.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Tue Jul 12 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.58.0-1.mga8
+- fix refreshing the timer
+
 * Mon Jul 11 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.57.0-1.mga8
 - update fltk to 1.3.11, enum-iterator to 1.1.3 and regex to 1.6.0
 
