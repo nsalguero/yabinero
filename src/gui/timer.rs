@@ -3,7 +3,7 @@
 //! `timer` handles the timer
 
 use std::{sync::{Arc, Mutex, mpsc::{self, Sender}}, thread, time::{Duration, Instant}};
-use fltk::{prelude::{WidgetBase, WidgetExt}, frame::Frame};
+use fltk::{app::{awake}, prelude::{WidgetBase, WidgetExt}, frame::Frame};
 use crate::gui::set_svg;
 
 pub struct Timer {
@@ -49,6 +49,7 @@ impl Timer {
                 if !pause {
                     let duration = cloned_curr_start.lock().unwrap().elapsed().as_secs() + *cloned_old_duration.lock().unwrap();
                     Timer::display_duration(&cloned_timer, duration);
+                    awake();
                 }
             }
         });
