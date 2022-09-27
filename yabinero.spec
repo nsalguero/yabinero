@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.58.0
+%define version 1.59.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Tue Sep 27 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.59.0-1.mga8
+- update fltk to 1.3.15, chrono to 0.4.22, enum-iterator to 1.2.0 and rodio to 0.16.0
+
 * Tue Jul 12 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.58.0-1.mga8
 - fix refreshing the timer
 
