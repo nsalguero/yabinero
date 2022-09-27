@@ -124,7 +124,7 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
-* Tue May 10 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.3-1.mga8
+* Tue Sep 27 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.3-1.mga8
 - update fltk to 1.3.15, chrono to 0.4.22 and rodio to 0.16.0
 
 * Tue Jul 12 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.2-1.mga8
