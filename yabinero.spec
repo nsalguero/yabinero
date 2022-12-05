@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.60.0
+%define version 1.61.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Mon Dec 05 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.61.0-1.mga8
+- update fltk to 1.3.23
+
 * Mon Nov 14 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.60.0-1.mga8
 - update fltk to 1.3.20, chrono to 0.4.23 and regex to 1.7.0
 
