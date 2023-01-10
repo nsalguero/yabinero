@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.61.0
+%define version 1.62.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
