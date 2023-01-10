@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Tue Jan 10 2023 Nicolas Salguero <nicolas.salguero@laposte.net> 1.62.0-1.mga8
+- update fltk to 1.3.26 and regex to 1.7.1
+
 * Mon Dec 05 2022 Nicolas Salguero <nicolas.salguero@laposte.net> 1.61.0-1.mga8
 - update fltk to 1.3.23
 
