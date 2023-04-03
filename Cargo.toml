@@ -1,6 +1,6 @@
 [package]
 name = "yabinero"
-version = "1.52.7"
+version = "1.52.8"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 homepage = "https://github.com/nsalguero/yabinero"
 repository = "https://github.com/nsalguero/yabinero"
