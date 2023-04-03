@@ -238,6 +238,12 @@ fn add_themes(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, app: &Rc<
         cloned_prefs.borrow_mut().set_theme(AppScheme::Plastic);
         cloned_app.borrow().with_scheme(AppScheme::Plastic);
     }));
+    let cloned_prefs = Rc::clone(user_prefs);
+    let cloned_app = Rc::clone(app);
+    menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Theme, Some(&format!("{:?}", AppScheme::Oxy))), Shortcut::None, MenuFlag::Radio, Box::new(move |_: &mut MenuBar| {
+        cloned_prefs.borrow_mut().set_theme(AppScheme::Oxy);
+        cloned_app.borrow().with_scheme(AppScheme::Oxy);
+    }));
 }
 
 /// Adds the "Options/Colors/..." menu entry

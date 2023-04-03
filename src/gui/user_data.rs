@@ -117,6 +117,7 @@ impl UserPrefs {
                 "Gtk" => AppScheme::Gtk,
                 "Gleam" => AppScheme::Gleam,
                 "Plastic" => AppScheme::Plastic,
+                "Oxy" => AppScheme::Oxy,
                 _ => {
                     UserPrefs::bad_theme()
                 },
