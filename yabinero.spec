@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.52.8
+%define version 1.52.9
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Tue Apr 04 2023 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.9-1.mga8
+- update fltk to 1.4.0
+
 Mon Apr 03 2023 Nicolas Salguero <nicolas.salguero@laposte.net> 1.52.8-1.mga8
 - update fltk to 1.3.34, chrono to 0.4.24, regex to 1.7.3 and rodio to 0.17.1
   to remove slice-deque which is affected by CVE-2021-29938
