@@ -74,6 +74,8 @@ pub fn set_menu_items(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
 /// * `changing` - the changing part of the GUI
 fn add_game_entries(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changing: &Rc<RefCell<ChangingPart>>) {
     add_new_game(menu, user_prefs, changing);
+    add_undo(menu, changing);
+    add_redo(menu, changing);
     add_best_scores(menu, user_prefs);
     add_quit(menu);
 }
@@ -123,18 +125,30 @@ fn add_new_game(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>, changin
     }));
 }
 
-/// Creates a button
+/// Adds the "Game/Undo" menu entry
 ///
 /// # Arguments
 ///
-/// * `x` - the horizontal starting point
-/// * `y` - the vertical starting point
-/// * `title` - the title of the button
-fn button(x: i32, y: i32, title: &str) -> Button {
-    let mut button = Button::new(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, "");
-    button.set_label(title);
-    button.set_color(BG_COLOR);
-    button
+/// * `menu` - a menu bar
+/// * `changing` - the changing part of the GUI
+fn add_undo(menu: &mut MenuBar, changing: &Rc<RefCell<ChangingPart>>) {
+    let cloned_changing = Rc::clone(changing);
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Undo, None), Shortcut::Ctrl | 'u', MenuFlag::Normal, Box::new(move |_: &mut MenuBar| {
+        ChangingPart::undo(&cloned_changing);
+    }));
+}
+
+/// Adds the "Game/Redo" menu entry
+///
+/// # Arguments
+///
+/// * `menu` - a menu bar
+/// * `changing` - the changing part of the GUI
+fn add_redo(menu: &mut MenuBar, changing: &Rc<RefCell<ChangingPart>>) {
+    let cloned_changing = Rc::clone(changing);
+    menu.add(&entry_label(&TopLevelMenu::Game, &Submenu::Redo, None), Shortcut::Ctrl | 'U', MenuFlag::Normal, Box::new(move |_: &mut MenuBar| {
+        ChangingPart::redo(&cloned_changing);
+    }));
 }
 
 /// Adds the "Game/Best scores" menu entry
@@ -261,6 +275,20 @@ fn add_colors(menu: &mut MenuBar, user_prefs: &Rc<RefCell<UserPrefs>>) {
     menu.add(&entry_label(&TopLevelMenu::Options, &Submenu::Colors, Some(&tr!("Color of inactives boxes"))), Shortcut::None, MenuFlag::Normal, Box::new(move |_: &mut MenuBar| {
         display_color_chooser(&cloned_prefs, true);
     }));
+}
+
+/// Creates a button
+///
+/// # Arguments
+///
+/// * `x` - the horizontal starting point
+/// * `y` - the vertical starting point
+/// * `title` - the title of the button
+fn button(x: i32, y: i32, title: &str) -> Button {
+    let mut button = Button::new(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, "");
+    button.set_label(title);
+    button.set_color(BG_COLOR);
+    button
 }
 
 /// Displays a color chooser
@@ -408,6 +436,8 @@ impl fmt::Display for TopLevelMenu {
 /// The submenus
 enum Submenu {
     New,
+    Undo,
+    Redo,
     BestScores,
     Quit,
     Size,
@@ -423,6 +453,8 @@ impl fmt::Display for Submenu {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let printable = match *self {
             Submenu::New => tr!("New"),
+            Submenu::Undo => tr!("Undo"),
+            Submenu::Redo => tr!("Redo"),
             Submenu::BestScores => tr!("Best scores"),
             Submenu::Quit => tr!("Quit"),
             Submenu::Size => tr!("Size"),
