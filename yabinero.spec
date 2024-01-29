@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 %define name yabinero
-%define version 1.67.0
+%define version 1.68.0
 %define release %mkrel 1
 
 Summary: Yet Another Binero Puzzle
@@ -124,6 +124,9 @@ desktop-file-install --vendor="" \
 %{_datadir}/applications/%{name}.desktop
 
 %changelog
+* Mon Jan 29 2024 Nicolas Salguero <nicolas.salguero@laposte.net> 1.68.0-1.mga9
+- fix a crash when the game is launched for the first time and update fltk to 1.4.23
+
 * Fri Jan 26 2024 Nicolas Salguero <nicolas.salguero@laposte.net> 1.67.0-1.mga9
 - change undo/redo shortcuts from Ctrl+z (resp. Ctrl+Z) to Ctrl+u (resp. Ctrl+U)
 
