@@ -4,7 +4,7 @@ version = "1.69.0"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 homepage = "https://github.com/nsalguero/yabinero"
 repository = "https://github.com/nsalguero/yabinero"
-edition = "2021"
+edition = "2024"
 license = "GPL-3.0+"
 
 [dependencies]
