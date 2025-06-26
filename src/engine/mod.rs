@@ -249,7 +249,7 @@ impl Binero {
 
     /// Returns a random `Value`
     fn rand_value(&self) -> Value {
-        let value = rand::thread_rng().gen_range(0..2);
+        let value = rand::rng().random_range(0..2);
         Value::from_u8(value).unwrap()
     }
 
@@ -304,7 +304,7 @@ impl Binero {
 
     /// Shuffles the x and y axis and returns them
     fn shuffle_indexes(&self) -> Vec<(u8, u8)> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut result: Vec<(u8, u8)> = Vec::new();
         for i in 0..self.grid.size().as_u8() {
             for j in 0..self.grid.size().as_u8() {

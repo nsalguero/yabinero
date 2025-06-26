@@ -1,6 +1,6 @@
 [package]
 name = "yabinero"
-version = "1.68.0"
+version = "1.69.0"
 authors = ["Nicolas Salguero <nicolas.salguero@laposte.net>"]
 homepage = "https://github.com/nsalguero/yabinero"
 repository = "https://github.com/nsalguero/yabinero"
@@ -9,13 +9,13 @@ license = "GPL-3.0+"
 
 [dependencies]
 locale_config = "^0.3"
-fltk = "^1.4"
-rand = "^0.8"
-rodio = "^0.17"
-preferences = "^1.1"
+fltk = "^1.5"
+rand = "^0.9"
+rodio = "^0.20"
+preferences = "^2"
 gettext = "^0.4"
 tr = { version = "^0.1", features = ["gettext"], default-features = false }
-enum-iterator = "^1"
+enum-iterator = "^2"
 chrono = "^0.4"
-lazy_static = "^1.4"
+lazy_static = "^1.5"
 regex = "^1"
